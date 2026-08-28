@@ -478,6 +478,159 @@
       color:#8f9098;font-size:10px;line-height:1.75
     }
 
+
+    /* V3.3 — Smart Exercise Screen */
+    .smart-visual{
+      display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px
+    }
+    .smart-visual-card{
+      position:relative;min-height:238px;border-radius:24px;overflow:hidden;
+      border:1px solid var(--line);background:
+        radial-gradient(circle at 50% 24%,rgba(183,255,0,.08),transparent 34%),
+        #0d0e12
+    }
+    .smart-card-label{
+      position:absolute;top:10px;right:10px;z-index:4;
+      padding:6px 8px;border-radius:999px;background:rgba(0,0,0,.46);
+      border:1px solid var(--line);color:#92939b;font-size:9px
+    }
+    .anatomy-toggle{
+      position:absolute;left:9px;top:9px;z-index:5;border:1px solid var(--line);
+      background:#16171c;color:#fff;border-radius:999px;padding:6px 9px;font-size:9px
+    }
+    .exercise-body-svg{
+      position:absolute;inset:34px 0 5px;width:100%;height:198px;margin:auto
+    }
+    .e-body-base{fill:#303137;stroke:#56575e;stroke-width:1.2}
+    .e-muscle-zone{fill:#4b4c53;stroke:#62636a;stroke-width:.7;transition:.2s ease}
+    .e-muscle-zone.active{
+      fill:var(--lime);stroke:#dcff80;
+      filter:drop-shadow(0 0 6px rgba(183,255,0,.52))
+    }
+    .exercise-body-side{display:none}.exercise-body-side.active{display:block}
+
+    .motion-stage{
+      position:absolute;inset:35px 9px 8px;display:grid;place-items:center;
+      border-radius:18px;background:
+        radial-gradient(circle at 50% 45%,rgba(123,60,255,.16),transparent 38%)
+    }
+    .motion-person{position:relative;width:100px;height:150px}
+    .motion-head{
+      position:absolute;top:8px;left:39px;width:23px;height:23px;border-radius:50%;
+      background:#c2c3c8
+    }
+    .motion-torso{
+      position:absolute;top:34px;left:38px;width:25px;height:59px;border-radius:12px;
+      background:linear-gradient(#a9aab0,#5b5c63)
+    }
+    .motion-arm,.motion-forearm,.motion-leg{
+      position:absolute;height:10px;border-radius:999px;background:#8d8e95;
+      transform-origin:7px 5px
+    }
+    .motion-arm.l{width:44px;left:8px;top:43px;transform:rotate(28deg)}
+    .motion-arm.r{width:44px;right:8px;top:43px;transform:rotate(152deg);transform-origin:37px 5px}
+    .motion-forearm.l{width:38px;left:6px;top:69px;transform:rotate(-35deg)}
+    .motion-forearm.r{width:38px;right:6px;top:69px;transform:rotate(215deg);transform-origin:31px 5px}
+    .motion-leg.l{width:55px;left:20px;top:102px;transform:rotate(74deg)}
+    .motion-leg.r{width:55px;right:20px;top:102px;transform:rotate(106deg);transform-origin:48px 5px}
+    .motion-weight{
+      position:absolute;width:18px;height:18px;border-radius:5px;border:4px solid #aaa;top:66px
+    }
+    .motion-weight.l{left:0}.motion-weight.r{right:0}
+    .motion-person.press .motion-arm.l{animation:pressL 1.35s ease-in-out infinite alternate}
+    .motion-person.press .motion-arm.r{animation:pressR 1.35s ease-in-out infinite alternate}
+    .motion-person.pull .motion-arm.l{animation:pullL 1.25s ease-in-out infinite alternate}
+    .motion-person.pull .motion-arm.r{animation:pullR 1.25s ease-in-out infinite alternate}
+    .motion-person.curl .motion-forearm.l{animation:curlL 1.15s ease-in-out infinite alternate}
+    .motion-person.curl .motion-forearm.r{animation:curlR 1.15s ease-in-out infinite alternate}
+    .motion-person.lower{animation:squat 1.35s ease-in-out infinite alternate}
+    .motion-person.core .motion-torso{animation:corePulse 1.1s ease-in-out infinite alternate}
+    @keyframes pressL{to{transform:rotate(-48deg) translateY(-8px)}}
+    @keyframes pressR{to{transform:rotate(228deg) translateY(8px)}}
+    @keyframes pullL{to{transform:rotate(5deg) translateX(15px)}}
+    @keyframes pullR{to{transform:rotate(175deg) translateX(-15px)}}
+    @keyframes curlL{to{transform:rotate(-105deg)}}
+    @keyframes curlR{to{transform:rotate(285deg)}}
+    @keyframes squat{to{transform:translateY(24px) scaleY(.94)}}
+    @keyframes corePulse{to{transform:scale(.92) translateY(5px)}}
+
+    .technique-hint{
+      margin-top:10px;padding:11px 13px;border-radius:16px;
+      background:#0d0e11;border:1px solid var(--line);
+      font-size:10px;line-height:1.75;color:#92939b
+    }
+    .technique-hint b{color:#fff}
+
+    .smart-record-grid{
+      display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px
+    }
+    .smart-record{
+      padding:11px 12px;border-radius:16px;border:1px solid var(--line);background:#0d0e11
+    }
+    .smart-record small{display:block;color:#767780;font-size:9px;margin-bottom:5px}
+    .smart-record strong{font-size:12px;color:#fff}
+
+    .rir-card{
+      margin-top:11px;padding:13px;border-radius:18px;border:1px solid var(--line);
+      background:#0e0f13
+    }
+    .rir-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .rir-head b{font-size:12px}.rir-head span{font-size:9px;color:#777983}
+    .rir-options{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:10px}
+    .rir-btn{
+      height:40px;border-radius:13px;border:1px solid var(--line);
+      background:#15161b;color:#85868e;font-weight:900
+    }
+    .rir-btn.selected{background:var(--lime);color:#050505;border-color:var(--lime)}
+    .rir-help{margin-top:8px;color:#6f7078;font-size:9px;line-height:1.7}
+
+    .suggestion-card{
+      margin-top:10px;padding:13px;border-radius:18px;border:1px solid rgba(183,255,0,.18);
+      background:
+        radial-gradient(circle at 8% 20%,rgba(123,60,255,.10),transparent 34%),
+        rgba(183,255,0,.035)
+    }
+    .suggestion-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+    .suggestion-head b{font-size:12px}.set-quality{font-size:9px;color:var(--lime)}
+    .suggestion-text{font-size:10px;color:#8e8f97;line-height:1.75;margin-top:7px}
+    .apply-suggestion{
+      margin-top:9px;border:1px solid rgba(183,255,0,.25);background:rgba(183,255,0,.08);
+      color:var(--lime);border-radius:13px;padding:9px 12px;font-size:10px;font-weight:900
+    }
+    .apply-suggestion[disabled]{opacity:.4}
+
+    .pr-banner{
+      display:none;margin-top:10px;padding:11px 13px;border-radius:16px;text-align:center;
+      color:#050505;background:linear-gradient(90deg,var(--lime),#d5ff70);
+      font-size:11px;font-weight:950
+    }
+    .pr-banner.show{display:block;animation:fade .2s ease}
+
+    .exercise-summary{
+      display:none;margin-top:11px;padding:14px;border-radius:20px;border:1px solid rgba(183,255,0,.20);
+      background:#101114
+    }
+    .exercise-summary.show{display:block}
+    .exercise-summary h4{margin:0 0 10px;font-size:13px}
+    .summary-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+    .summary-stats div{padding:9px 4px;border-radius:13px;background:#0b0c0f;text-align:center;border:1px solid var(--line)}
+    .summary-stats strong{display:block;font-size:13px}
+    .summary-stats span{font-size:8px;color:#74757d}
+    .summary-line{margin-top:9px;color:#8e8f97;font-size:9px;line-height:1.75}
+
+    .next-preview{
+      margin-top:10px;padding:12px 13px;border-radius:17px;background:#0d0e11;border:1px solid var(--line)
+    }
+    .next-preview small{color:#777983;font-size:9px}
+    .next-preview b{display:block;font-size:12px;margin-top:5px}
+    .next-preview span{display:block;color:#8e8f97;font-size:9px;margin-top:4px}
+
+    @media(max-width:370px){
+      .smart-visual-card{min-height:220px}
+      .exercise-body-svg{height:180px}
+      .smart-record-grid{grid-template-columns:1fr}
+    }
+
 </style>
 </head>
 <body>
@@ -934,16 +1087,77 @@
 
     <div class="session-progress"><i id="sessionProgressBar"></i></div>
 
-    <div class="visual">
-      <div class="benchbox">
-        <div class="bench"></div><div class="bodyline"></div><div class="barbell"></div>
-        <div class="weight l"></div><div class="weight r"></div><div class="muscle"></div>
+    <div class="smart-visual">
+      <div class="smart-visual-card">
+        <span class="smart-card-label">عضلات درگیر</span>
+        <button class="anatomy-toggle" id="anatomyToggle">جلو / پشت</button>
+
+        <svg class="exercise-body-svg exercise-body-side active" id="exerciseBodyFront" data-ex-side="front" viewBox="0 0 180 330">
+          <circle class="e-body-base" cx="90" cy="27" r="19"/>
+          <rect class="e-body-base" x="66" y="47" width="48" height="96" rx="22"/>
+          <rect class="e-body-base" x="42" y="58" width="23" height="103" rx="12" transform="rotate(7 53 110)"/>
+          <rect class="e-body-base" x="115" y="58" width="23" height="103" rx="12" transform="rotate(-7 126 110)"/>
+          <rect class="e-body-base" x="62" y="139" width="27" height="151" rx="14" transform="rotate(3 76 216)"/>
+          <rect class="e-body-base" x="91" y="139" width="27" height="151" rx="14" transform="rotate(-3 104 216)"/>
+          <ellipse class="e-muscle-zone" data-emuscle="shoulders" cx="61" cy="65" rx="14" ry="12"/>
+          <ellipse class="e-muscle-zone" data-emuscle="shoulders" cx="119" cy="65" rx="14" ry="12"/>
+          <ellipse class="e-muscle-zone" data-emuscle="chest" cx="78" cy="81" rx="18" ry="14"/>
+          <ellipse class="e-muscle-zone" data-emuscle="chest" cx="102" cy="81" rx="18" ry="14"/>
+          <ellipse class="e-muscle-zone" data-emuscle="biceps" cx="53" cy="103" rx="10" ry="24" transform="rotate(7 53 103)"/>
+          <ellipse class="e-muscle-zone" data-emuscle="biceps" cx="127" cy="103" rx="10" ry="24" transform="rotate(-7 127 103)"/>
+          <rect class="e-muscle-zone" data-emuscle="abs" x="78" y="97" width="24" height="43" rx="9"/>
+          <rect class="e-muscle-zone" data-emuscle="quads" x="64" y="151" width="23" height="68" rx="11"/>
+          <rect class="e-muscle-zone" data-emuscle="quads" x="93" y="151" width="23" height="68" rx="11"/>
+          <rect class="e-muscle-zone" data-emuscle="calves" x="66" y="228" width="19" height="55" rx="10"/>
+          <rect class="e-muscle-zone" data-emuscle="calves" x="95" y="228" width="19" height="55" rx="10"/>
+        </svg>
+
+        <svg class="exercise-body-svg exercise-body-side" id="exerciseBodyBack" data-ex-side="back" viewBox="0 0 180 330">
+          <circle class="e-body-base" cx="90" cy="27" r="19"/>
+          <rect class="e-body-base" x="66" y="47" width="48" height="96" rx="22"/>
+          <rect class="e-body-base" x="42" y="58" width="23" height="103" rx="12" transform="rotate(7 53 110)"/>
+          <rect class="e-body-base" x="115" y="58" width="23" height="103" rx="12" transform="rotate(-7 126 110)"/>
+          <rect class="e-body-base" x="62" y="139" width="27" height="151" rx="14" transform="rotate(3 76 216)"/>
+          <rect class="e-body-base" x="91" y="139" width="27" height="151" rx="14" transform="rotate(-3 104 216)"/>
+          <ellipse class="e-muscle-zone" data-emuscle="shoulders" cx="61" cy="65" rx="14" ry="12"/>
+          <ellipse class="e-muscle-zone" data-emuscle="shoulders" cx="119" cy="65" rx="14" ry="12"/>
+          <path class="e-muscle-zone" data-emuscle="back" d="M69 71 Q90 56 111 71 L106 122 Q90 138 74 122 Z"/>
+          <ellipse class="e-muscle-zone" data-emuscle="triceps" cx="53" cy="107" rx="10" ry="25" transform="rotate(7 53 107)"/>
+          <ellipse class="e-muscle-zone" data-emuscle="triceps" cx="127" cy="107" rx="10" ry="25" transform="rotate(-7 127 107)"/>
+          <ellipse class="e-muscle-zone" data-emuscle="glutes" cx="77" cy="151" rx="16" ry="16"/>
+          <ellipse class="e-muscle-zone" data-emuscle="glutes" cx="103" cy="151" rx="16" ry="16"/>
+          <rect class="e-muscle-zone" data-emuscle="hamstrings" x="64" y="166" width="22" height="56" rx="10"/>
+          <rect class="e-muscle-zone" data-emuscle="hamstrings" x="94" y="166" width="22" height="56" rx="10"/>
+          <rect class="e-muscle-zone" data-emuscle="calves" x="66" y="228" width="19" height="55" rx="10"/>
+          <rect class="e-muscle-zone" data-emuscle="calves" x="95" y="228" width="19" height="55" rx="10"/>
+        </svg>
+      </div>
+
+      <div class="smart-visual-card">
+        <span class="smart-card-label">الگوی حرکت</span>
+        <div class="motion-stage">
+          <div class="motion-person press" id="motionPerson">
+            <div class="motion-head"></div><div class="motion-torso"></div>
+            <div class="motion-arm l"></div><div class="motion-arm r"></div>
+            <div class="motion-forearm l"></div><div class="motion-forearm r"></div>
+            <div class="motion-leg l"></div><div class="motion-leg r"></div>
+            <div class="motion-weight l"></div><div class="motion-weight r"></div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="previous-record">
-      <span>رکورد جلسه قبل</span>
-      <strong id="previousRecord">هنوز ثبت نشده</strong>
+    <div class="technique-hint" id="techniqueHint"><b>نکته فرم:</b> حرکت را کنترل‌شده اجرا کن.</div>
+
+    <div class="smart-record-grid">
+      <div class="smart-record">
+        <small>رکورد جلسه قبل</small>
+        <strong id="previousRecord">هنوز ثبت نشده</strong>
+      </div>
+      <div class="smart-record">
+        <small>پیشنهاد شروع امروز</small>
+        <strong id="startingSuggestion">—</strong>
+      </div>
     </div>
 
     <div class="set-status" id="setStatus"></div>
@@ -961,7 +1175,50 @@
       </div>
     </div>
 
+    <div class="rir-card">
+      <div class="rir-head">
+        <b>RIR این ست</b>
+        <span>چند تکرار دیگر در توانت بود؟</span>
+      </div>
+      <div class="rir-options" id="rirOptions">
+        <button class="rir-btn" data-rir="0">۰</button>
+        <button class="rir-btn" data-rir="1">۱</button>
+        <button class="rir-btn selected" data-rir="2">۲</button>
+        <button class="rir-btn" data-rir="3">۳</button>
+        <button class="rir-btn" data-rir="4">۴+</button>
+      </div>
+      <div class="rir-help">۰ = تا ناتوانی · ۱–۲ = سنگین و مناسب · ۳–۴ = هنوز ذخیره داشتی</div>
+    </div>
+
+    <div class="suggestion-card">
+      <div class="suggestion-head">
+        <b>پیشنهاد Sven برای ست بعدی</b>
+        <span class="set-quality" id="setQuality">آماده ثبت</span>
+      </div>
+      <div class="suggestion-text" id="weightSuggestionText">بعد از ثبت ست، Sven شدت ست را تحلیل می‌کند.</div>
+      <button class="apply-suggestion" id="applySuggestion" disabled>اعمال پیشنهاد</button>
+    </div>
+
+    <div class="pr-banner" id="prBanner">🏆 رکورد جدید ثبت شد</div>
+
     <div class="last-set" id="lastSetText"></div>
+
+    <div class="exercise-summary" id="exerciseSummary">
+      <h4>جمع‌بندی این حرکت</h4>
+      <div class="summary-stats">
+        <div><strong id="sumSets">۰</strong><span>ست</span></div>
+        <div><strong id="sumVolume">۰</strong><span>حجم</span></div>
+        <div><strong id="sumAvgRir">—</strong><span>میانگین RIR</span></div>
+        <div><strong id="sumBestSet">—</strong><span>بهترین ست</span></div>
+      </div>
+      <div class="summary-line" id="exerciseSummaryLine"></div>
+    </div>
+
+    <div class="next-preview" id="nextPreview">
+      <small>حرکت بعدی</small>
+      <b id="nextPreviewName">—</b>
+      <span id="nextPreviewMuscles">—</span>
+    </div>
 
     <div class="restwrap">
       <div class="ring" id="restRing">
@@ -1366,6 +1623,7 @@ function openWorkout(){
   currentSetIndex=currentSession.exercises[currentExerciseIndex].loggedSets.length;
   modal.classList.add('open');
   document.body.style.overflow='hidden';
+  selectedRir=2;
   renderWorkout();
 }
 
@@ -1380,18 +1638,155 @@ document.getElementById('closeWorkout').onclick=()=>{
 
 function getCurrentExercise(){return currentSession.exercises[currentExerciseIndex]}
 
+
+let selectedRir=2;
+let suggestedWeight=null;
+let anatomySide='front';
+
+function estimatedOneRM(w,r){
+  w=Number(w);r=Number(r);
+  if(!w||w<=0||!r)return 0;
+  return w*(1+r/30);
+}
+
 function previousBest(exerciseId){
   const sessions=getSessions();
   let best=null;
   sessions.forEach(s=>{
     const ex=s.exercises?.find(x=>x.id===exerciseId);
     (ex?.loggedSets||[]).forEach(set=>{
-      const score=Number(set.weight)*Number(set.reps);
+      const score=estimatedOneRM(set.weight,set.reps);
       if(!best||score>best.score)best={...set,score};
     });
   });
   return best;
 }
+
+function weightIncrement(ex){
+  if(!Number(ex.weight))return 0;
+  if(ex.name.includes('دمبل'))return 2;
+  if(ex.name.includes('سیم')||ex.name.includes('لت')||ex.name.includes('قایقی')||ex.name.includes('دستگاه'))return 5;
+  return 2.5;
+}
+
+function roundToStep(value,step){
+  if(!step)return 0;
+  return Math.max(0,Math.round(value/step)*step);
+}
+
+function qualityFromRir(rir){
+  rir=Number(rir);
+  if(rir===0)return {label:'خیلی سنگین',text:'ست تا ناتوانی رفت؛ برای ست بعدی کمی محافظه‌کارتر باش.'};
+  if(rir===1)return {label:'سنگین',text:'شدت بالا و مناسب است؛ اگر فرم خوب بود وزن را ثابت نگه دار.'};
+  if(rir===2)return {label:'مناسب',text:'شدت در محدوده خوب قرار دارد؛ همین وزنه انتخاب مناسبی است.'};
+  if(rir===3)return {label:'کمی سبک',text:'کمی ذخیره داشتی؛ افزایش کوچک وزنه می‌تواند مناسب باشد.'};
+  return {label:'سبک',text:'ذخیره زیادی داشتی؛ در صورت حفظ فرم وزنه را افزایش بده.'};
+}
+
+function suggestNextWeight(ex,lastSet){
+  if(!lastSet||!Number(lastSet.weight))return {weight:Number(lastSet?.weight||0),reason:'برای این حرکت پیشنهاد وزنه عددی نداریم.'};
+  const step=weightIncrement(ex);
+  let next=Number(lastSet.weight);
+  const rir=Number(lastSet.rir ?? 2);
+
+  if(rir>=4)next+=step;
+  else if(rir===3)next+=step;
+  else if(rir===0 && Number(lastSet.reps)<Number(ex.reps))next-=step;
+  else if(rir===0 && Number(lastSet.reps)>=Number(ex.reps))next=Math.max(0,next-step/2);
+
+  next=roundToStep(next,step);
+  const q=qualityFromRir(rir);
+  return {weight:next,reason:q.text,label:q.label};
+}
+
+function movementType(ex){
+  const id=ex.id||'';
+  if(/bench|press|fly|push/.test(id))return 'press';
+  if(/pull|row/.test(id))return 'pull';
+  if(/curl/.test(id))return 'curl';
+  if(/squat|leg_|romanian|hip_thrust|calf/.test(id))return 'lower';
+  if(/plank|crunch/.test(id))return 'core';
+  return 'press';
+}
+
+function techniqueCue(ex){
+  const id=ex.id||'';
+  if(/bench|incline/.test(id))return 'کتف‌ها را عقب و پایین نگه دار، مسیر وزنه را کنترل کن و آرنج را بیش از حد باز نکن.';
+  if(/fly/.test(id))return 'آرنج کمی خم بماند و کشش سینه را بدون قفل‌کردن مفصل کنترل کن.';
+  if(/lat_pull/.test(id))return 'سینه بالا، شانه‌ها پایین و میله را با آرنج‌ها به سمت پایین بکش.';
+  if(/row/.test(id))return 'کمر خنثی بماند و حرکت را با جمع‌کردن کتف‌ها شروع کن.';
+  if(/shoulder_press/.test(id))return 'شکم را منقبض نگه دار و وزنه را بدون قوس زیاد کمر بالا ببر.';
+  if(/lateral/.test(id))return 'وزنه سبک و کنترل‌شده؛ دست‌ها را با آرنج نرم تا حدود ارتفاع شانه بالا بیاور.';
+  if(/curl/.test(id))return 'آرنج کنار بدن ثابت بماند؛ از تاب‌دادن تنه برای بالا بردن وزنه استفاده نکن.';
+  if(/triceps|overhead_tri/.test(id))return 'بازو را ثابت نگه دار و حرکت را از مفصل آرنج انجام بده.';
+  if(/squat|leg_press/.test(id))return 'زانو در مسیر پنجه‌ها حرکت کند و فشار را روی کل کف پا پخش کن.';
+  if(/romanian/.test(id))return 'لگن را عقب بده، ستون فقرات خنثی و کشش همسترینگ را حفظ کن.';
+  if(/hip_thrust/.test(id))return 'بالای حرکت باسن را کامل منقبض کن و کمر را بیش از حد گود نکن.';
+  if(/plank|crunch/.test(id))return 'شکم را فعال نگه دار و حرکت را با کنترل، بدون کشیدن گردن انجام بده.';
+  return 'حرکت را با دامنه کنترل‌شده و فرم ثابت اجرا کن.';
+}
+
+function preferredAnatomySide(ex){
+  const backKeys=['back','triceps','glutes','hamstrings'];
+  const b=(ex.muscleKeys||[]).filter(m=>backKeys.includes(m)).length;
+  const f=(ex.muscleKeys||[]).length-b;
+  return b>f?'back':'front';
+}
+
+function renderExerciseAnatomy(ex){
+  document.querySelectorAll('[data-emuscle]').forEach(z=>{
+    z.classList.toggle('active',(ex.muscleKeys||[]).includes(z.dataset.emuscle));
+  });
+  anatomySide=preferredAnatomySide(ex);
+  document.querySelectorAll('.exercise-body-side').forEach(s=>s.classList.toggle('active',s.dataset.exSide===anatomySide));
+  document.getElementById('anatomyToggle').textContent=anatomySide==='front'?'نمای جلو':'نمای پشت';
+
+  const motion=document.getElementById('motionPerson');
+  motion.className='motion-person '+movementType(ex);
+  document.getElementById('techniqueHint').innerHTML='<b>نکته فرم:</b> '+techniqueCue(ex);
+}
+
+function renderRir(){
+  document.querySelectorAll('.rir-btn').forEach(b=>b.classList.toggle('selected',Number(b.dataset.rir)===selectedRir));
+}
+
+function renderNextPreview(){
+  const next=currentSession?.exercises?.[currentExerciseIndex+1];
+  const box=document.getElementById('nextPreview');
+  if(!next){
+    document.getElementById('nextPreviewName').textContent='پایان جلسه';
+    document.getElementById('nextPreviewMuscles').textContent='بعد از این حرکت، جلسه آماده ثبت نهایی است.';
+    return;
+  }
+  document.getElementById('nextPreviewName').textContent=next.name;
+  document.getElementById('nextPreviewMuscles').textContent=(next.muscles||[]).join(' · ');
+}
+
+function renderExerciseSummary(ex){
+  const box=document.getElementById('exerciseSummary');
+  if(ex.loggedSets.length<ex.sets){box.classList.remove('show');return}
+  box.classList.add('show');
+
+  const volume=Math.round(ex.loggedSets.reduce((s,x)=>s+Number(x.weight||0)*Number(x.reps||0),0));
+  const rirSets=ex.loggedSets.filter(x=>Number.isFinite(Number(x.rir)));
+  const avg=rirSets.length ? rirSets.reduce((s,x)=>s+Number(x.rir),0)/rirSets.length : null;
+  const best=[...ex.loggedSets].sort((a,b)=>estimatedOneRM(b.weight,b.reps)-estimatedOneRM(a.weight,a.reps))[0];
+  const prs=ex.loggedSets.filter(x=>x.pr).length;
+
+  document.getElementById('sumSets').textContent=fa(ex.loggedSets.length);
+  document.getElementById('sumVolume').textContent=fa(volume);
+  document.getElementById('sumAvgRir').textContent=avg===null?'—':fa(avg.toFixed(1));
+  document.getElementById('sumBestSet').textContent=best&&Number(best.weight)?fa(best.weight)+'×'+fa(best.reps):fa(best?.reps||0)+' تکرار';
+
+  let line='حرکت کامل شد.';
+  if(avg!==null && avg<1.2)line+=' شدت کلی بالا بود؛ جلسه بعد افزایش وزنه لازم نیست.';
+  else if(avg!==null && avg>=3)line+=' ست‌ها نسبتاً سبک بودند؛ جلسه بعد امکان پیشرفت وجود دارد.';
+  else if(avg!==null)line+=' شدت کلی در محدوده مناسبی قرار داشت.';
+  if(prs)line+=' '+fa(prs)+' رکورد جدید هم ثبت شد.';
+  document.getElementById('exerciseSummaryLine').textContent=line;
+}
+
+
 
 function renderSetStatus(){
   const ex=getCurrentExercise();
@@ -1409,8 +1804,10 @@ function renderSetStatus(){
 function renderWorkout(){
   const ex=getCurrentExercise();
   currentSetIndex=Math.min(ex.loggedSets.length,ex.sets-1);
-  reps=Number(ex.loggedSets.length?ex.reps:ex.reps);
-  weight=Number(ex.loggedSets.length?ex.weight:ex.weight);
+
+  // Keep the last used prescription as the starting point for the next set.
+  reps=Number(ex.reps||10);
+  weight=Number(ex.weight||0);
 
   document.getElementById('workoutCounter').textContent='تمرین امروز · '+fa(currentExerciseIndex+1)+' از '+fa(currentSession.exercises.length);
   document.getElementById('exerciseTitle').textContent=ex.name;
@@ -1418,22 +1815,56 @@ function renderWorkout(){
     '<span>'+fa(ex.sets)+' ست</span><span>'+fa(ex.rest)+' ثانیه استراحت</span>'+
     ex.muscles.map(m=>'<span class="target">'+m+'</span>').join('');
 
+  renderExerciseAnatomy(ex);
+  renderNextPreview();
+
+  const histBest=previousBest(ex.id);
+  document.getElementById('previousRecord').textContent=
+    histBest ? fa(histBest.weight)+' kg × '+fa(histBest.reps)+' تکرار' : 'هنوز ثبت نشده';
+
+  // Starting suggestion: historical best if available, otherwise program prescription.
+  const startWeight=histBest?.weight ?? ex.weight;
+  const startReps=histBest?.reps ?? ex.reps;
+  document.getElementById('startingSuggestion').textContent=
+    Number(startWeight) ? fa(startWeight)+' kg × '+fa(startReps) : fa(startReps)+' تکرار';
+
+  const last=ex.loggedSets.at(-1);
+  if(last){
+    reps=Number(ex.reps||last.reps);
+    weight=Number(ex.weight||last.weight);
+    const sug=suggestNextWeight(ex,last);
+    suggestedWeight=sug.weight;
+    document.getElementById('setQuality').textContent=sug.label||qualityFromRir(last.rir??2).label;
+    document.getElementById('weightSuggestionText').textContent=
+      Number(suggestedWeight)
+        ? sug.reason+' پیشنهاد: '+fa(suggestedWeight)+' کیلو برای ست بعدی.'
+        : sug.reason;
+    const apply=document.getElementById('applySuggestion');
+    apply.disabled=!Number(suggestedWeight)||Number(suggestedWeight)===Number(weight);
+    apply.textContent=apply.disabled?'نیازی به تغییر نیست':'اعمال '+fa(suggestedWeight)+' kg';
+  }else{
+    suggestedWeight=Number(startWeight)||null;
+    document.getElementById('setQuality').textContent='ست اول';
+    document.getElementById('weightSuggestionText').textContent='ست اول را با فرم کنترل‌شده اجرا کن؛ بعد از ثبت، پیشنهاد دقیق‌تر می‌شود.';
+    const apply=document.getElementById('applySuggestion');
+    apply.disabled=true;apply.textContent='بعد از ست اول';
+  }
+
   document.getElementById('repsValue').textContent=fa(reps);
   document.getElementById('weightValue').textContent=fa(weight);
 
-  const best=previousBest(ex.id);
-  document.getElementById('previousRecord').textContent=
-    best ? fa(best.weight)+' kg × '+fa(best.reps)+' تکرار' : 'هنوز ثبت نشده';
-
   renderSetStatus();
+  renderRir();
+  renderExerciseSummary(ex);
 
   const completedExercises=currentSession.exercises.filter(e=>e.loggedSets.length>=e.sets).length;
   document.getElementById('sessionProgressBar').style.width=
     ((completedExercises/currentSession.exercises.length)*100)+'%';
 
-  const last=ex.loggedSets.at(-1);
   document.getElementById('lastSetText').textContent=
-    last ? 'آخرین ست: '+fa(last.weight)+'kg × '+fa(last.reps) : '';
+    last ? 'آخرین ست: '+(Number(last.weight)?fa(last.weight)+'kg × ':'')+fa(last.reps)+' · RIR '+fa(last.rir??2) : '';
+
+  document.getElementById('prBanner').classList.toggle('show',!!last?.pr);
 
   total=ex.rest;left=ex.rest;renderTimer();stopTimer();
   document.getElementById('toggleTimer').textContent='شروع استراحت';
@@ -1455,6 +1886,26 @@ document.querySelectorAll('[data-step]').forEach(b=>b.addEventListener('click',(
     document.getElementById('weightValue').textContent=fa(weight);
   }
 }));
+
+document.querySelectorAll('.rir-btn').forEach(b=>b.addEventListener('click',()=>{
+  selectedRir=Number(b.dataset.rir);
+  renderRir();
+}));
+
+document.getElementById('applySuggestion').addEventListener('click',()=>{
+  if(suggestedWeight===null||suggestedWeight===undefined)return;
+  weight=Number(suggestedWeight);
+  document.getElementById('weightValue').textContent=fa(weight);
+  document.getElementById('applySuggestion').disabled=true;
+  document.getElementById('applySuggestion').textContent='اعمال شد ✓';
+  navigator.vibrate?.(20);
+});
+
+document.getElementById('anatomyToggle').addEventListener('click',()=>{
+  anatomySide=anatomySide==='front'?'back':'front';
+  document.querySelectorAll('.exercise-body-side').forEach(s=>s.classList.toggle('active',s.dataset.exSide===anatomySide));
+  document.getElementById('anatomyToggle').textContent=anatomySide==='front'?'نمای جلو':'نمای پشت';
+});
 
 function renderTimer(){
   const m=Math.floor(left/60),s=left%60;
@@ -1481,13 +1932,34 @@ document.getElementById('toggleTimer').onclick=()=>{
 document.getElementById('completeSet').onclick=()=>{
   const ex=getCurrentExercise();
   if(ex.loggedSets.length>=ex.sets)return;
-  ex.loggedSets.push({set:ex.loggedSets.length+1,reps,weight,at:new Date().toISOString()});
+
+  const histBest=previousBest(ex.id);
+  const e1rm=estimatedOneRM(weight,reps);
+  const isPr=Number(weight)>0 && e1rm>(histBest?.score||0)+0.05;
+
+  const logged={
+    set:ex.loggedSets.length+1,
+    reps,
+    weight,
+    rir:selectedRir,
+    e1rm:Number(e1rm.toFixed(1)),
+    pr:isPr,
+    at:new Date().toISOString()
+  };
+  ex.loggedSets.push(logged);
   ex.reps=reps;ex.weight=weight;
   currentSetIndex=ex.loggedSets.length;
+
+  // Prepare a next-set suggestion, but do not force it on the user.
+  const sug=suggestNextWeight(ex,logged);
+  suggestedWeight=sug.weight;
+
   saveActive();
-  navigator.vibrate?.(35);
+  navigator.vibrate?.(isPr?[45,45,65]:35);
   renderWorkout();
-  left=ex.rest;total=ex.rest;renderTimer();startTimer();
+
+  left=ex.rest;total=ex.rest;renderTimer();
+  if(ex.loggedSets.length<ex.sets)startTimer();
 };
 
 document.getElementById('nextExercise').onclick=()=>{
@@ -1499,6 +1971,8 @@ document.getElementById('nextExercise').onclick=()=>{
   stopTimer();
   if(currentExerciseIndex<currentSession.exercises.length-1){
     currentExerciseIndex++;
+    selectedRir=2;
+    suggestedWeight=null;
     renderWorkout();
   }else{
     finishCurrentWorkout();
