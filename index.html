@@ -263,6 +263,21 @@
     }
     .saved-toast.show{opacity:1;transform:translate(-50%,0)}
 
+
+    .estimate-card{
+      grid-column:1/-1;
+      display:grid;grid-template-columns:1fr 1fr;gap:10px;
+      padding:13px;border-radius:18px;background:
+        radial-gradient(circle at 12% 20%,rgba(183,255,0,.08),transparent 35%),
+        #101115;border:1px solid rgba(183,255,0,.18)
+    }
+    .estimate-box{padding:10px 11px;border-radius:14px;background:#0b0b0e;border:1px solid var(--line)}
+    .estimate-box small{display:block;color:#7d7f87;font-size:10px;margin-bottom:5px}
+    .estimate-box strong{font-size:18px;color:#fff}
+    .estimate-note{
+      grid-column:1/-1;color:#777983;font-size:10px;line-height:1.7;padding:0 3px
+    }
+
 </style>
 </head>
 <body>
@@ -403,7 +418,7 @@
       <div class="pm">
         <div><strong id="profileWeight">—</strong><span>وزن (kg)</span></div>
         <div><strong id="profileHeight">—</strong><span>قد (cm)</span></div>
-        <div><strong id="profileBodyFat">—</strong><span>چربی بدن</span></div>
+        <div><strong id="profileBodyFat">—</strong><span>چربی تخمینی</span></div>
       </div>
 
       <div class="goal-card">
@@ -450,8 +465,17 @@
         </div>
 
         <div class="field">
-          <label for="pfAge">سن</label>
-          <input id="pfAge" type="number" inputmode="numeric" min="13" max="100" placeholder="40" />
+          <label for="pfBirthDate">تاریخ تولد</label>
+          <input id="pfBirthDate" type="date" />
+        </div>
+
+        <div class="field">
+          <label for="pfSex">جنسیت</label>
+          <select id="pfSex">
+            <option value="">انتخاب</option>
+            <option value="male">مرد</option>
+            <option value="female">زن</option>
+          </select>
         </div>
 
         <div class="field">
@@ -464,9 +488,18 @@
           <input id="pfWeight" type="number" inputmode="decimal" min="30" max="300" step="0.1" placeholder="85" />
         </div>
 
-        <div class="field">
-          <label for="pfBodyFat">درصد چربی (اختیاری)</label>
-          <input id="pfBodyFat" type="number" inputmode="decimal" min="2" max="60" step="0.1" placeholder="15" />
+        <div class="estimate-card">
+          <div class="estimate-box">
+            <small>سن محاسبه‌شده</small>
+            <strong id="liveAge">—</strong>
+          </div>
+          <div class="estimate-box">
+            <small>چربی بدن تخمینی</small>
+            <strong id="liveBodyFat">—</strong>
+          </div>
+          <div class="estimate-note">
+            درصد چربی به‌صورت تخمینی از قد، وزن، تاریخ تولد و جنسیت محاسبه می‌شود؛ این عدد اندازه‌گیری پزشکی نیست.
+          </div>
         </div>
 
         <div class="field full">
@@ -644,7 +677,46 @@ function saveProfile(data){
 }
 
 function profileComplete(p){
-  return !!(p && p.height && p.weight && p.goal && p.level && p.days);
+  return !!(p && p.birthDate && p.sex && p.height && p.weight && p.goal && p.level && p.days);
+}
+
+
+function getAgeFromBirthDate(value){
+  if(!value) return null;
+  const dob = new Date(value + 'T00:00:00');
+  if(Number.isNaN(dob.getTime())) return null;
+  const today = new Date();
+  let age = today.getFullYear() - dob.getFullYear();
+  const m = today.getMonth() - dob.getMonth();
+  if(m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+  return age > 0 ? age : null;
+}
+
+function estimateBodyFat(heightCm, weightKg, age, sex){
+  const h = Number(heightCm);
+  const w = Number(weightKg);
+  const a = Number(age);
+  if(!h || !w || !a || !sex || a < 18) return null;
+  const bmi = w / Math.pow(h / 100, 2);
+  const sexCode = sex === 'male' ? 1 : 0;
+  // Adult Deurenberg BMI-based estimate.
+  let bf = 1.20 * bmi + 0.23 * a - 10.8 * sexCode - 5.4;
+  bf = Math.max(3, Math.min(60, bf));
+  return bf;
+}
+
+function updateLiveEstimates(){
+  const birth = document.getElementById('pfBirthDate')?.value || '';
+  const sex = document.getElementById('pfSex')?.value || '';
+  const height = document.getElementById('pfHeight')?.value || '';
+  const weight = document.getElementById('pfWeight')?.value || '';
+  const age = getAgeFromBirthDate(birth);
+  const bf = estimateBodyFat(height, weight, age, sex);
+
+  const ageEl = document.getElementById('liveAge');
+  const bfEl = document.getElementById('liveBodyFat');
+  if(ageEl) ageEl.textContent = age ? fa(age) + ' سال' : '—';
+  if(bfEl) bfEl.textContent = bf ? fa(bf.toFixed(1)) + '٪' : '—';
 }
 
 function renderProfile(){
@@ -668,7 +740,8 @@ function renderProfile(){
   }
 
   nameEl.textContent = p.name ? p.name : 'پروفایل شما';
-  const ageText = p.age ? `${fa(p.age)} سال` : '';
+  const calcAge = getAgeFromBirthDate(p.birthDate);
+  const ageText = calcAge ? `${fa(calcAge)} سال` : '';
   summaryEl.textContent = [ageText, levelLabels[p.level] || ''].filter(Boolean).join(' · ') || 'اطلاعات بدنی و اهداف تمرینی';
 
   if(profileComplete(p)){
@@ -681,7 +754,8 @@ function renderProfile(){
 
   document.getElementById('profileWeight').textContent = p.weight ? fa(p.weight) : '—';
   document.getElementById('profileHeight').textContent = p.height ? fa(p.height) : '—';
-  document.getElementById('profileBodyFat').textContent = p.bodyFat ? fa(p.bodyFat)+'٪' : '—';
+  const bf = estimateBodyFat(p.height, p.weight, calcAge, p.sex);
+  document.getElementById('profileBodyFat').textContent = bf ? fa(bf.toFixed(1))+'٪' : '—';
   document.getElementById('profileGoal').textContent = goalLabels[p.goal] || 'هنوز انتخاب نشده';
   document.getElementById('profileLevelLabel').textContent = levelLabels[p.level] || '—';
   document.getElementById('profileDaysLabel').textContent = p.days ? fa(p.days)+' روز' : '—';
@@ -693,13 +767,14 @@ function renderProfile(){
 function fillProfileForm(){
   const p = loadProfile() || {};
   document.getElementById('pfName').value = p.name || '';
-  document.getElementById('pfAge').value = p.age || '';
+  document.getElementById('pfBirthDate').value = p.birthDate || '';
+  document.getElementById('pfSex').value = p.sex || '';
   document.getElementById('pfHeight').value = p.height || '';
   document.getElementById('pfWeight').value = p.weight || '';
-  document.getElementById('pfBodyFat').value = p.bodyFat || '';
   document.getElementById('pfGoal').value = p.goal || '';
   document.getElementById('pfLevel').value = p.level || '';
   document.getElementById('pfDays').value = p.days || '';
+  updateLiveEstimates();
 }
 
 function openProfileModal(){
@@ -722,15 +797,24 @@ document.getElementById('profileModal').addEventListener('click', (e)=>{
   if(e.target.id==='profileModal') closeProfileModal();
 });
 
+
+['pfBirthDate','pfSex','pfHeight','pfWeight'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el){
+    el.addEventListener('input', updateLiveEstimates);
+    el.addEventListener('change', updateLiveEstimates);
+  }
+});
+
 document.getElementById('profileForm').addEventListener('submit', (e)=>{
   e.preventDefault();
 
   const data = {
     name: document.getElementById('pfName').value.trim(),
-    age: document.getElementById('pfAge').value,
+    birthDate: document.getElementById('pfBirthDate').value,
+    sex: document.getElementById('pfSex').value,
     height: document.getElementById('pfHeight').value,
     weight: document.getElementById('pfWeight').value,
-    bodyFat: document.getElementById('pfBodyFat').value,
     goal: document.getElementById('pfGoal').value,
     level: document.getElementById('pfLevel').value,
     days: document.getElementById('pfDays').value,
