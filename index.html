@@ -487,6 +487,7 @@
         </div>
         <button class="cta" data-start-workout>شروع تمرین <span>←</span></button>
         <div class="hero-note" id="heroFocus">تمرکز: سینه، سرشانه و پشت‌بازو</div>
+        <div class="hero-note" id="heroReason" style="color:#73757d">انتخاب جلسه بر اساس سابقه تمرین و ریکاوری</div>
       </div>
     </section>
 
@@ -1050,6 +1051,15 @@ const exerciseLibrary=[
   {id:'cable_crunch',name:'کرانچ سیم‌کش',muscles:['abs'],compound:0,baseWeight:25}
 ];
 
+const sessionSplits={
+  push:{name:'فشار بالاتنه',muscles:['chest','shoulders','triceps']},
+  pull:{name:'کشش بالاتنه',muscles:['back','biceps']},
+  legs:{name:'پایین‌تنه',muscles:['quads','hamstrings','glutes','calves']},
+  upper:{name:'بالاتنه',muscles:['chest','back','shoulders','biceps','triceps']},
+  lower:{name:'پایین‌تنه',muscles:['quads','hamstrings','glutes','calves']},
+  full:{name:'فول‌بادی',muscles:['chest','back','shoulders','quads','hamstrings','glutes','abs']}
+};
+
 function profileForProgram(){
   try{return JSON.parse(localStorage.getItem('sven.profile.v1')||'null')||{}}catch(e){return{}}
 }
@@ -1066,55 +1076,143 @@ function programParams(goal,level){
   return p;
 }
 
+function getHistorySessions(){
+  try{return JSON.parse(localStorage.getItem('sven.workout.sessions.v1')||'[]')}catch(e){return[]}
+}
+
+function sessionMuscles(session){
+  const found=new Set();
+  (session?.exercises||[]).forEach(ex=>{
+    (ex.muscleKeys||[]).forEach(m=>found.add(m));
+  });
+  return [...found];
+}
+
+function getMuscleRecoveryState(){
+  const sessions=getHistorySessions();
+  const now=Date.now();
+  const state={};
+  Object.keys(muscleLabels).forEach(m=>state[m]={lastAt:0,hours:999,sets72:0});
+
+  sessions.forEach(s=>{
+    const ts=new Date(s.completedAt||s.startedAt||0).getTime();
+    (s.exercises||[]).forEach(ex=>{
+      const sets=ex.loggedSets?.length||0;
+      (ex.muscleKeys||[]).forEach(m=>{
+        if(!state[m])state[m]={lastAt:0,hours:999,sets72:0};
+        state[m].lastAt=Math.max(state[m].lastAt,ts);
+        if(now-ts<=72*3600000)state[m].sets72+=sets;
+      });
+    });
+  });
+
+  Object.values(state).forEach(x=>{
+    x.hours=x.lastAt?Math.max(0,(now-x.lastAt)/3600000):999;
+  });
+  return state;
+}
+
+function lastSessionMuscles(){
+  const sessions=getHistorySessions();
+  return sessions.length?sessionMuscles(sessions[0]):[];
+}
+
+function splitCandidates(days){
+  const d=Number(days)||3;
+  if(d<=2)return ['upper','lower'];
+  return ['push','pull','legs'];
+}
+
+function chooseNextSplit(){
+  const p=profileForProgram();
+  const targets=Array.isArray(p.targetMuscles)?p.targetMuscles:[];
+  const state=getMuscleRecoveryState();
+  const previous=new Set(lastSessionMuscles());
+  const candidates=splitCandidates(p.days);
+
+  let scored=candidates.map(key=>{
+    const split=sessionSplits[key];
+    const readiness=split.muscles.reduce((sum,m)=>{
+      const h=state[m]?.hours??999;
+      const ageScore=Math.min(h,96)/4;              // 0..24
+      const recentLoad=Math.min(state[m]?.sets72||0,18);
+      const previousPenalty=previous.has(m)?18:0;  // strong penalty to avoid repeating last session
+      const targetBonus=targets.includes(m)?4:0;   // priority, not permission to overtrain
+      return sum + ageScore - recentLoad - previousPenalty + targetBonus;
+    },0)/split.muscles.length;
+
+    const overlapLast=split.muscles.filter(m=>previous.has(m)).length;
+    return {key,score:readiness,overlapLast};
+  });
+
+  // If there is workout history, strongly prefer a split that is different from the last session.
+  if(previous.size){
+    const alternatives=scored.filter(s=>s.overlapLast===0);
+    if(alternatives.length)scored=alternatives;
+  }
+
+  scored.sort((a,b)=>b.score-a.score);
+  return scored[0]?.key||candidates[0];
+}
+
 function buildWorkoutPlanFromProfile(){
   const p=profileForProgram();
-  const targets=Array.isArray(p.targetMuscles)&&p.targetMuscles.length?p.targetMuscles:['chest','shoulders','triceps','back'];
   const goal=p.goal||'recomp';
   const level=p.level||'intermediate';
+  const targets=Array.isArray(p.targetMuscles)?p.targetMuscles:[];
   const params=programParams(goal,level);
+  const splitKey=chooseNextSplit();
+  const split=sessionSplits[splitKey];
   const count=level==='beginner'?5:level==='advanced'?7:6;
 
-  const ranked=exerciseLibrary.map((ex,index)=>{
-    const hits=ex.muscles.filter(m=>targets.includes(m)).length;
-    return {...ex,_score:hits*10+ex.compound*2-index/100};
-  }).sort((a,b)=>b._score-a._score);
+  const ranked=exerciseLibrary
+    .filter(ex=>ex.muscles.some(m=>split.muscles.includes(m)))
+    .map((ex,index)=>{
+      const splitHits=ex.muscles.filter(m=>split.muscles.includes(m)).length;
+      const targetHits=ex.muscles.filter(m=>targets.includes(m)).length;
+      return {...ex,_score:splitHits*10+targetHits*3+ex.compound*2-index/100};
+    })
+    .sort((a,b)=>b._score-a._score);
 
   const chosen=[];
   const add=ex=>{if(ex&&!chosen.some(x=>x.id===ex.id)&&chosen.length<count)chosen.push(ex)};
 
-  // First prioritize selected muscle groups.
-  targets.forEach(m=>add(ranked.find(ex=>ex.muscles.includes(m))));
-  ranked.forEach(ex=>{if(ex._score>0)add(ex)});
-
-  // Add balance if there is room.
-  ['back','chest','quads','hamstrings','shoulders','abs'].forEach(m=>add(ranked.find(ex=>ex.muscles.includes(m))));
+  // Cover the split first, then give user's priority muscles extra representation.
+  split.muscles.forEach(m=>add(ranked.find(ex=>ex.muscles.includes(m))));
+  targets.filter(m=>split.muscles.includes(m)).forEach(m=>add(ranked.find(ex=>ex.muscles.includes(m))));
   ranked.forEach(add);
 
   return chosen.slice(0,count).map(ex=>({
     id:ex.id,name:ex.name,sets:params.sets,reps:params.reps,
     weight:ex.baseWeight,rest:params.rest,
     muscles:ex.muscles.map(m=>muscleLabels[m]||m),
-    muscleKeys:ex.muscles
+    muscleKeys:ex.muscles,
+    splitKey
   }));
 }
 
 function getProgramMeta(){
   const p=profileForProgram();
-  const targets=Array.isArray(p.targetMuscles)?p.targetMuscles:[];
-  const targetNames=targets.map(m=>muscleLabels[m]).filter(Boolean);
-  const goalNames={fat_loss:'چربی‌سوزی هدفمند',muscle_gain:'عضله‌سازی',strength:'افزایش قدرت',recomp:'بازترکیب بدن',fitness:'فیتنس عمومی'};
-  const levelNames={beginner:'مبتدی',intermediate:'متوسط',advanced:'پیشرفته'};
   const plan=buildWorkoutPlanFromProfile();
-  let name=goalNames[p.goal]||'برنامه شخصی';
-  if(targetNames.length)name+=' · '+targetNames.slice(0,2).join(' و ');
+  const splitKey=plan[0]?.splitKey||chooseNextSplit();
+  const split=sessionSplits[splitKey]||sessionSplits.full;
+  const levelNames={beginner:'مبتدی',intermediate:'متوسط',advanced:'پیشرفته'};
   const duration=Math.max(30,plan.length*8);
+  const focus=[...new Set(plan.flatMap(ex=>ex.muscleKeys||[]))].map(m=>muscleLabels[m]).filter(Boolean);
+  const prev=lastSessionMuscles().map(m=>muscleLabels[m]).filter(Boolean);
+  const reason=prev.length
+    ? 'جلسه قبل: '+prev.slice(0,4).join('، ')+' · امروز عضلات متفاوت انتخاب شده'
+    : 'اولین جلسه بر اساس هدف و عضلات اولویت‌دار شما ساخته شده';
+
   return {
-    name,
+    name:split.name,
     level:levelNames[p.level]||'متوسط',
     days:Number(p.days)||3,
     duration,
     count:plan.length,
-    focus:targetNames.length?targetNames.join('، '):'تمام بدن'
+    focus:focus.join('، '),
+    reason,
+    splitKey
   };
 }
 
@@ -1145,7 +1243,9 @@ function createSession(){
 }
 
 function openWorkout(){
-  currentSession=loadActive()||createSession();
+  const active=loadActive();
+  if(!active)workoutPlan=buildWorkoutPlanFromProfile();
+  currentSession=active||createSession();
   const unfinished=currentSession.exercises.findIndex(ex=>ex.loggedSets.length<ex.sets);
   currentExerciseIndex=unfinished>=0?unfinished:0;
   currentSetIndex=currentSession.exercises[currentExerciseIndex].loggedSets.length;
@@ -1313,6 +1413,7 @@ function finishCurrentWorkout(){
   document.getElementById('completeMinutes').textContent=fa(currentSession.durationMin);
   document.getElementById('workoutComplete').classList.add('show');
   renderProgress();
+  refreshProgramUI();
 }
 
 document.getElementById('closeComplete').onclick=()=>{
@@ -1568,6 +1669,7 @@ function refreshProgramUI(){
   document.getElementById('heroLevel').textContent='سطح '+meta.level;
   document.getElementById('heroExerciseCount').textContent=fa(meta.count)+' حرکت';
   document.getElementById('heroFocus').textContent='تمرکز: '+meta.focus;
+  document.getElementById('heroReason').textContent=meta.reason;
 
   document.getElementById('workoutCardTitle').textContent=meta.name;
   document.getElementById('workoutCardMeta').textContent=fa(meta.duration)+' دقیقه · '+meta.level+' · '+fa(meta.count)+' حرکت';
