@@ -690,6 +690,15 @@
     .motion-footer span{display:block;color:#9ea0a8;font-size:9px;line-height:1.65;margin-top:4px}
     .anatomy-toggle{padding:6px 10px}
 
+
+    /* V3.4 — one unique media asset per exercise */
+    .motion-media-shell{display:grid;place-items:center;background:#07080a}
+    .exercise-motion-media{width:100%;height:100%;object-fit:cover;display:block;background:#07080a}
+    .motion-missing{
+      min-height:180px;display:grid;place-items:center;text-align:center;
+      color:#6f7078;font-size:10px;padding:18px
+    }
+
 </style>
 </head>
 <body>
@@ -1161,14 +1170,9 @@
       </div>
 
       <div class="smart-visual-card">
-        <span class="smart-card-label">الگوی حرکت</span>
-        <div class="real-athlete-shell">
-          <div class="real-athlete-image motion-shot press" id="motionShot"></div>
-          <div class="motion-footer">
-            <small>نوع اجرا</small>
-            <b id="motionPatternText">حرکت فشاری</b>
-            <span id="motionPatternCue">فرم را کنترل کن و دامنه حرکت را کامل نگه دار.</span>
-          </div>
+        <span class="smart-card-label">الگوی حرکت اختصاصی</span>
+        <div class="real-athlete-shell motion-media-shell" id="exerciseMotionHost">
+          <div class="motion-missing">در حال بارگذاری حرکت…</div>
         </div>
       </div>
     </div>
@@ -1759,6 +1763,58 @@ function preferredAnatomySide(ex){
   return b>f?'back':'front';
 }
 
+
+const EXERCISE_MEDIA = {
+  db_bench:{gif:'assets/gifs/db-bench-press.gif',video:'https://pub-585d42eb1aa64a67aedf483ec328d3fe.r2.dev/exercise-videos/male/decline-dumbbell-bench-press.mp4'},
+  incline_db:{gif:'assets/gifs/incline-dumbbell-press.gif',video:'https://pub-585d42eb1aa64a67aedf483ec328d3fe.r2.dev/exercise-videos/male/dumbbell-incline-bench-press.mp4'},
+  chest_fly:{gif:'assets/gifs/dumbbell-fly.gif',video:'https://pub-585d42eb1aa64a67aedf483ec328d3fe.r2.dev/exercise-videos/male/dumbbell-fly.mp4'},
+  lat_pull:{gif:'assets/gifs/lat-pulldown.gif',video:'https://pub-585d42eb1aa64a67aedf483ec328d3fe.r2.dev/exercise-videos/male/cable-pulldown.mp4'},
+  seated_row:{gif:'assets/gifs/seated-row.gif',video:'https://pub-585d42eb1aa64a67aedf483ec328d3fe.r2.dev/exercise-videos/male/cable-seated-high-row-v-bar.mp4'},
+  db_row:{gif:'assets/gifs/one-arm-dumbbell-row.gif',video:'https://pub-585d42eb1aa64a67aedf483ec328d3fe.r2.dev/exercise-videos/male/dumbbell-bent-over-row.mp4'},
+  shoulder_press:{gif:'assets/gifs/dumbbell-shoulder-press.gif',video:'https://pub-585d42eb1aa64a67aedf483ec328d3fe.r2.dev/exercise-videos/male/dumbbell-alternating-shoulder-press.mp4'},
+  lateral_raise:{gif:'assets/gifs/lateral-raise.gif',video:'https://pub-585d42eb1aa64a67aedf483ec328d3fe.r2.dev/exercise-videos/male/cable-lateral-raise.mp4'},
+  biceps_curl:{gif:'assets/gifs/dumbbell-biceps-curl.gif',video:'https://pub-585d42eb1aa64a67aedf483ec328d3fe.r2.dev/exercise-videos/male/dumbbell-biceps-curl.mp4'},
+  hammer_curl:{gif:'assets/gifs/hammer-curl.gif',video:'https://pub-585d42eb1aa64a67aedf483ec328d3fe.r2.dev/exercise-videos/male/dumbbell-cross-body-hammer-curl.mp4'},
+  triceps_push:{gif:'assets/gifs/triceps-pushdown.gif',video:'https://pub-585d42eb1aa64a67aedf483ec328d3fe.r2.dev/exercise-videos/male/cable-triceps-pushdown.mp4'},
+  overhead_tri:{gif:'assets/gifs/overhead-triceps-extension.gif',video:'https://pub-585d42eb1aa64a67aedf483ec328d3fe.r2.dev/exercise-videos/male/cable-rope-overhead-triceps-extension.mp4'},
+  goblet_squat:{gif:'assets/gifs/goblet-squat.gif',video:'https://pub-585d42eb1aa64a67aedf483ec328d3fe.r2.dev/exercise-videos/male/dumbbell-goblet-squat.mp4'},
+  leg_press:{gif:'assets/gifs/leg-press.gif',video:'https://pub-585d42eb1aa64a67aedf483ec328d3fe.r2.dev/exercise-videos/male/close-feet-leg-press.mp4'},
+  romanian_deadlift:{gif:'assets/gifs/romanian-deadlift.gif',video:'https://pub-585d42eb1aa64a67aedf483ec328d3fe.r2.dev/exercise-videos/male/barbell-straight-leg-deadlift.mp4'},
+  leg_curl:{gif:'assets/gifs/leg-curl.gif',video:'https://pub-585d42eb1aa64a67aedf483ec328d3fe.r2.dev/exercise-videos/male/band-prone-leg-curl.mp4'},
+  hip_thrust:{gif:'assets/gifs/hip-thrust.gif',video:'https://pub-585d42eb1aa64a67aedf483ec328d3fe.r2.dev/exercise-videos/male/bridge-pose-setu-bandhasana.mp4'},
+  calf_raise:{gif:'assets/gifs/calf-raise.gif',video:'https://pub-585d42eb1aa64a67aedf483ec328d3fe.r2.dev/exercise-videos/male/dumbbell-standing-calf-raise.mp4'},
+  plank:{gif:'assets/gifs/plank.gif',video:'https://pub-585d42eb1aa64a67aedf483ec328d3fe.r2.dev/exercise-videos/male/bench-crunch.mp4'},
+  cable_crunch:{gif:'assets/gifs/cable-crunch.gif',video:'https://pub-585d42eb1aa64a67aedf483ec328d3fe.r2.dev/exercise-videos/male/cable-kneeling-crunch.mp4'}
+};
+
+function renderExerciseMotionMedia(ex){
+  const host=document.getElementById('exerciseMotionHost');
+  if(!host)return;
+  const media=EXERCISE_MEDIA[ex.id];
+  host.innerHTML='';
+
+  if(!media){
+    host.innerHTML='<div class="motion-missing">انیمیشن این حرکت هنوز آماده نشده</div>';
+    return;
+  }
+
+  const gif=new Image();
+  gif.className='exercise-motion-media';
+  gif.alt='الگوی حرکت '+ex.name;
+  gif.src=media.gif;
+  gif.onload=()=>host.replaceChildren(gif);
+  gif.onerror=()=>{
+    const v=document.createElement('video');
+    v.className='exercise-motion-media';
+    v.src=media.video;
+    v.autoplay=true; v.loop=true; v.muted=true; v.playsInline=true; v.preload='metadata';
+    v.onerror=()=>{host.innerHTML='<div class="motion-missing">نمایش حرکت در دسترس نیست</div>'};
+    host.replaceChildren(v);
+    v.play().catch(()=>{});
+  };
+  host.appendChild(gif);
+}
+
 function patternTitle(type){
   if(type==='press')return 'حرکت فشاری';
   if(type==='pull')return 'حرکت کششی';
@@ -1783,11 +1839,7 @@ function renderExerciseAnatomy(ex){
   const preferred=preferredAnatomySide(ex)==='back' ? 'پشت‌زنجیره و عضلات پشتی در این حرکت سهم بیشتری دارند.' : 'تمرکز اصلی این حرکت روی جلوی بدن و عضلات فشاری است.';
   document.getElementById('focusNote').textContent=preferred;
 
-  const motionType=movementType(ex);
-  const motion=document.getElementById('motionShot');
-  motion.className='real-athlete-image motion-shot '+motionType;
-  document.getElementById('motionPatternText').textContent=patternTitle(motionType);
-  document.getElementById('motionPatternCue').textContent=shortTechniqueCue(ex);
+
 }
 
 function renderRir(){
@@ -1860,6 +1912,7 @@ function renderWorkout(){
     ex.muscles.map(m=>'<span class="target">'+m+'</span>').join('');
 
   renderExerciseAnatomy(ex);
+  renderExerciseMotionMedia(ex);
   renderNextPreview();
 
   const histBest=previousBest(ex.id);
