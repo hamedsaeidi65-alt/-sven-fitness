@@ -43,7 +43,7 @@
     .segment button{flex:1;border:0;background:transparent;color:#75767d;border-radius:999px;padding:10px 8px;font-size:12px;font-weight:850}
     .segment button.active{background:var(--lime);color:#050505}
 
-    .hero{position:relative;overflow:hidden;min-height:278px;border-radius:30px;border:1px solid rgba(255,255,255,.11);background:#0b0b0d;box-shadow:0 18px 60px rgba(0,0,0,.28)}
+    .hero{position:relative;overflow:hidden;min-height:305px;border-radius:30px;border:1px solid rgba(255,255,255,.11);background:#0b0b0d;box-shadow:0 18px 60px rgba(0,0,0,.28)}
     .hero::before{
       content:""; position:absolute; inset:0;
       background:
@@ -59,30 +59,43 @@
       transform:scaleX(-1)
     }
     .hero-content{
-      position:absolute; z-index:2; top:18px; right:18px;
-      width:46%; max-width:none; margin:0; padding:0; text-align:right
+      position:absolute; z-index:2; top:18px; right:18px; bottom:18px;
+      width:46%; max-width:none; margin:0; padding:0;
+      text-align:right; display:flex; flex-direction:column; align-items:flex-end
     }
     .badge{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:999px;color:var(--lime);border:1px solid rgba(183,255,0,.36);background:rgba(183,255,0,.09);font-size:11px;font-weight:900}
     .hero h2{font-size:28px;line-height:1.3;margin:16px 0 8px;font-weight:950}
     .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
     .pill{padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:11px;color:#b7b8bf}
-    .cta{border:0;background:var(--lime);color:#050505;border-radius:18px;padding:15px 18px;font-weight:950;display:inline-flex;align-items:center;gap:9px;min-width:180px;justify-content:center;margin-top:18px;box-shadow:0 0 28px rgba(183,255,0,.14)}
-    .hero-note{margin-top:10px;font-size:11px;color:#9a9aa1;max-width:92%}
+    .cta{border:0;background:var(--lime);color:#050505;border-radius:18px;padding:15px 18px;font-weight:950;display:inline-flex;align-items:center;gap:9px;min-width:180px;justify-content:center;margin-top:14px;box-shadow:0 0 28px rgba(183,255,0,.14)}
+    .hero-note{
+      margin-top:10px;
+      font-size:12px;
+      line-height:1.7;
+      color:#a5a5ad;
+      max-width:100%;
+      width:100%;
+      white-space:nowrap;
+      overflow:visible;
+      word-break:keep-all;
+      font-size:11px;
+      letter-spacing:-0.2px
+    }
 
     .section-head{display:flex;justify-content:space-between;align-items:center;margin:24px 2px 12px}
     .section-head h3{margin:0;font-size:18px}
     .section-head span{font-size:12px;color:#7b7c83}
 
     .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-    .stat{background:rgba(14,14,18,.92);border:1px solid var(--line);border-radius:21px;padding:14px 12px;min-height:110px}
+    .stat{background:rgba(14,14,18,.92);border:1px solid var(--line);border-radius:21px;padding:14px 12px;min-height:110px;text-align:center}
     .stat small{font-size:10px;color:#777983}
     .stat strong{display:block;font-size:22px;margin-top:10px}
     .stat em{display:block;font-style:normal;font-size:11px;color:var(--lime);margin-top:8px}
 
     .coach{border:1px solid var(--line);border-radius:24px;padding:18px;background:
       radial-gradient(circle at 9% 15%,rgba(123,60,255,.18),transparent 34%),
-      linear-gradient(145deg,#111217,#0d0d10)}
-    .coach-row{display:flex;gap:12px;align-items:center}
+      linear-gradient(145deg,#111217,#0d0d10);text-align:center}
+    .coach-row{display:flex;gap:12px;align-items:center;justify-content:center;flex-direction:row-reverse}
     .ai{width:50px;height:50px;border-radius:16px;display:grid;place-items:center;color:var(--lime);font-size:18px;font-weight:950;border:1px solid #34343a;background:radial-gradient(circle at 40% 35%,rgba(183,255,0,.18),transparent 28%),#17171c}
     .coach h4{margin:0 0 5px;font-size:15px}
     .coach p{margin:13px 0 0;color:#9a9ba2;line-height:1.9;font-size:13px}
@@ -179,7 +192,7 @@
 
     @media(max-width:370px){
       .headline{font-size:30px}
-      .hero-content{width:48%; right:14px; top:16px}
+      .hero-content{width:48%; right:14px; top:16px; bottom:14px}
       .hero h2{font-size:25px}
       .cta{min-width:160px}
     }
@@ -214,7 +227,7 @@
           <span class="pill">۶ حرکت</span>
         </div>
         <button class="cta" data-start-workout>شروع تمرین <span>←</span></button>
-        <div class="hero-note">تمرکز: سینه، سرشانه و پشت بازو</div>
+        <div class="hero-note">تمرکز: سینه، سرشانه و پشت‌بازو</div>
       </div>
     </section>
 
@@ -229,7 +242,7 @@
     <section class="coach">
       <div class="coach-row">
         <div class="ai">AI</div>
-        <div><h4>ریکاوری بدنت خوب به نظر می‌رسد.</h4><small style="color:#74767e">بر اساس فعالیت‌های اخیر</small></div>
+        <div style="text-align:center"><h4>ریکاوری بدنت خوب به نظر می‌رسد.</h4><small style="color:#74767e">بر اساس فعالیت‌های اخیر</small></div>
       </div>
       <p>امروز برای یک جلسه قوی‌تر آماده‌ای. اگر احساس خوبی داری، وزنه حرکات اصلی را کمی افزایش بده.</p>
     </section>
