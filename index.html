@@ -455,6 +455,29 @@
       display:inline-flex;align-items:center;gap:6px;color:var(--lime);font-size:10px;font-weight:900
     }
 
+
+    /* V3.2 — Recovery Engine */
+    .recovery-list{display:grid;gap:10px}
+    .recovery-row{
+      padding:12px 13px;border-radius:17px;background:#0c0d10;border:1px solid var(--line)
+    }
+    .recovery-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .recovery-head b{font-size:12px}
+    .recovery-head span{font-size:10px;color:#8a8b93}
+    .recovery-meta{display:flex;justify-content:space-between;gap:10px;margin-top:6px;font-size:9px;color:#6f7078}
+    .recovery-track{height:6px;border-radius:999px;background:#24252a;overflow:hidden;margin-top:9px}
+    .recovery-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--purple),var(--lime));transition:width .25s ease}
+    .recovery-tag{
+      display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;
+      border:1px solid var(--line);background:#111217;color:#8a8b93;font-size:9px
+    }
+    .recovery-tag.ready{color:var(--lime);border-color:rgba(183,255,0,.24);background:rgba(183,255,0,.06)}
+    .recovery-summary{
+      margin-bottom:11px;padding:11px 12px;border-radius:16px;
+      background:rgba(183,255,0,.05);border:1px solid rgba(183,255,0,.14);
+      color:#8f9098;font-size:10px;line-height:1.75
+    }
+
 </style>
 </head>
 <body>
@@ -564,6 +587,12 @@
         <div class="bar" style="height:35%"><span>پ</span></div>
         <div class="bar" style="height:18%"><span>ج</span></div>
       </div>
+    </section>
+
+    <section class="panel">
+      <div class="panelhead"><b>ریکاوری عضلات</b><span>Recovery Engine</span></div>
+      <div class="recovery-summary" id="recoverySummary">Sven سابقه تمرین را تحلیل می‌کند تا جلسه بعدی را انتخاب کند.</div>
+      <div class="recovery-list" id="muscleRecoveryList"></div>
     </section>
 
     <section class="panel">
@@ -1088,27 +1117,84 @@ function sessionMuscles(session){
   return [...found];
 }
 
+function weeklySetTarget(muscle){
+  const p=profileForProgram();
+  const major=['chest','back','quads','hamstrings','glutes'].includes(muscle);
+  let target=major?10:8;
+
+  if(p.goal==='muscle_gain')target+=2;
+  if(p.goal==='strength')target-=1;
+  if(p.goal==='fat_loss')target-=1;
+  if(p.goal==='fitness')target-=1;
+
+  if(p.level==='beginner')target-=2;
+  if(p.level==='advanced')target+=2;
+
+  if(Array.isArray(p.targetMuscles) && p.targetMuscles.includes(muscle))target+=2;
+  return Math.max(5,Math.min(16,target));
+}
+
+function baseRecoveryHours(muscle){
+  if(['chest','back','quads','hamstrings','glutes'].includes(muscle))return 48;
+  if(muscle==='shoulders')return 42;
+  if(['biceps','triceps'].includes(muscle))return 36;
+  return 30;
+}
+
 function getMuscleRecoveryState(){
   const sessions=getHistorySessions();
   const now=Date.now();
+  const p=profileForProgram();
+  const age=typeof getAgeFromBirthDate==='function' ? (getAgeFromBirthDate(p.birthDate)||30) : 30;
   const state={};
-  Object.keys(muscleLabels).forEach(m=>state[m]={lastAt:0,hours:999,sets72:0});
 
-  sessions.forEach(s=>{
+  Object.keys(muscleLabels).forEach(m=>{
+    state[m]={
+      lastAt:0,hours:999,sets72:0,sets7d:0,lastSessionSets:0,
+      target:weeklySetTarget(m),recoveryHours:baseRecoveryHours(m),
+      recoveryPct:100,deficit:0,priority:0
+    };
+  });
+
+  sessions.forEach((s,sessionIndex)=>{
     const ts=new Date(s.completedAt||s.startedAt||0).getTime();
+    if(!ts)return;
     (s.exercises||[]).forEach(ex=>{
       const sets=ex.loggedSets?.length||0;
       (ex.muscleKeys||[]).forEach(m=>{
-        if(!state[m])state[m]={lastAt:0,hours:999,sets72:0};
+        if(!state[m])return;
         state[m].lastAt=Math.max(state[m].lastAt,ts);
         if(now-ts<=72*3600000)state[m].sets72+=sets;
+        if(now-ts<=7*24*3600000)state[m].sets7d+=sets;
+        if(sessionIndex===0)state[m].lastSessionSets+=sets;
       });
     });
   });
 
-  Object.values(state).forEach(x=>{
+  Object.entries(state).forEach(([m,x])=>{
     x.hours=x.lastAt?Math.max(0,(now-x.lastAt)/3600000):999;
+
+    // Conservative heuristic: more recent training volume and higher age slightly extend recovery.
+    const volumeExtra=Math.min(18,Math.max(0,x.sets72-4)*1.5);
+    const ageExtra=age>=50?12:age>=40?6:0;
+    x.recoveryHours=baseRecoveryHours(m)+volumeExtra+ageExtra;
+
+    x.recoveryPct=x.lastAt?Math.min(100,Math.round((x.hours/x.recoveryHours)*100)):100;
+    x.deficit=Math.max(0,x.target-x.sets7d);
+    const deficitPct=Math.min(100,(x.deficit/x.target)*100);
+    const over=Math.max(0,x.sets7d-x.target);
+    const targetBonus=Array.isArray(p.targetMuscles)&&p.targetMuscles.includes(m)?8:0;
+    const lastPenalty=x.lastSessionSets>0?Math.max(0,28-x.hours/2):0;
+
+    x.priority=Math.round(
+      x.recoveryPct*.55 +
+      deficitPct*.35 +
+      targetBonus -
+      over*4 -
+      lastPenalty
+    );
   });
+
   return state;
 }
 
@@ -1123,36 +1209,56 @@ function splitCandidates(days){
   return ['push','pull','legs'];
 }
 
+function splitRecoveryStats(key,state=getMuscleRecoveryState()){
+  const split=sessionSplits[key];
+  const values=split.muscles.map(m=>state[m]).filter(Boolean);
+  const avgRecovery=Math.round(values.reduce((s,x)=>s+x.recoveryPct,0)/Math.max(1,values.length));
+  const minRecovery=Math.min(...values.map(x=>x.recoveryPct));
+  const sets=values.reduce((s,x)=>s+x.sets7d,0);
+  const target=values.reduce((s,x)=>s+x.target,0);
+  const deficit=values.reduce((s,x)=>s+x.deficit,0);
+  const priority=values.reduce((s,x)=>s+x.priority,0)/Math.max(1,values.length);
+  return {avgRecovery,minRecovery,sets,target,deficit,priority};
+}
+
 function chooseNextSplit(){
   const p=profileForProgram();
-  const targets=Array.isArray(p.targetMuscles)?p.targetMuscles:[];
   const state=getMuscleRecoveryState();
   const previous=new Set(lastSessionMuscles());
   const candidates=splitCandidates(p.days);
 
-  let scored=candidates.map(key=>{
+  const scored=candidates.map(key=>{
     const split=sessionSplits[key];
-    const readiness=split.muscles.reduce((sum,m)=>{
-      const h=state[m]?.hours??999;
-      const ageScore=Math.min(h,96)/4;              // 0..24
-      const recentLoad=Math.min(state[m]?.sets72||0,18);
-      const previousPenalty=previous.has(m)?18:0;  // strong penalty to avoid repeating last session
-      const targetBonus=targets.includes(m)?4:0;   // priority, not permission to overtrain
-      return sum + ageScore - recentLoad - previousPenalty + targetBonus;
-    },0)/split.muscles.length;
+    const stats=splitRecoveryStats(key,state);
+    const overlap=split.muscles.filter(m=>previous.has(m)).length;
+    const overlapRatio=overlap/Math.max(1,split.muscles.length);
 
-    const overlapLast=split.muscles.filter(m=>previous.has(m)).length;
-    return {key,score:readiness,overlapLast};
+    let score=stats.priority;
+    // Avoid immediately repeating the same tissue while it is still recovering.
+    score-=overlapRatio*24;
+    if(stats.minRecovery<55)score-=30;
+    else if(stats.minRecovery<75)score-=12;
+
+    // Reward splits that are behind their weekly set target.
+    score+=Math.min(18,(stats.deficit/Math.max(1,stats.target))*35);
+
+    return {key,score,stats,overlap};
   });
-
-  // If there is workout history, strongly prefer a split that is different from the last session.
-  if(previous.size){
-    const alternatives=scored.filter(s=>s.overlapLast===0);
-    if(alternatives.length)scored=alternatives;
-  }
 
   scored.sort((a,b)=>b.score-a.score);
   return scored[0]?.key||candidates[0];
+}
+
+function setsForExercise(ex,params,state){
+  const primary=ex.muscles[0];
+  const m=state[primary];
+  let sets=params.sets;
+
+  if(m){
+    if(m.recoveryPct>=90 && m.sets7d < m.target*.55)sets+=1;
+    if(m.sets7d >= m.target || m.recoveryPct<70)sets-=1;
+  }
+  return Math.max(2,Math.min(5,sets));
 }
 
 function buildWorkoutPlanFromProfile(){
@@ -1161,6 +1267,7 @@ function buildWorkoutPlanFromProfile(){
   const level=p.level||'intermediate';
   const targets=Array.isArray(p.targetMuscles)?p.targetMuscles:[];
   const params=programParams(goal,level);
+  const state=getMuscleRecoveryState();
   const splitKey=chooseNextSplit();
   const split=sessionSplits[splitKey];
   const count=level==='beginner'?5:level==='advanced'?7:6;
@@ -1170,24 +1277,25 @@ function buildWorkoutPlanFromProfile(){
     .map((ex,index)=>{
       const splitHits=ex.muscles.filter(m=>split.muscles.includes(m)).length;
       const targetHits=ex.muscles.filter(m=>targets.includes(m)).length;
-      return {...ex,_score:splitHits*10+targetHits*3+ex.compound*2-index/100};
+      const recoveryBonus=ex.muscles.reduce((s,m)=>s+(state[m]?.recoveryPct||100),0)/ex.muscles.length/12;
+      const deficitBonus=ex.muscles.reduce((s,m)=>s+(state[m]?.deficit||0),0);
+      return {...ex,_score:splitHits*10+targetHits*3+ex.compound*2+recoveryBonus+deficitBonus-index/100};
     })
     .sort((a,b)=>b._score-a._score);
 
   const chosen=[];
   const add=ex=>{if(ex&&!chosen.some(x=>x.id===ex.id)&&chosen.length<count)chosen.push(ex)};
 
-  // Cover the split first, then give user's priority muscles extra representation.
   split.muscles.forEach(m=>add(ranked.find(ex=>ex.muscles.includes(m))));
   targets.filter(m=>split.muscles.includes(m)).forEach(m=>add(ranked.find(ex=>ex.muscles.includes(m))));
   ranked.forEach(add);
 
   return chosen.slice(0,count).map(ex=>({
-    id:ex.id,name:ex.name,sets:params.sets,reps:params.reps,
-    weight:ex.baseWeight,rest:params.rest,
+    id:ex.id,name:ex.name,
+    sets:setsForExercise(ex,params,state),
+    reps:params.reps,weight:ex.baseWeight,rest:params.rest,
     muscles:ex.muscles.map(m=>muscleLabels[m]||m),
-    muscleKeys:ex.muscles,
-    splitKey
+    muscleKeys:ex.muscles,splitKey
   }));
 }
 
@@ -1196,13 +1304,19 @@ function getProgramMeta(){
   const plan=buildWorkoutPlanFromProfile();
   const splitKey=plan[0]?.splitKey||chooseNextSplit();
   const split=sessionSplits[splitKey]||sessionSplits.full;
+  const stats=splitRecoveryStats(splitKey);
   const levelNames={beginner:'مبتدی',intermediate:'متوسط',advanced:'پیشرفته'};
-  const duration=Math.max(30,plan.length*8);
+  const duration=Math.max(30,plan.reduce((s,e)=>s+e.sets*2,0)+12);
   const focus=[...new Set(plan.flatMap(ex=>ex.muscleKeys||[]))].map(m=>muscleLabels[m]).filter(Boolean);
-  const prev=lastSessionMuscles().map(m=>muscleLabels[m]).filter(Boolean);
-  const reason=prev.length
-    ? 'جلسه قبل: '+prev.slice(0,4).join('، ')+' · امروز عضلات متفاوت انتخاب شده'
-    : 'اولین جلسه بر اساس هدف و عضلات اولویت‌دار شما ساخته شده';
+  const history=getHistorySessions();
+
+  let reason;
+  if(!history.length){
+    reason='اولین جلسه بر اساس هدف، سطح و عضلات اولویت‌دار شما ساخته شده';
+  }else{
+    reason='ریکاوری '+fa(stats.avgRecovery)+'٪ · حجم هفتگی '+fa(stats.sets)+' از '+fa(stats.target)+' ست';
+    if(stats.deficit>0)reason+=' · اولویت با عضلات عقب‌مانده از هدف';
+  }
 
   return {
     name:split.name,
@@ -1212,7 +1326,8 @@ function getProgramMeta(){
     count:plan.length,
     focus:focus.join('، '),
     reason,
-    splitKey
+    splitKey,
+    recovery:stats.avgRecovery
   };
 }
 
@@ -1424,7 +1539,53 @@ document.getElementById('closeComplete').onclick=()=>{
   showPage('home');
 };
 
+
+function recoveryStatusText(pct){
+  if(pct>=90)return 'آماده';
+  if(pct>=70)return 'تقریباً آماده';
+  if(pct>=45)return 'در حال ریکاوری';
+  return 'استراحت';
+}
+
+function renderRecoveryPanel(){
+  const wrap=document.getElementById('muscleRecoveryList');
+  const summary=document.getElementById('recoverySummary');
+  if(!wrap||!summary)return;
+
+  const state=getMuscleRecoveryState();
+  const p=profileForProgram();
+  const targets=new Set(Array.isArray(p.targetMuscles)?p.targetMuscles:[]);
+  const rows=Object.entries(state).sort((a,b)=>{
+    const at=targets.has(a[0])?1:0, bt=targets.has(b[0])?1:0;
+    if(at!==bt)return bt-at;
+    return b[1].priority-a[1].priority;
+  });
+
+  const ready=rows.filter(([,x])=>x.recoveryPct>=85).length;
+  const behind=rows.filter(([,x])=>x.sets7d<x.target).length;
+  summary.textContent=fa(ready)+' گروه عضلانی آماده‌اند · '+fa(behind)+' گروه هنوز به حجم هدف هفتگی نرسیده‌اند.';
+
+  wrap.innerHTML=rows.map(([key,x])=>{
+    const last=x.lastAt
+      ? (x.hours<48 ? fa(Math.round(x.hours))+' ساعت از آخرین تمرین' : fa(Math.round(x.hours/24))+' روز از آخرین تمرین')
+      : 'هنوز تمرین نشده';
+    const cls=x.recoveryPct>=90?' ready':'';
+    return `<div class="recovery-row">
+      <div class="recovery-head">
+        <b>${muscleLabels[key]||key}${targets.has(key)?' ★':''}</b>
+        <span class="recovery-tag${cls}">${recoveryStatusText(x.recoveryPct)} · ${fa(x.recoveryPct)}٪</span>
+      </div>
+      <div class="recovery-meta">
+        <span>${last}</span>
+        <span>${fa(x.sets7d)} / ${fa(x.target)} ست این هفته</span>
+      </div>
+      <div class="recovery-track"><div class="recovery-fill" style="width:${Math.max(3,x.recoveryPct)}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
 function renderProgress(){
+  renderRecoveryPanel();
   const sessions=getSessions();
   const count=sessions.length;
   const volume=sessions.reduce((s,x)=>s+Number(x.volume||0),0);
@@ -1676,6 +1837,7 @@ function refreshProgramUI(){
   document.getElementById('workoutCardFocus').textContent=meta.focus.replace(/، /g,' · ');
 
   renderProfile();
+  renderRecoveryPanel();
 }
 
 function syncOnboardingState(){
