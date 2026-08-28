@@ -710,12 +710,13 @@
       box-shadow:inset 0 0 45px rgba(183,255,0,.04)
     }
 
+
 </style>
 </head>
 <body>
 
 <!--
-SVEN V3.4.1
+SVEN V3.4.3
 Exercise card policy: ONE STATIC REAL-ATHLETE IMAGE PER EXERCISE.
 First batch images are embedded directly in this HTML for phone-only deployment.
 Second-batch movement IDs currently use the locked Sven reference still as a safe fallback;
@@ -890,8 +891,6 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
       <div class="item" id="openOnboardingFromProfile"><span>🧠 برنامه هوشمند Sven</span><b>بازطراحی</b></div>
       <div class="item"><span>🎯 هدف و سطح تمرین</span><b id="profileLevelLabel">—</b></div>
       <div class="item"><span>📅 روزهای تمرین در هفته</span><b id="profileDaysLabel">—</b></div>
-      <div class="item"><span>◎ عضلات هدف</span><b id="profileTargetsLabel">—</b></div>
-      <div class="item"><span>⌚ اتصال ساعت و Health</span><b>‹</b></div>
       <div class="item"><span>🏆 دستاوردها و رکوردها</span><b>‹</b></div>
       <div class="item"><span>🔔 اعلان‌های تمرین</span><b>‹</b></div>
     </div>
@@ -916,11 +915,11 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
     </div>
 
     <div class="ob-progress" id="obProgress">
-      <i class="active"></i><i></i><i></i><i></i>
+      <i class="active"></i><i></i><i></i>
     </div>
 
     <section class="ob-step active" data-step="1">
-      <div class="ob-kicker">۱ از ۴ · هدف اصلی</div>
+      <div class="ob-kicker">۱ از ۳ · هدف اصلی</div>
       <h2>هدفت از تمرین چیه؟</h2>
       <p>بر اساس هدفت، تعداد تکرار، استراحت و ترکیب حرکات Sven تغییر می‌کند.</p>
 
@@ -945,7 +944,7 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
     </section>
 
     <section class="ob-step" data-step="2">
-      <div class="ob-kicker">۲ از ۴ · تجربه و زمان</div>
+      <div class="ob-kicker">۲ از ۳ · تجربه و زمان</div>
       <h2>برنامه چقدر سنگین باشه؟</h2>
       <p>سطح تمرین و تعداد روزهای هفتگی را مشخص کن.</p>
 
@@ -967,97 +966,42 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
     </section>
 
     <section class="ob-step" data-step="3">
-      <div class="ob-kicker">۳ از ۴ · عضلات هدف</div>
-      <h2>روی کدوم عضلات تمرکز کنیم؟</h2>
-      <p>می‌توانی چند ناحیه را انتخاب کنی. برنامه امروز بر اساس اولویت‌های تو چیده می‌شود.</p>
-
-      <div class="body-tabs">
-        <button class="active" data-body-side="front">نمای جلو</button>
-        <button data-body-side="back">نمای پشت</button>
-      </div>
-
-      <div class="body-stage">
-        <svg class="body-svg body-side active" id="bodyFront" data-side="front" viewBox="0 0 180 340" aria-label="نمای جلوی بدن">
-          <circle class="body-base" cx="90" cy="28" r="20"/>
-          <rect class="body-base" x="66" y="48" width="48" height="98" rx="22"/>
-          <rect class="body-base" x="42" y="58" width="23" height="105" rx="12" transform="rotate(7 53 110)"/>
-          <rect class="body-base" x="115" y="58" width="23" height="105" rx="12" transform="rotate(-7 126 110)"/>
-          <rect class="body-base" x="62" y="141" width="27" height="156" rx="14" transform="rotate(3 76 219)"/>
-          <rect class="body-base" x="91" y="141" width="27" height="156" rx="14" transform="rotate(-3 104 219)"/>
-
-          <ellipse class="muscle-zone" data-muscle="shoulders" cx="61" cy="66" rx="14" ry="12"/>
-          <ellipse class="muscle-zone" data-muscle="shoulders" cx="119" cy="66" rx="14" ry="12"/>
-          <ellipse class="muscle-zone" data-muscle="chest" cx="78" cy="82" rx="18" ry="14"/>
-          <ellipse class="muscle-zone" data-muscle="chest" cx="102" cy="82" rx="18" ry="14"/>
-          <ellipse class="muscle-zone" data-muscle="biceps" cx="53" cy="104" rx="10" ry="24" transform="rotate(7 53 104)"/>
-          <ellipse class="muscle-zone" data-muscle="biceps" cx="127" cy="104" rx="10" ry="24" transform="rotate(-7 127 104)"/>
-          <rect class="muscle-zone" data-muscle="abs" x="78" y="98" width="24" height="43" rx="9"/>
-          <rect class="muscle-zone" data-muscle="quads" x="64" y="153" width="23" height="70" rx="11"/>
-          <rect class="muscle-zone" data-muscle="quads" x="93" y="153" width="23" height="70" rx="11"/>
-          <rect class="muscle-zone" data-muscle="calves" x="66" y="231" width="19" height="57" rx="10"/>
-          <rect class="muscle-zone" data-muscle="calves" x="95" y="231" width="19" height="57" rx="10"/>
-        </svg>
-
-        <svg class="body-svg body-side" id="bodyBack" data-side="back" viewBox="0 0 180 340" aria-label="نمای پشت بدن">
-          <circle class="body-base" cx="90" cy="28" r="20"/>
-          <rect class="body-base" x="66" y="48" width="48" height="98" rx="22"/>
-          <rect class="body-base" x="42" y="58" width="23" height="105" rx="12" transform="rotate(7 53 110)"/>
-          <rect class="body-base" x="115" y="58" width="23" height="105" rx="12" transform="rotate(-7 126 110)"/>
-          <rect class="body-base" x="62" y="141" width="27" height="156" rx="14" transform="rotate(3 76 219)"/>
-          <rect class="body-base" x="91" y="141" width="27" height="156" rx="14" transform="rotate(-3 104 219)"/>
-
-          <ellipse class="muscle-zone" data-muscle="shoulders" cx="61" cy="66" rx="14" ry="12"/>
-          <ellipse class="muscle-zone" data-muscle="shoulders" cx="119" cy="66" rx="14" ry="12"/>
-          <path class="muscle-zone" data-muscle="back" d="M69 72 Q90 57 111 72 L106 124 Q90 140 74 124 Z"/>
-          <ellipse class="muscle-zone" data-muscle="triceps" cx="53" cy="108" rx="10" ry="25" transform="rotate(7 53 108)"/>
-          <ellipse class="muscle-zone" data-muscle="triceps" cx="127" cy="108" rx="10" ry="25" transform="rotate(-7 127 108)"/>
-          <ellipse class="muscle-zone" data-muscle="glutes" cx="77" cy="154" rx="16" ry="16"/>
-          <ellipse class="muscle-zone" data-muscle="glutes" cx="103" cy="154" rx="16" ry="16"/>
-          <rect class="muscle-zone" data-muscle="hamstrings" x="64" y="169" width="22" height="57" rx="10"/>
-          <rect class="muscle-zone" data-muscle="hamstrings" x="94" y="169" width="22" height="57" rx="10"/>
-          <rect class="muscle-zone" data-muscle="calves" x="66" y="231" width="19" height="57" rx="10"/>
-          <rect class="muscle-zone" data-muscle="calves" x="95" y="231" width="19" height="57" rx="10"/>
-        </svg>
-      </div>
-
-      <div class="muscle-list" id="muscleChips">
-        <button class="muscle-chip" data-muscle="chest">سینه</button>
-        <button class="muscle-chip" data-muscle="back">پشت</button>
-        <button class="muscle-chip" data-muscle="shoulders">سرشانه</button>
-        <button class="muscle-chip" data-muscle="biceps">جلو بازو</button>
-        <button class="muscle-chip" data-muscle="triceps">پشت‌بازو</button>
-        <button class="muscle-chip" data-muscle="abs">شکم</button>
-        <button class="muscle-chip" data-muscle="glutes">باسن</button>
-        <button class="muscle-chip" data-muscle="quads">چهارسر</button>
-        <button class="muscle-chip" data-muscle="hamstrings">همسترینگ</button>
-        <button class="muscle-chip" data-muscle="calves">ساق</button>
-      </div>
-      <div class="selection-count" id="selectionCount">هیچ عضله‌ای انتخاب نشده</div>
-      <div class="ob-error" id="obError3"></div>
-    </section>
-
-    <section class="ob-step" data-step="4">
-      <div class="ob-kicker">۴ از ۴ · برنامه شخصی</div>
+      <div class="ob-kicker">۳ از ۳ · برنامه شخصی</div>
       <h2>Sven آماده ساخت برنامه است.</h2>
-      <p>انتخاب‌ها را بررسی کن؛ بعد برنامه تمرینی روی گوشی ذخیره می‌شود.</p>
+      <p>هدف، سطح و تعداد روزهای تمرین را بررسی کن. انتخاب عضلات هر جلسه را خود Sven بر اساس ریکاوری و سابقه تمرین انجام می‌دهد.</p>
 
       <div class="ob-summary">
         <div class="summary-card"><small>هدف</small><strong id="sumGoal">—</strong></div>
         <div class="summary-card"><small>سطح و تعداد جلسات</small><strong id="sumLevelDays">—</strong></div>
-        <div class="summary-card"><small>عضلات اولویت‌دار</small><strong id="sumMuscles">—</strong></div>
       </div>
       <div class="summary-plan">
         <div class="program-status">● برنامه تولیدشده توسط Sven</div>
         <div class="plan-name" id="sumPlanName">برنامه شخصی</div>
         <p id="sumPlanMeta">—</p>
       </div>
-      <div class="ob-error" id="obError4"></div>
+      <div class="ob-error" id="obError3"></div>
     </section>
 
     <div class="ob-actions">
       <button class="ob-back" id="obBack">قبلی</button>
       <button class="ob-next" id="obNext">ادامه</button>
     </div>
+  </div>
+</div>
+
+
+<div class="health-modal" id="healthModal">
+  <div class="health-sheet">
+    <h3>Apple Health + Apple Watch</h3>
+    <p>نسخه فعلی Sven یک وب‌اپ است. اتصال واقعی HealthKit باید در نسخه iOS/watchOS انجام شود و بعد از اجازه خودت داده‌ها وارد Sven می‌شوند.</p>
+    <div class="health-cap-list">
+      <div class="health-cap"><span>تمرین‌ها و Active Energy</span><span>HealthKit</span></div>
+      <div class="health-cap"><span>ضربان قلب و Resting HR</span><span>HealthKit</span></div>
+      <div class="health-cap"><span>HRV و خواب</span><span>HealthKit</span></div>
+      <div class="health-cap"><span>قدم‌ها و فعالیت روزانه</span><span>HealthKit</span></div>
+    </div>
+    <div class="health-note">این صفحه اتصال جعلی ایجاد نمی‌کند. برای فعال‌شدن واقعی، Sven باید یک Target بومی iOS با قابلیت HealthKit و مجوزهای Apple داشته باشد.</div>
+    <button class="health-close" id="closeHealthModal">متوجه شدم</button>
   </div>
 </div>
 
@@ -1324,6 +1268,7 @@ function setGreeting(){
 }
 window.addEventListener('load', async()=>{
   setGreeting();
+  cleanupLegacyTargetMuscles();
   renderProfile();
   renderProgress();
   refreshProgramUI();
@@ -1437,7 +1382,6 @@ function weeklySetTarget(muscle){
   if(p.level==='beginner')target-=2;
   if(p.level==='advanced')target+=2;
 
-  if(Array.isArray(p.targetMuscles) && p.targetMuscles.includes(muscle))target+=2;
   return Math.max(5,Math.min(16,target));
 }
 
@@ -1490,7 +1434,7 @@ function getMuscleRecoveryState(){
     x.deficit=Math.max(0,x.target-x.sets7d);
     const deficitPct=Math.min(100,(x.deficit/x.target)*100);
     const over=Math.max(0,x.sets7d-x.target);
-    const targetBonus=Array.isArray(p.targetMuscles)&&p.targetMuscles.includes(m)?8:0;
+    const targetBonus=0;
     const lastPenalty=x.lastSessionSets>0?Math.max(0,28-x.hours/2):0;
 
     x.priority=Math.round(
@@ -1572,7 +1516,7 @@ function buildWorkoutPlanFromProfile(){
   const p=profileForProgram();
   const goal=p.goal||'recomp';
   const level=p.level||'intermediate';
-  const targets=Array.isArray(p.targetMuscles)?p.targetMuscles:[];
+  const targets=[];
   const params=programParams(goal,level);
   const state=getMuscleRecoveryState();
   const splitKey=chooseNextSplit();
@@ -2131,7 +2075,7 @@ function renderRecoveryPanel(){
 
   const state=getMuscleRecoveryState();
   const p=profileForProgram();
-  const targets=new Set(Array.isArray(p.targetMuscles)?p.targetMuscles:[]);
+  const targets=new Set();
   const rows=Object.entries(state).sort((a,b)=>{
     const at=targets.has(a[0])?1:0, bt=targets.has(b[0])?1:0;
     if(at!==bt)return bt-at;
@@ -2292,7 +2236,6 @@ function renderProfile(){
     document.getElementById('profileGoal').textContent='هنوز انتخاب نشده';
     document.getElementById('profileLevelLabel').textContent='—';
     document.getElementById('profileDaysLabel').textContent='—';
-    document.getElementById('profileTargetsLabel').textContent='—';
     return;
   }
 
@@ -2316,8 +2259,6 @@ function renderProfile(){
   document.getElementById('profileGoal').textContent = goalLabels[p.goal] || 'هنوز انتخاب نشده';
   document.getElementById('profileLevelLabel').textContent = levelLabels[p.level] || '—';
   document.getElementById('profileDaysLabel').textContent = p.days ? fa(p.days)+' روز' : '—';
-  const targets=(p.targetMuscles||[]).map(m=>muscleLabels[m]||m);
-  document.getElementById('profileTargetsLabel').textContent = targets.length ? targets.slice(0,2).join('، ')+(targets.length>2?' +'+fa(targets.length-2):'') : '—';
 
   // Personalize the home greeting when a name exists.
   setGreeting();
@@ -2395,7 +2336,7 @@ document.getElementById('profileForm').addEventListener('submit', (e)=>{
 
 
 /* Smart Onboarding */
-const onboardingState={step:1,goal:'',level:'',days:'',muscles:[]};
+const onboardingState={step:1,goal:'',level:'',days:''};
 
 function refreshProgramUI(){
   workoutPlan=buildWorkoutPlanFromProfile();
@@ -2422,12 +2363,10 @@ function syncOnboardingState(){
   onboardingState.goal=p.goal||'';
   onboardingState.level=p.level||'';
   onboardingState.days=p.days||'';
-  onboardingState.muscles=Array.isArray(p.targetMuscles)?[...p.targetMuscles]:[];
 
   document.querySelectorAll('[data-goal]').forEach(b=>b.classList.toggle('selected',b.dataset.goal===onboardingState.goal));
   document.querySelectorAll('[data-level]').forEach(b=>b.classList.toggle('selected',b.dataset.level===onboardingState.level));
   document.querySelectorAll('[data-days]').forEach(b=>b.classList.toggle('selected',b.dataset.days===String(onboardingState.days)));
-  renderMuscleSelection();
 }
 
 function openSmartOnboarding(force=false){
@@ -2450,34 +2389,19 @@ function renderOnboardingStep(){
     i.classList.toggle('done',idx<onboardingState.step-1);
   });
   document.getElementById('obBack').style.visibility=onboardingState.step===1?'hidden':'visible';
-  document.getElementById('obNext').textContent=onboardingState.step===4?'ساخت برنامه Sven':'ادامه';
+  document.getElementById('obNext').textContent=onboardingState.step===3?'ساخت برنامه Sven':'ادامه';
   ['obError1','obError2','obError3','obError4'].forEach(id=>document.getElementById(id).textContent='');
   if(onboardingState.step===4)renderOnboardingSummary();
 }
 
-function toggleMuscle(key){
-  const i=onboardingState.muscles.indexOf(key);
-  if(i>=0)onboardingState.muscles.splice(i,1);
-  else onboardingState.muscles.push(key);
-  renderMuscleSelection();
-}
-
-function renderMuscleSelection(){
-  document.querySelectorAll('[data-muscle]').forEach(el=>{
-    el.classList.toggle('selected',onboardingState.muscles.includes(el.dataset.muscle));
-  });
-  const n=onboardingState.muscles.length;
-  document.getElementById('selectionCount').textContent=n?fa(n)+' عضله انتخاب شده':'هیچ عضله‌ای انتخاب نشده';
-}
 
 function renderOnboardingSummary(){
   const goals={fat_loss:'کاهش چربی',muscle_gain:'عضله‌سازی',strength:'افزایش قدرت',recomp:'کاهش چربی + عضله‌سازی',fitness:'فیتنس عمومی'};
   const levels={beginner:'مبتدی',intermediate:'متوسط',advanced:'پیشرفته'};
   document.getElementById('sumGoal').textContent=goals[onboardingState.goal]||'—';
   document.getElementById('sumLevelDays').textContent=(levels[onboardingState.level]||'—')+' · '+fa(onboardingState.days)+' روز در هفته';
-  document.getElementById('sumMuscles').textContent=onboardingState.muscles.map(m=>muscleLabels[m]).join('، ');
 
-  const tempProfile={...(loadProfile()||{}),goal:onboardingState.goal,level:onboardingState.level,days:onboardingState.days,targetMuscles:onboardingState.muscles};
+  const tempProfile={...(loadProfile()||{}),goal:onboardingState.goal,level:onboardingState.level,days:onboardingState.days};
   const old=localStorage.getItem(PROFILE_KEY);
   localStorage.setItem(PROFILE_KEY,JSON.stringify(tempProfile));
   const meta=getProgramMeta();
@@ -2494,9 +2418,6 @@ function validateOnboardingStep(){
   if(onboardingState.step===2 && (!onboardingState.level||!onboardingState.days)){
     document.getElementById('obError2').textContent='سطح و تعداد روزهای تمرین را مشخص کن.';return false;
   }
-  if(onboardingState.step===3 && onboardingState.muscles.length<1){
-    document.getElementById('obError3').textContent='حداقل یک گروه عضلانی انتخاب کن.';return false;
-  }
   return true;
 }
 
@@ -2507,10 +2428,10 @@ function saveOnboarding(){
     goal:onboardingState.goal,
     level:onboardingState.level,
     days:String(onboardingState.days),
-    targetMuscles:[...onboardingState.muscles],
     onboardingDone:true,
     onboardingUpdatedAt:new Date().toISOString()
   };
+  delete updated.targetMuscles;
   saveProfile(updated);
   clearActive(); // new program starts fresh; completed history remains.
   refreshProgramUI();
@@ -2533,27 +2454,24 @@ document.querySelectorAll('[data-days]').forEach(b=>b.addEventListener('click',(
   onboardingState.days=b.dataset.days;
   document.querySelectorAll('[data-days]').forEach(x=>x.classList.toggle('selected',x===b));
 }));
-document.querySelectorAll('.muscle-chip,.muscle-zone').forEach(el=>el.addEventListener('click',()=>toggleMuscle(el.dataset.muscle)));
-
-document.querySelectorAll('[data-body-side]').forEach(btn=>btn.addEventListener('click',()=>{
-  document.querySelectorAll('[data-body-side]').forEach(b=>b.classList.toggle('active',b===btn));
-  document.querySelectorAll('.body-side').forEach(s=>s.classList.toggle('active',s.dataset.side===btn.dataset.bodySide));
-}));
-
-document.getElementById('obNext').addEventListener('click',()=>{
-  if(!validateOnboardingStep())return;
-  if(onboardingState.step<4){onboardingState.step++;renderOnboardingStep()}
-  else saveOnboarding();
-});
 document.getElementById('obBack').addEventListener('click',()=>{
   if(onboardingState.step>1){onboardingState.step--;renderOnboardingStep()}
 });
 document.getElementById('closeOnboarding').addEventListener('click',closeSmartOnboarding);
 document.getElementById('openOnboardingFromProfile').addEventListener('click',()=>openSmartOnboarding(true));
 
+
+function cleanupLegacyTargetMuscles(){
+  const p=loadProfile();
+  if(p && Object.prototype.hasOwnProperty.call(p,'targetMuscles')){
+    delete p.targetMuscles;
+    saveProfile(p);
+  }
+}
+
 function maybeLaunchOnboarding(){
   const p=loadProfile()||{};
-  if(!p.onboardingDone || !Array.isArray(p.targetMuscles) || !p.targetMuscles.length){
+  if(!p.onboardingDone || !p.goal || !p.level || !p.days){
     setTimeout(()=>openSmartOnboarding(),350);
   }
 }
