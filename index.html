@@ -711,6 +711,107 @@
     }
 
 
+
+    /* V3.5 — Achievements & Records */
+    .records-header{
+      display:flex;align-items:center;justify-content:space-between;margin-bottom:14px
+    }
+    .records-back{
+      width:42px;height:42px;border-radius:50%;border:1px solid var(--line);
+      background:#131419;color:#fff;font-size:20px
+    }
+    .records-hero{
+      position:relative;overflow:hidden;padding:18px;border-radius:25px;
+      border:1px solid rgba(183,255,0,.18);
+      background:
+        radial-gradient(circle at 85% 12%,rgba(183,255,0,.15),transparent 30%),
+        radial-gradient(circle at 8% 90%,rgba(123,60,255,.14),transparent 35%),
+        #0e0f13
+    }
+    .records-hero small{color:#81828a;font-size:10px}
+    .records-hero h2{margin:5px 0 4px;font-size:24px}
+    .records-hero p{margin:0;color:#8f9098;font-size:10px;line-height:1.75}
+    .records-overview{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:13px
+    }
+    .records-overview div{
+      padding:10px 4px;border-radius:14px;text-align:center;
+      background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.05)
+    }
+    .records-overview strong{display:block;font-size:15px;color:#fff}
+    .records-overview span{display:block;font-size:8px;color:#75767e;margin-top:3px}
+
+    .section-title-row{
+      display:flex;align-items:end;justify-content:space-between;margin:19px 2px 9px
+    }
+    .section-title-row b{font-size:14px}
+    .section-title-row span{font-size:9px;color:#73747c}
+
+    .achievement-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+    .achievement-card{
+      min-height:128px;padding:13px;border-radius:20px;
+      border:1px solid var(--line);background:#0e0f13;position:relative;overflow:hidden
+    }
+    .achievement-card.unlocked{
+      border-color:rgba(183,255,0,.24);
+      background:
+        radial-gradient(circle at 90% 10%,rgba(183,255,0,.10),transparent 38%),
+        #0f1013
+    }
+    .achievement-icon{
+      width:38px;height:38px;border-radius:13px;display:grid;place-items:center;
+      background:#17181d;color:#777983;border:1px solid var(--line);font-size:18px
+    }
+    .achievement-card.unlocked .achievement-icon{
+      background:var(--lime);color:#050505;border-color:var(--lime)
+    }
+    .achievement-card h4{font-size:11px;margin:10px 0 4px}
+    .achievement-card p{margin:0;color:#73747c;font-size:8.5px;line-height:1.65}
+    .achievement-state{
+      position:absolute;left:10px;top:10px;font-size:8px;color:#62636b
+    }
+    .achievement-card.unlocked .achievement-state{color:var(--lime);font-weight:900}
+    .ach-progress{
+      height:4px;border-radius:999px;background:#23242a;overflow:hidden;margin-top:9px
+    }
+    .ach-progress i{
+      display:block;height:100%;border-radius:999px;background:#55565d
+    }
+    .achievement-card.unlocked .ach-progress i{background:var(--lime)}
+
+    .record-list{display:grid;gap:9px}
+    .record-row{
+      display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:10px;align-items:center;
+      padding:12px;border-radius:18px;background:#0e0f12;border:1px solid var(--line)
+    }
+    .record-rank{
+      width:42px;height:42px;border-radius:13px;display:grid;place-items:center;
+      color:var(--lime);background:rgba(183,255,0,.07);border:1px solid rgba(183,255,0,.16);
+      font-size:15px;font-weight:950
+    }
+    .record-info{min-width:0}
+    .record-info b{display:block;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .record-info small{display:block;color:#74757d;font-size:8.5px;margin-top:4px}
+    .record-value{text-align:left;direction:ltr}
+    .record-value strong{display:block;font-size:12px;color:#fff}
+    .record-value small{display:block;color:var(--lime);font-size:8px;margin-top:3px}
+
+    .pr-list{display:grid;gap:8px}
+    .pr-row{
+      display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:16px;
+      background:#0d0e11;border:1px solid var(--line)
+    }
+    .pr-dot{
+      width:32px;height:32px;flex:0 0 32px;border-radius:11px;display:grid;place-items:center;
+      background:rgba(183,255,0,.10);color:var(--lime)
+    }
+    .pr-row b{display:block;font-size:10px}
+    .pr-row small{display:block;color:#73747d;font-size:8.5px;margin-top:3px}
+    .record-empty{
+      padding:18px;text-align:center;border:1px dashed var(--line);
+      border-radius:17px;color:#74757d;font-size:10px;line-height:1.8
+    }
+
 </style>
 </head>
 <body>
@@ -891,9 +992,48 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
       <div class="item" id="openOnboardingFromProfile"><span>🧠 برنامه هوشمند Sven</span><b>بازطراحی</b></div>
       <div class="item"><span>🎯 هدف و سطح تمرین</span><b id="profileLevelLabel">—</b></div>
       <div class="item"><span>📅 روزهای تمرین در هفته</span><b id="profileDaysLabel">—</b></div>
-      <div class="item"><span>🏆 دستاوردها و رکوردها</span><b>‹</b></div>
+      <div class="item" id="openRecords"><span>🏆 دستاوردها و رکوردها</span><b id="recordsProfileBadge">‹</b></div>
       <div class="item"><span>🔔 اعلان‌های تمرین</span><b>‹</b></div>
     </div>
+  </main>
+
+
+  <main id="records" class="page">
+    <div class="records-header">
+      <button class="records-back" id="recordsBack">›</button>
+      <h2 style="margin:0">دستاوردها و رکوردها</h2>
+      <div style="width:42px"></div>
+    </div>
+
+    <section class="records-hero">
+      <small>SVEN PERFORMANCE</small>
+      <h2 id="recordsHeroTitle">مسیر پیشرفت تو</h2>
+      <p id="recordsHeroText">هر جلسه‌ای که ثبت می‌کنی، رکوردها و دستاوردهای Sven به‌صورت خودکار به‌روزرسانی می‌شوند.</p>
+      <div class="records-overview">
+        <div><strong id="recSessions">۰</strong><span>جلسه</span></div>
+        <div><strong id="recSets">۰</strong><span>ست</span></div>
+        <div><strong id="recVolume">۰</strong><span>حجم</span></div>
+        <div><strong id="recPRs">۰</strong><span>PR</span></div>
+      </div>
+    </section>
+
+    <div class="section-title-row">
+      <b>دستاوردها</b>
+      <span id="achievementCount">۰ از ۰ باز شده</span>
+    </div>
+    <div class="achievement-grid" id="achievementGrid"></div>
+
+    <div class="section-title-row">
+      <b>رکورد حرکات</b>
+      <span>بهترین عملکرد ثبت‌شده</span>
+    </div>
+    <div class="record-list" id="exerciseRecords"></div>
+
+    <div class="section-title-row">
+      <b>PRهای اخیر</b>
+      <span>رکوردهای شخصی جدید</span>
+    </div>
+    <div class="pr-list" id="recentPRs"></div>
   </main>
 
   <nav class="nav">
@@ -1271,6 +1411,7 @@ window.addEventListener('load', async()=>{
   cleanupLegacyTargetMuscles();
   renderProfile();
   renderProgress();
+  renderAchievementsRecords();
   refreshProgramUI();
   showPage('home');
   maybeLaunchOnboarding();
@@ -2049,6 +2190,7 @@ function finishCurrentWorkout(){
   document.getElementById('completeMinutes').textContent=fa(currentSession.durationMin);
   document.getElementById('workoutComplete').classList.add('show');
   renderProgress();
+  renderAchievementsRecords();
   refreshProgramUI();
 }
 
@@ -2148,6 +2290,201 @@ function renderProgress(){
 
 renderTimer();
 renderProgress();
+
+
+/* Achievements & Records */
+const ACHIEVEMENTS = [
+  {id:'first_session',icon:'✓',title:'شروع مسیر',desc:'اولین جلسه تمرینی را کامل کن.',metric:'sessions',target:1},
+  {id:'ten_sessions',icon:'10',title:'۱۰ جلسه کامل',desc:'۱۰ جلسه تمرینی را در Sven ثبت کن.',metric:'sessions',target:10},
+  {id:'twentyfive_sessions',icon:'25',title:'ثبات واقعی',desc:'به ۲۵ جلسه تمرینی ثبت‌شده برس.',metric:'sessions',target:25},
+  {id:'hundred_sets',icon:'≡',title:'۱۰۰ ست',desc:'در مجموع ۱۰۰ ست تمرینی ثبت کن.',metric:'sets',target:100},
+  {id:'thousand_reps',icon:'↟',title:'۱۰۰۰ تکرار',desc:'مجموع تکرارهای ثبت‌شده را به ۱۰۰۰ برسان.',metric:'reps',target:1000},
+  {id:'first_pr',icon:'★',title:'اولین PR',desc:'اولین رکورد شخصی خودت را ثبت کن.',metric:'prs',target:1},
+  {id:'five_prs',icon:'🏆',title:'شکارچی رکورد',desc:'۵ رکورد شخصی جدید ثبت کن.',metric:'prs',target:5},
+  {id:'volume_10k',icon:'10K',title:'۱۰ هزار کیلو حجم',desc:'حجم تجمعی تمرین را از ۱۰٬۰۰۰ عبور بده.',metric:'volume',target:10000},
+  {id:'volume_50k',icon:'50K',title:'۵۰ هزار کیلو حجم',desc:'حجم تجمعی تمرین را به ۵۰٬۰۰۰ برسان.',metric:'volume',target:50000},
+  {id:'four_weeks',icon:'4W',title:'۴ هفته فعال',desc:'در چهار هفته متفاوت تمرین ثبت کن.',metric:'activeWeeks',target:4}
+];
+
+function achievementStats(){
+  const sessions=getSessions();
+  let sets=0,reps=0,volume=0,prs=0;
+  const weekKeys=new Set();
+
+  sessions.forEach(s=>{
+    const dt=new Date(s.completedAt||s.startedAt||0);
+    if(!Number.isNaN(dt.getTime())){
+      const first=new Date(dt.getFullYear(),0,1);
+      const day=Math.floor((dt-first)/86400000);
+      const week=Math.ceil((day+first.getDay()+1)/7);
+      weekKeys.add(dt.getFullYear()+'-'+week);
+    }
+    (s.exercises||[]).forEach(ex=>{
+      (ex.loggedSets||[]).forEach(set=>{
+        sets++;
+        reps+=Number(set.reps||0);
+        volume+=Number(set.weight||0)*Number(set.reps||0);
+        if(set.pr)prs++;
+      });
+    });
+  });
+
+  return {
+    sessions:sessions.length,
+    sets,reps,
+    volume:Math.round(volume),
+    prs,
+    activeWeeks:weekKeys.size
+  };
+}
+
+function collectExerciseRecords(){
+  const sessions=[...getSessions()].reverse(); // oldest -> newest
+  const map={};
+
+  sessions.forEach(s=>{
+    (s.exercises||[]).forEach(ex=>{
+      if(!map[ex.id]){
+        map[ex.id]={
+          id:ex.id,name:ex.name,
+          bestWeight:0,bestReps:0,bestE1RM:0,bestSetVolume:0,
+          bestSet:null,date:null,totalSets:0
+        };
+      }
+      const r=map[ex.id];
+      (ex.loggedSets||[]).forEach(set=>{
+        const w=Number(set.weight||0), reps=Number(set.reps||0);
+        const oneRM=estimatedOneRM(w,reps);
+        const setVol=w*reps;
+        r.totalSets++;
+        r.bestWeight=Math.max(r.bestWeight,w);
+        r.bestReps=Math.max(r.bestReps,reps);
+        r.bestE1RM=Math.max(r.bestE1RM,oneRM);
+        r.bestSetVolume=Math.max(r.bestSetVolume,setVol);
+
+        const score=w>0 ? oneRM : reps;
+        const oldScore=r.bestSet ? (Number(r.bestSet.weight)>0 ? estimatedOneRM(r.bestSet.weight,r.bestSet.reps) : Number(r.bestSet.reps)) : -1;
+        if(score>=oldScore){
+          r.bestSet={...set};
+          r.date=set.at||s.completedAt||s.startedAt;
+        }
+      });
+    });
+  });
+
+  return Object.values(map).sort((a,b)=>{
+    if(b.totalSets!==a.totalSets)return b.totalSets-a.totalSets;
+    return b.bestE1RM-a.bestE1RM;
+  });
+}
+
+function collectRecentPRs(){
+  const prs=[];
+  getSessions().forEach(s=>{
+    (s.exercises||[]).forEach(ex=>{
+      (ex.loggedSets||[]).forEach(set=>{
+        if(set.pr){
+          prs.push({
+            exercise:ex.name,
+            weight:Number(set.weight||0),
+            reps:Number(set.reps||0),
+            at:set.at||s.completedAt||s.startedAt
+          });
+        }
+      });
+    });
+  });
+  prs.sort((a,b)=>new Date(b.at||0)-new Date(a.at||0));
+  return prs;
+}
+
+function compactNumber(n){
+  n=Number(n)||0;
+  if(n>=1000000)return fa((n/1000000).toFixed(1))+'M';
+  if(n>=1000)return fa((n/1000).toFixed(1))+'K';
+  return fa(Math.round(n));
+}
+
+function recordDate(value){
+  if(!value)return '—';
+  const d=new Date(value);
+  if(Number.isNaN(d.getTime()))return '—';
+  return d.toLocaleDateString('fa-IR',{year:'numeric',month:'short',day:'numeric'});
+}
+
+function renderAchievementsRecords(){
+  const stats=achievementStats();
+  const unlocked=ACHIEVEMENTS.filter(a=>Number(stats[a.metric]||0)>=a.target).length;
+
+  document.getElementById('recSessions').textContent=fa(stats.sessions);
+  document.getElementById('recSets').textContent=fa(stats.sets);
+  document.getElementById('recVolume').textContent=compactNumber(stats.volume);
+  document.getElementById('recPRs').textContent=fa(stats.prs);
+  document.getElementById('achievementCount').textContent=fa(unlocked)+' از '+fa(ACHIEVEMENTS.length)+' باز شده';
+  document.getElementById('recordsProfileBadge').textContent=unlocked ? fa(unlocked)+'/'+fa(ACHIEVEMENTS.length) : '‹';
+
+  const agrid=document.getElementById('achievementGrid');
+  agrid.innerHTML=ACHIEVEMENTS.map(a=>{
+    const value=Number(stats[a.metric]||0);
+    const done=value>=a.target;
+    const pct=Math.min(100,Math.round(value/a.target*100));
+    return `<div class="achievement-card ${done?'unlocked':''}">
+      <span class="achievement-state">${done?'باز شد ✓':fa(Math.min(value,a.target))+'/'+fa(a.target)}</span>
+      <div class="achievement-icon">${a.icon}</div>
+      <h4>${a.title}</h4>
+      <p>${a.desc}</p>
+      <div class="ach-progress"><i style="width:${Math.max(done?100:3,pct)}%"></i></div>
+    </div>`;
+  }).join('');
+
+  const records=collectExerciseRecords();
+  const rwrap=document.getElementById('exerciseRecords');
+  if(!records.length){
+    rwrap.innerHTML='<div class="record-empty">هنوز رکورد حرکتی ثبت نشده است.<br>بعد از اولین تمرین، بهترین ست هر حرکت اینجا ظاهر می‌شود.</div>';
+  }else{
+    rwrap.innerHTML=records.map((r,i)=>{
+      const set=r.bestSet||{};
+      const main=Number(set.weight)>0
+        ? `${fa(set.weight)} kg × ${fa(set.reps)}`
+        : `${fa(set.reps||r.bestReps)} تکرار`;
+      const e1rm=r.bestE1RM>0 ? 'e1RM '+fa(r.bestE1RM.toFixed(1))+' kg' : 'بهترین تکرار';
+      return `<div class="record-row">
+        <div class="record-rank">${fa(i+1)}</div>
+        <div class="record-info">
+          <b>${r.name}</b>
+          <small>${recordDate(r.date)} · ${fa(r.totalSets)} ست ثبت‌شده</small>
+        </div>
+        <div class="record-value">
+          <strong>${main}</strong>
+          <small>${e1rm}</small>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  const prs=collectRecentPRs();
+  const pwrap=document.getElementById('recentPRs');
+  if(!prs.length){
+    pwrap.innerHTML='<div class="record-empty">هنوز PR جدیدی ثبت نشده است. وقتی بهترین عملکرد قبلی را بشکنی، Sven آن را اینجا ثبت می‌کند.</div>';
+  }else{
+    pwrap.innerHTML=prs.slice(0,8).map(pr=>`<div class="pr-row">
+      <div class="pr-dot">★</div>
+      <div>
+        <b>${pr.exercise} · ${Number(pr.weight)>0?fa(pr.weight)+'kg × ':''}${fa(pr.reps)}</b>
+        <small>${recordDate(pr.at)}</small>
+      </div>
+    </div>`).join('');
+  }
+
+  if(stats.sessions===0){
+    document.getElementById('recordsHeroTitle').textContent='اولین رکوردت منتظر توست';
+  }else if(unlocked===ACHIEVEMENTS.length){
+    document.getElementById('recordsHeroTitle').textContent='همه دستاوردها باز شدند 🏆';
+  }else{
+    document.getElementById('recordsHeroTitle').textContent=fa(unlocked)+' دستاورد باز شده';
+  }
+}
+
 
 /* Persistent Sven profile */
 const PROFILE_KEY = 'sven.profile.v1';
@@ -2459,6 +2796,11 @@ document.getElementById('obBack').addEventListener('click',()=>{
 });
 document.getElementById('closeOnboarding').addEventListener('click',closeSmartOnboarding);
 document.getElementById('openOnboardingFromProfile').addEventListener('click',()=>openSmartOnboarding(true));
+document.getElementById('openRecords').addEventListener('click',()=>{
+  renderAchievementsRecords();
+  showPage('records');
+});
+document.getElementById('recordsBack').addEventListener('click',()=>showPage('profile'));
 
 
 function cleanupLegacyTargetMuscles(){
