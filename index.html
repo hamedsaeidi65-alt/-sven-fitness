@@ -196,7 +196,74 @@
       .hero h2{font-size:25px}
       .cta{min-width:160px}
     }
-  </style>
+  
+    /* V2.7 — persistent profile */
+    .profile-status{
+      display:inline-flex;align-items:center;gap:7px;margin:8px auto 0;
+      padding:7px 11px;border-radius:999px;font-size:10px;font-weight:850;
+      color:var(--lime);background:rgba(183,255,0,.08);
+      border:1px solid rgba(183,255,0,.28)
+    }
+    .profile-status.empty{color:#b4b4bb;background:rgba(255,255,255,.04);border-color:var(--line)}
+    .goal-card{
+      margin-top:12px;padding:14px 16px;border-radius:18px;text-align:right;
+      background:#0b0b0d;border:1px solid var(--line)
+    }
+    .goal-card small{display:block;color:#777983;font-size:10px;margin-bottom:6px}
+    .goal-card strong{font-size:14px;color:#f4f4f6}
+    .profile-actions{display:grid;grid-template-columns:1fr;gap:9px;margin-top:13px}
+    .edit-profile{
+      width:100%;border:0;background:var(--lime);color:#050505;border-radius:17px;
+      padding:14px;font-weight:950
+    }
+    .form-modal{
+      position:fixed;inset:0;z-index:120;display:none;overflow:auto;
+      background:rgba(0,0,0,.78);backdrop-filter:blur(12px);
+      padding:max(16px,env(safe-area-inset-top)) 14px calc(18px + env(safe-area-inset-bottom))
+    }
+    .form-modal.open{display:block}
+    .sheet{
+      width:min(100%,470px);margin:22px auto 0;background:#0b0b0e;
+      border:1px solid var(--line);border-radius:28px;padding:18px;
+      box-shadow:0 28px 80px rgba(0,0,0,.55)
+    }
+    .sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .sheet-head h3{margin:0;font-size:21px}
+    .sheet-close{
+      width:42px;height:42px;border-radius:50%;border:1px solid var(--line);
+      background:#17171b;color:#fff;font-size:22px
+    }
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .field{display:grid;gap:7px}
+    .field.full{grid-column:1/-1}
+    .field label{font-size:11px;color:#8b8c94;padding-right:3px}
+    .field input,.field select{
+      width:100%;height:50px;border-radius:15px;border:1px solid var(--line);
+      background:#121217;color:#fff;padding:0 13px;outline:none;text-align:right;
+      -webkit-appearance:none;appearance:none
+    }
+    .field input:focus,.field select:focus{border-color:rgba(183,255,0,.55);box-shadow:0 0 0 3px rgba(183,255,0,.06)}
+    .field input::placeholder{color:#55575f}
+    .field select option{background:#121217;color:#fff}
+    .form-hint{
+      margin:13px 1px;color:#74757d;font-size:10px;line-height:1.8
+    }
+    .form-actions{display:grid;grid-template-columns:1fr 2fr;gap:9px;margin-top:14px}
+    .form-cancel,.form-save{
+      height:50px;border-radius:16px;font-weight:900
+    }
+    .form-cancel{border:1px solid var(--line);background:#141419;color:#fff}
+    .form-save{border:0;background:var(--lime);color:#050505}
+    .saved-toast{
+      position:fixed;z-index:180;left:50%;bottom:calc(95px + env(safe-area-inset-bottom));
+      transform:translate(-50%,18px);opacity:0;pointer-events:none;
+      background:#1a1b1f;border:1px solid rgba(183,255,0,.28);color:#fff;
+      border-radius:999px;padding:10px 15px;font-size:11px;font-weight:850;
+      transition:.22s ease
+    }
+    .saved-toast.show{opacity:1;transform:translate(-50%,0)}
+
+</style>
 </head>
 <body>
 <div class="shell">
@@ -326,23 +393,35 @@
   </main>
 
   <main id="profile" class="page">
-    <div class="header"><h2>پروفایل</h2><div class="circle">⚙</div></div>
+    <div class="header"><h2>پروفایل</h2><div class="circle" id="profileSettingsBtn">⚙</div></div>
     <section class="profile">
       <div class="pavatar"></div>
-      <h3>پروفایل شما</h3>
-      <p>اطلاعات بدنی و اهداف تمرینی</p>
+      <h3 id="profileDisplayName">پروفایل شما</h3>
+      <p id="profileSummary">اطلاعات بدنی و اهداف تمرینی</p>
+      <div id="profileStatus" class="profile-status empty">پروفایل هنوز تکمیل نشده</div>
+
       <div class="pm">
-        <div><strong>—</strong><span>وزن</span></div>
-        <div><strong>—</strong><span>قد</span></div>
-        <div><strong>—</strong><span>چربی بدن</span></div>
+        <div><strong id="profileWeight">—</strong><span>وزن (kg)</span></div>
+        <div><strong id="profileHeight">—</strong><span>قد (cm)</span></div>
+        <div><strong id="profileBodyFat">—</strong><span>چربی بدن</span></div>
+      </div>
+
+      <div class="goal-card">
+        <small>هدف فعلی</small>
+        <strong id="profileGoal">هنوز انتخاب نشده</strong>
+      </div>
+
+      <div class="profile-actions">
+        <button class="edit-profile" id="editProfileBtn">تکمیل / ویرایش پروفایل</button>
       </div>
     </section>
+
     <div class="menu">
-      <div class="item"><span>🎯 اهداف تمرینی</span><b>‹</b></div>
+      <div class="item"><span>🎯 هدف و سطح تمرین</span><b id="profileLevelLabel">—</b></div>
+      <div class="item"><span>📅 روزهای تمرین در هفته</span><b id="profileDaysLabel">—</b></div>
       <div class="item"><span>⌚ اتصال ساعت و Health</span><b>‹</b></div>
       <div class="item"><span>🏆 دستاوردها و رکوردها</span><b>‹</b></div>
       <div class="item"><span>🔔 اعلان‌های تمرین</span><b>‹</b></div>
-      <div class="item"><span>🌐 زبان و واحدها</span><b>‹</b></div>
     </div>
   </main>
 
@@ -354,6 +433,90 @@
     <button class="navbtn" data-page="profile"><span class="icon">○</span><span class="label">پروفایل</span></button>
   </nav>
 </div>
+
+
+<div class="form-modal" id="profileModal">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h3>مشخصات تمرینی</h3>
+      <button class="sheet-close" id="closeProfileModal">×</button>
+    </div>
+
+    <form id="profileForm">
+      <div class="form-grid">
+        <div class="field full">
+          <label for="pfName">نام</label>
+          <input id="pfName" type="text" autocomplete="name" placeholder="مثلاً حامد" />
+        </div>
+
+        <div class="field">
+          <label for="pfAge">سن</label>
+          <input id="pfAge" type="number" inputmode="numeric" min="13" max="100" placeholder="40" />
+        </div>
+
+        <div class="field">
+          <label for="pfHeight">قد (سانتی‌متر)</label>
+          <input id="pfHeight" type="number" inputmode="decimal" min="100" max="250" step="0.1" placeholder="183" />
+        </div>
+
+        <div class="field">
+          <label for="pfWeight">وزن (کیلوگرم)</label>
+          <input id="pfWeight" type="number" inputmode="decimal" min="30" max="300" step="0.1" placeholder="85" />
+        </div>
+
+        <div class="field">
+          <label for="pfBodyFat">درصد چربی (اختیاری)</label>
+          <input id="pfBodyFat" type="number" inputmode="decimal" min="2" max="60" step="0.1" placeholder="15" />
+        </div>
+
+        <div class="field full">
+          <label for="pfGoal">هدف اصلی</label>
+          <select id="pfGoal">
+            <option value="">انتخاب هدف</option>
+            <option value="fat_loss">کاهش چربی</option>
+            <option value="muscle_gain">عضله‌سازی</option>
+            <option value="strength">افزایش قدرت</option>
+            <option value="recomp">کاهش چربی + عضله‌سازی</option>
+            <option value="fitness">آمادگی جسمانی عمومی</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="pfLevel">سطح تمرین</label>
+          <select id="pfLevel">
+            <option value="">انتخاب</option>
+            <option value="beginner">مبتدی</option>
+            <option value="intermediate">متوسط</option>
+            <option value="advanced">پیشرفته</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="pfDays">تمرین در هفته</label>
+          <select id="pfDays">
+            <option value="">انتخاب</option>
+            <option value="2">۲ روز</option>
+            <option value="3">۳ روز</option>
+            <option value="4">۴ روز</option>
+            <option value="5">۵ روز</option>
+            <option value="6">۶ روز</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-hint">
+        اطلاعات فقط داخل همین مرورگر/گوشی ذخیره می‌شود و با بستن Sven پاک نمی‌شود.
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="form-cancel" id="cancelProfile">انصراف</button>
+        <button type="submit" class="form-save">ذخیره اطلاعات</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="saved-toast" id="savedToast">پروفایل ذخیره شد ✓</div>
 
 <div class="modal" id="workoutModal">
   <div class="modal-inner">
@@ -392,10 +555,16 @@ nav.forEach(btn=>btn.addEventListener('click',()=>showPage(btn.dataset.page)));
 function setGreeting(){
   const h=new Date().getHours();
   const t=h<5?'شب بخیر':h<12?'صبح بخیر':h<17?'ظهر بخیر':h<21?'عصر بخیر':'شب بخیر';
-  document.getElementById('greeting').textContent=t;
+  let name='';
+  try{
+    const p=JSON.parse(localStorage.getItem('sven.profile.v1') || 'null');
+    name=p?.name ? '، '+p.name : '';
+  }catch(e){}
+  document.getElementById('greeting').textContent=t+name;
 }
 window.addEventListener('load', async()=>{
   setGreeting();
+  renderProfile();
   showPage('home');
   if('serviceWorker' in navigator){
     try {
@@ -445,6 +614,138 @@ function stopTimer(){ running=false; if(timer){clearInterval(timer); timer=null;
 document.getElementById('toggleTimer').onclick=()=>{ if(running){stopTimer();document.getElementById('toggleTimer').textContent='ادامه';} else {startTimer();document.getElementById('toggleTimer').textContent='توقف';} };
 document.getElementById('completeSet').onclick=()=>{ left=45; renderTimer(); startTimer(); navigator.vibrate?.(30); };
 renderTimer();
+
+
+/* Persistent Sven profile */
+const PROFILE_KEY = 'sven.profile.v1';
+const goalLabels = {
+  fat_loss:'کاهش چربی',
+  muscle_gain:'عضله‌سازی',
+  strength:'افزایش قدرت',
+  recomp:'کاهش چربی + عضله‌سازی',
+  fitness:'آمادگی جسمانی عمومی'
+};
+const levelLabels = {
+  beginner:'مبتدی',
+  intermediate:'متوسط',
+  advanced:'پیشرفته'
+};
+
+function loadProfile(){
+  try {
+    return JSON.parse(localStorage.getItem(PROFILE_KEY) || 'null');
+  } catch(e) {
+    return null;
+  }
+}
+
+function saveProfile(data){
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(data));
+}
+
+function profileComplete(p){
+  return !!(p && p.height && p.weight && p.goal && p.level && p.days);
+}
+
+function renderProfile(){
+  const p = loadProfile();
+  const nameEl = document.getElementById('profileDisplayName');
+  const summaryEl = document.getElementById('profileSummary');
+  const statusEl = document.getElementById('profileStatus');
+
+  if(!p){
+    nameEl.textContent='پروفایل شما';
+    summaryEl.textContent='اطلاعات بدنی و اهداف تمرینی';
+    statusEl.textContent='پروفایل هنوز تکمیل نشده';
+    statusEl.classList.add('empty');
+    document.getElementById('profileWeight').textContent='—';
+    document.getElementById('profileHeight').textContent='—';
+    document.getElementById('profileBodyFat').textContent='—';
+    document.getElementById('profileGoal').textContent='هنوز انتخاب نشده';
+    document.getElementById('profileLevelLabel').textContent='—';
+    document.getElementById('profileDaysLabel').textContent='—';
+    return;
+  }
+
+  nameEl.textContent = p.name ? p.name : 'پروفایل شما';
+  const ageText = p.age ? `${fa(p.age)} سال` : '';
+  summaryEl.textContent = [ageText, levelLabels[p.level] || ''].filter(Boolean).join(' · ') || 'اطلاعات بدنی و اهداف تمرینی';
+
+  if(profileComplete(p)){
+    statusEl.textContent='پروفایل آماده شخصی‌سازی است ✓';
+    statusEl.classList.remove('empty');
+  }else{
+    statusEl.textContent='بعضی اطلاعات هنوز ناقص است';
+    statusEl.classList.add('empty');
+  }
+
+  document.getElementById('profileWeight').textContent = p.weight ? fa(p.weight) : '—';
+  document.getElementById('profileHeight').textContent = p.height ? fa(p.height) : '—';
+  document.getElementById('profileBodyFat').textContent = p.bodyFat ? fa(p.bodyFat)+'٪' : '—';
+  document.getElementById('profileGoal').textContent = goalLabels[p.goal] || 'هنوز انتخاب نشده';
+  document.getElementById('profileLevelLabel').textContent = levelLabels[p.level] || '—';
+  document.getElementById('profileDaysLabel').textContent = p.days ? fa(p.days)+' روز' : '—';
+
+  // Personalize the home greeting when a name exists.
+  setGreeting();
+}
+
+function fillProfileForm(){
+  const p = loadProfile() || {};
+  document.getElementById('pfName').value = p.name || '';
+  document.getElementById('pfAge').value = p.age || '';
+  document.getElementById('pfHeight').value = p.height || '';
+  document.getElementById('pfWeight').value = p.weight || '';
+  document.getElementById('pfBodyFat').value = p.bodyFat || '';
+  document.getElementById('pfGoal').value = p.goal || '';
+  document.getElementById('pfLevel').value = p.level || '';
+  document.getElementById('pfDays').value = p.days || '';
+}
+
+function openProfileModal(){
+  fillProfileForm();
+  document.getElementById('profileModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeProfileModal(){
+  document.getElementById('profileModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+document.getElementById('editProfileBtn').addEventListener('click', openProfileModal);
+document.getElementById('profileSettingsBtn').addEventListener('click', openProfileModal);
+document.getElementById('closeProfileModal').addEventListener('click', closeProfileModal);
+document.getElementById('cancelProfile').addEventListener('click', closeProfileModal);
+
+document.getElementById('profileModal').addEventListener('click', (e)=>{
+  if(e.target.id==='profileModal') closeProfileModal();
+});
+
+document.getElementById('profileForm').addEventListener('submit', (e)=>{
+  e.preventDefault();
+
+  const data = {
+    name: document.getElementById('pfName').value.trim(),
+    age: document.getElementById('pfAge').value,
+    height: document.getElementById('pfHeight').value,
+    weight: document.getElementById('pfWeight').value,
+    bodyFat: document.getElementById('pfBodyFat').value,
+    goal: document.getElementById('pfGoal').value,
+    level: document.getElementById('pfLevel').value,
+    days: document.getElementById('pfDays').value,
+    updatedAt: new Date().toISOString()
+  };
+
+  saveProfile(data);
+  renderProfile();
+  closeProfileModal();
+
+  const toast=document.getElementById('savedToast');
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),1800);
+});
+
 
 const input=document.getElementById('chatInput');
 const chat=document.querySelector('.chat');
