@@ -188,3 +188,10 @@ Changes from V4.4:
 - Added cache-busting query strings to icon/manifest links.
 - Uses the selected geometric lime/white Sven icon.
 - JavaScript syntax check: PASS.
+
+## V4.27 — Weekly Check-in
+- Added weekly check-in to Progress: weight, waist, navel, chest, hips, arm and thigh.
+- Added front, side and back progress-photo capture/upload.
+- Numeric history persists in localStorage; photos persist locally in IndexedDB to avoid localStorage image limits.
+- Shows latest check-in and weight change.
+- JavaScript syntax check: PASS.
