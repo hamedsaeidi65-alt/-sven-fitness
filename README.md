@@ -1,3 +1,11 @@
+# Sven Fitness V4.6 — GitHub Pages Image Reliability Fix
+
+- 25 dedicated exercise SVGs are now embedded directly inside `index.html` as data URIs.
+- Exercise images no longer depend on `assets/exercises` being uploaded correctly.
+- Added automatic schematic fallback if any image fails to render.
+- Service Worker cache bumped to `sven-v4.6` and no longer requires exercise asset files during install.
+- Workout plan, six-pack priority, and progressive overload logic remain unchanged.
+
 Sven Fitness V4.5 — Dedicated Exercise Images
 
 Changes from V4.4:
