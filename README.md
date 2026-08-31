@@ -27,3 +27,11 @@ Changes from V4.4:
 - Added large flat timer with slim segmented-style progress bar.
 - Primary set action is full width; secondary rest control is compact.
 - Next exercise and finish workout remain secondary footer actions.
+
+
+## V4.10 — Premium Workouts / Concept 2
+- Redesigned Workouts page using approved Concept 2 hierarchy.
+- Today card with one primary Start CTA.
+- Compact weekly plan rows.
+- Removed prototype/version/promotional copy from main UI.
+- Existing manual plan and workout engine preserved.

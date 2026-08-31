@@ -940,6 +940,33 @@
 <style id="manual-plan-styles">
 .manual-plan{margin:14px 0 100px}.manual-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.manual-head button,.manual-add,.manual-save,.manual-start{border:0;border-radius:14px;background:var(--lime);color:#050505;font-family:inherit;font-weight:950;padding:11px 14px}.manual-day{background:#111218;border:1px solid #24262d;border-radius:20px;padding:14px;margin:10px 0}.manual-day-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.manual-day-name{font-weight:950;font-size:13px}.manual-day-actions{display:flex;gap:6px}.manual-day-actions button{border:1px solid #30323a;background:#17181e;color:#ddd;border-radius:10px;padding:7px 9px;font-family:inherit}.manual-ex{display:grid;grid-template-columns:1fr auto;gap:7px;padding:10px 0;border-top:1px solid #202229;margin-top:10px}.manual-ex b{font-size:11px}.manual-ex small{display:block;color:#777;font-size:8px;margin-top:4px}.manual-empty{color:#70727a;text-align:center;padding:18px;font-size:10px}.manual-modal{position:fixed;z-index:500;inset:0;background:rgba(0,0,0,.78);display:none;align-items:flex-end;justify-content:center}.manual-modal.open{display:flex}.manual-sheet{width:min(100%,480px);max-height:88vh;overflow:auto;background:#0e0f13;border:1px solid #292b33;border-radius:26px 26px 0 0;padding:18px 16px calc(20px + env(safe-area-inset-bottom))}.manual-sheet h3{margin:0 0 14px}.manual-field{margin:10px 0}.manual-field label{display:block;color:#8b8d96;font-size:9px;margin-bottom:6px}.manual-field input,.manual-field select{width:100%;box-sizing:border-box;border:1px solid #30323a;background:#17181e;color:#fff;border-radius:13px;padding:12px;font-family:inherit}.manual-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.manual-close{float:left;border:0;background:#22242b;color:#fff;border-radius:50%;width:34px;height:34px}.manual-delete{background:#2a1518!important;color:#ff7c86!important;border-color:#4b2026!important}.manual-note{font-size:9px;line-height:1.8;color:#777;margin:8px 0 14px}.manual-badge{color:var(--lime);font-size:8px;font-weight:900}.manual-primary-card{margin:12px 0;padding:13px;border-radius:17px;border:1px solid rgba(183,255,0,.2);background:rgba(183,255,0,.05)}
 </style>
+
+<style id="sven-v410-workouts-premium">
+#workouts{padding-bottom:110px}
+#workouts>.header{margin-bottom:18px;align-items:center}
+#workouts>.header h2{font-size:25px;letter-spacing:-.5px;margin:0}
+#workouts>.header .circle{width:38px;height:38px;border-radius:12px;border:1px solid rgba(183,255,0,.55);background:#10120d;color:var(--lime);font-size:23px}
+#workouts .manual-plan{margin:0 0 26px}
+#workouts .manual-head{display:none}
+#workouts .manual-note{display:none}
+#workouts .chips,#workouts>.list{display:none}
+.workout-today{border:1px solid rgba(183,255,0,.38);background:linear-gradient(135deg,#151810,#0d0e10 72%);border-radius:22px;padding:18px;margin-bottom:22px;box-shadow:0 16px 42px rgba(0,0,0,.22)}
+.workout-today-kicker{display:flex;align-items:center;gap:7px;color:var(--lime);font-size:9px;font-weight:950;margin-bottom:12px}.workout-today-kicker i{width:7px;height:7px;background:var(--lime);border-radius:50%;box-shadow:0 0 12px rgba(183,255,0,.5)}
+.workout-today h3{font-size:24px;margin:0 0 11px;letter-spacing:-.5px}.workout-today-meta{display:flex;gap:15px;align-items:center;color:#999ca5;font-size:9px;margin-bottom:17px}.workout-today-meta b{color:#d8d9dd;font-size:10px}
+.workout-start-main{width:100%;border:0;border-radius:15px;padding:14px;background:var(--lime);color:#050505;font-family:inherit;font-weight:950;font-size:13px;box-shadow:0 7px 24px rgba(183,255,0,.12)}
+.weekly-head{display:flex;align-items:center;justify-content:space-between;margin:2px 2px 9px}.weekly-head b{font-size:14px}.weekly-head button{border:0;background:none;color:var(--lime);font-family:inherit;font-size:9px;font-weight:850;padding:5px}
+#workouts .manual-day{background:#111216;border:1px solid #24262b;border-radius:16px;padding:0;margin:8px 0;overflow:hidden;transition:.15s}
+#workouts .manual-day.is-today{border-color:rgba(183,255,0,.5);box-shadow:inset 3px 0 0 var(--lime)}
+#workouts .manual-day-top{padding:13px 14px;gap:10px;cursor:pointer}
+#workouts .manual-day-name{font-size:12px;line-height:1.55}
+#workouts .manual-day-top small{font-size:8px!important;color:#777b84!important}
+#workouts .manual-day-actions{display:none}
+#workouts .manual-ex{display:none}
+#workouts .manual-start{display:none}
+.week-row-arrow{color:#7f838c;font-size:18px;font-weight:400;margin-right:auto}.is-today .week-row-arrow{color:var(--lime)}
+.week-row-check{width:25px;height:25px;border:1px solid #3a3c43;border-radius:50%;display:grid;place-items:center;color:#555;font-size:12px}.is-today .week-row-check{border-color:var(--lime);color:var(--lime)}
+.program-edit{width:100%;margin-top:12px;border:1px solid #303239;background:#111216;color:#d8d9dd;border-radius:15px;padding:12px;font-family:inherit;font-weight:850;font-size:10px}
+</style>
 </head>
 <body>
 
@@ -1017,9 +1044,11 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
   <main id="workouts" class="page">
     <div class="header"><h2>تمرینات</h2><div class="circle" id="manualPlanAddDay">＋</div></div>
     <section class="manual-plan" id="manualPlanSection">
-      <div class="manual-head"><div><b>برنامه من</b><div class="manual-badge">SVEN V4.3 · MANUAL + SMART PROGRESSION</div></div><div style="display:flex;gap:6px"><button id="loadV43PlanBtn" style="background:#202229;color:var(--lime);border:1px solid #343740">برنامه ۴روزه من</button><button id="manualAddDayBtn">+ روز تمرین</button></div></div>
-      <p class="manual-note">حرکت‌ها، تعداد ست و بازه تکرار را خودت تعیین می‌کنی. Sven فقط عملکرد، RIR و Progressive Overload را تحلیل می‌کند و بدون اجازه تو حرکت برنامه را تغییر نمی‌دهد.<br><span style="color:var(--lime);font-weight:900">Six-Pack Priority:</span> ۱۳ ست مستقیم شکم در هفته + Progressive Overload مستقل.</p>
+      <div class="manual-head"><button id="loadV43PlanBtn">برنامه ۴روزه من</button><button id="manualAddDayBtn">+ روز تمرین</button></div>
+      <div id="workoutTodayCard"></div>
+      <div class="weekly-head"><b>برنامه هفتگی</b><button id="premiumEditPlan">ویرایش برنامه</button></div>
       <div id="manualDaysList"></div>
+      <button class="program-edit" id="premiumAddDay">＋ افزودن روز تمرین</button>
     </section>
     <div class="chips">
       <button class="chip active">همه</button><button class="chip">بالاتنه</button><button class="chip">پایین‌تنه</button><button class="chip">هسته بدن</button><button class="chip">کاردیو</button>
@@ -3678,7 +3707,7 @@ document.getElementById('sendChat').onclick=()=>sendMessage(input.value);
 input.addEventListener('keydown',e=>{ if(e.key==='Enter') sendMessage(input.value); });
 document.querySelectorAll('[data-quick]').forEach(b=>b.onclick=()=>sendMessage(b.dataset.quick));
 
-// === SVEN V4.8 Manual Workout + Six-Pack Priority + Dedicated Exercise Images ===
+// === SVEN V4.10 Premium Workouts + Six-Pack Priority + Dedicated Exercise Images ===
 const MANUAL_PLAN_KEY='sven.manualPlan.v1';
 const SVEN_V43_PLAN={
   version:'4.5',
@@ -3750,9 +3779,19 @@ function manualExerciseSummary(x,ex){
 function renderManualPlan(){
   const root=document.getElementById('manualDaysList');if(!root)return;
   const p=loadManualPlan();
-  if(!p.days.length){root.innerHTML='<div class="manual-empty">هنوز برنامه‌ای نساختی.<br>«برنامه ۴روزه من» را بزن تا نسخه V4.3 بارگذاری شود.</div>';return;}
-  root.innerHTML=p.days.map((d,di)=>`<div class="manual-day"><div class="manual-day-top"><div><div class="manual-day-name">${escapeHtml(d.name||('روز '+(di+1)))}</div><small style="color:#777">${fa((d.exercises||[]).length)} آیتم</small></div><div class="manual-day-actions"><button onclick="openManualExercise('${d.id}')">+ حرکت</button><button onclick="editManualDay('${d.id}')">ویرایش</button><button class="manual-delete" onclick="deleteManualDay('${d.id}')">حذف</button></div></div>${(d.exercises||[]).map((x,i)=>{const ex=exerciseLibrary.find(e=>e.id===x.exerciseId);return `<div class="manual-ex"><div><b>${fa(i+1)}. ${escapeHtml(ex?.name||x.exerciseId)}${x.priority==='abs'?' <span style="color:var(--lime)">★</span>':''}</b><small>${manualExerciseSummary(x,ex)}</small></div><button class="manual-delete" onclick="deleteManualExercise('${d.id}',${i})">×</button></div>`}).join('')||'<div class="manual-empty">حرکتی اضافه نشده</div>'}<button class="manual-start" style="width:100%;margin-top:10px" ${d.exercises?.length?'':'disabled'} onclick="startManualDay('${d.id}')">شروع این تمرین ←</button></div>`).join('');
+  const todayRoot=document.getElementById('workoutTodayCard');
+  if(!p.days.length){if(todayRoot)todayRoot.innerHTML='';root.innerHTML='<div class="manual-empty">هنوز برنامه‌ای نساختی.</div>';return;}
+  const jsDay=new Date().getDay();
+  const preferred={6:'v43_sat',0:'v43_sun',1:'v43_mon',2:'v43_tue'}[jsDay];
+  const today=p.days.find(d=>d.id===preferred)||p.days[0];
+  const strength=(today.exercises||[]).filter(x=>x.mode!=='cardio');
+  const cardio=(today.exercises||[]).find(x=>x.mode==='cardio');
+  const mins=Math.max(35, strength.reduce((n,x)=>n+(Number(x.sets)||3)*3,0)+(cardio?Number(cardio.durationMin)||15:0));
+  const title=(today.name||'تمرین امروز').replace(/^(شنبه|یکشنبه|دوشنبه|سه‌شنبه)\s*[—-]\s*/,'').replace(/\s*\+\s*(تردمیل|دوچرخه).*$/,'');
+  if(todayRoot)todayRoot.innerHTML=`<div class="workout-today"><div class="workout-today-kicker"><i></i> برنامه امروز</div><h3>${escapeHtml(title)}</h3><div class="workout-today-meta"><span>🏋️ <b>${fa(strength.length)}</b> حرکت</span><span>◷ حدود <b>${fa(mins)}</b> دقیقه</span>${cardio?'<span>＋ کاردیو</span>':''}</div><button class="workout-start-main" onclick="startManualDay('${today.id}')">شروع تمرین امروز ←</button></div>`;
+  root.innerHTML=p.days.map((d,di)=>{const isToday=d.id===today.id;const count=(d.exercises||[]).filter(x=>x.mode!=='cardio').length;return `<div class="manual-day ${isToday?'is-today':''}" onclick="startManualDay('${d.id}')"><div class="manual-day-top"><div class="week-row-check">${isToday?'✓':'○'}</div><div><div class="manual-day-name">${escapeHtml(d.name||('روز '+(di+1)))}</div><small>${fa(count)} حرکت${(d.exercises||[]).some(x=>x.mode==='cardio')?' · کاردیو':''}</small></div><span class="week-row-arrow">‹</span></div></div>`}).join('');
 }
+
 function escapeHtml(v){return String(v??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function openManualDay(id=''){const p=loadManualPlan(),d=p.days.find(x=>x.id===id);document.getElementById('manualDayId').value=id;document.getElementById('manualDayName').value=d?.name||'';document.getElementById('manualDayModalTitle').textContent=d?'ویرایش روز تمرین':'روز تمرین جدید';document.getElementById('manualDayModal').classList.add('open')}
 function editManualDay(id){openManualDay(id)}
@@ -3761,6 +3800,7 @@ function openManualExercise(dayId){document.getElementById('manualExerciseDayId'
 function deleteManualExercise(dayId,index){const p=loadManualPlan(),d=p.days.find(x=>x.id===dayId);if(!d)return;d.exercises.splice(index,1);saveManualPlan(p)}
 document.getElementById('loadV43PlanBtn')?.addEventListener('click',()=>{const p=loadManualPlan();if(p.days?.length&&!confirm('برنامه فعلی با برنامه ۴روزه Sven V4.3 جایگزین شود؟'))return;installV43Plan(true);renderManualPlan();refreshProgramUI();showSvenToast('برنامه V4.3 بارگذاری شد','۴ روز تمرین + ۱۳ ست مستقیم شکم در هفته');});
 document.getElementById('manualAddDayBtn')?.addEventListener('click',()=>openManualDay());document.getElementById('manualPlanAddDay')?.addEventListener('click',()=>openManualDay());
+document.getElementById('premiumAddDay')?.addEventListener('click',()=>openManualDay());document.getElementById('premiumEditPlan')?.addEventListener('click',()=>{const p=loadManualPlan();if(p.days?.[0])openManualDay(p.days[0].id);});
 document.querySelectorAll('[data-manual-close]').forEach(b=>b.addEventListener('click',()=>b.closest('.manual-modal').classList.remove('open')));
 document.getElementById('manualSaveDay')?.addEventListener('click',()=>{const name=document.getElementById('manualDayName').value.trim();if(!name)return alert('نام روز یا جلسه را وارد کن.');const id=document.getElementById('manualDayId').value,p=loadManualPlan();if(id){const d=p.days.find(x=>x.id===id);if(d)d.name=name}else p.days.push({id:'day_'+Date.now(),name,exercises:[]});saveManualPlan(p);document.getElementById('manualDayModal').classList.remove('open')});
 const mex=document.getElementById('manualExerciseSelect');
