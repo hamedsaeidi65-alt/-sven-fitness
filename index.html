@@ -183,12 +183,19 @@
     .cc small{color:#777982} .cc strong{display:block;font-size:29px;margin:4px}
     .step{display:flex;justify-content:center;align-items:center;gap:18px;margin-top:9px}
     .step button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#17171c;color:#fff}
-    .restwrap{display:grid;place-items:center;margin:18px 0}
-    .ring{width:150px;height:150px;border-radius:50%;display:grid;place-items:center;position:relative;background:conic-gradient(var(--lime) var(--rest,0deg),#25252a 0)}
-    .ring::after{content:"";position:absolute;inset:10px;background:#08080a;border-radius:50%}
-    .rcontent{position:relative;z-index:2;text-align:center} .rcontent small{color:#777} .rcontent strong{display:block;font-size:31px;margin-top:3px}
-    .actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-    .secondary{border:1px solid var(--line);background:#111115;color:#fff;border-radius:17px;padding:14px;font-weight:850}
+    .restwrap{margin:20px 0 14px}
+    .ring{width:100%;height:auto;display:block;position:relative;background:none;padding:6px 2px 30px;text-align:center}
+    .ring::after{content:"";position:absolute;left:0;right:0;bottom:5px;height:8px;border-radius:999px;background:#24252a}
+    .ring::before{content:"";position:absolute;left:0;bottom:5px;height:8px;width:var(--rest-pct,0%);border-radius:999px;background:var(--lime);z-index:1;box-shadow:0 0 14px rgba(183,255,0,.18)}
+    .rcontent{position:relative;z-index:2;text-align:center}
+    .rcontent small{display:block;color:var(--lime);font-size:11px;font-weight:900;margin-bottom:3px}
+    .rcontent strong{display:block;font-size:48px;line-height:1.05;letter-spacing:1px;margin:2px 0 6px;direction:ltr}
+    .rcontent::after{content:"دقیقه : ثانیه";display:block;color:#777983;font-size:9px}
+    .actions{display:grid;grid-template-columns:1fr;gap:9px}
+    .secondary{border:1px solid var(--line);background:#111115;color:#b9bac1;border-radius:15px;padding:11px;font-weight:850}
+    #completeSet{min-height:56px!important;font-size:15px;border-radius:18px!important}
+    .workout-footer{grid-template-columns:1fr 1fr!important;margin-top:9px}
+    .finish-workout,.next-action{min-height:48px;border-radius:15px!important}
 
     @media(max-width:370px){
       .headline{font-size:30px}
@@ -1534,7 +1541,7 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
     </div>
 
     <div class="actions">
-      <button class="secondary" id="toggleTimer">توقف</button>
+      <button class="secondary" id="toggleTimer">شروع استراحت</button>
       <button class="cta" style="margin:0;width:100%;min-width:0" id="completeSet">ثبت ست ←</button>
     </div>
 
@@ -2876,6 +2883,7 @@ function renderTimer(){
     fa(String(m).padStart(2,'0'))+':'+fa(String(s).padStart(2,'0'));
   const deg=total?((total-left)/total)*360:0;
   document.getElementById('restRing').style.setProperty('--rest',deg+'deg');
+  document.getElementById('restRing').style.setProperty('--rest-pct',(total?((total-left)/total)*100:0)+'%');
 }
 function startTimer(){
   if(running||left<=0)return;

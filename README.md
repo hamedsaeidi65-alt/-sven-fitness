@@ -20,3 +20,10 @@ Changes from V4.4:
 - Removed the involved-muscles/anatomy image card from the live workout screen.
 - Muscle chips in exercise metadata remain available as compact text information.
 - Removed exercise image assets from the package; workout execution now prioritizes sets, load, reps, RIR and progressive overload.
+
+
+## V4.9 — Rest Timer Design D
+- Removed circular rest timer.
+- Added large flat timer with slim segmented-style progress bar.
+- Primary set action is full width; secondary rest control is compact.
+- Next exercise and finish workout remain secondary footer actions.
