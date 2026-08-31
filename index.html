@@ -1152,7 +1152,7 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
 
     <div class="home-tab-panel" id="homeTabWeek">
       <section class="home-week-card">
-        <div class="home-tab-heading"><div><small>برنامه هفتگی</small><h3>چهار روز تمرین</h3></div><span>شنبه تا سه‌شنبه</span></div>
+        <div class="home-tab-heading"><div><small>برنامه هفتگی</small><h3>برنامه ۷ روزه</h3></div><span>شنبه تا جمعه</span></div>
         <div id="homeWeeklyPlan"></div>
       </section>
     </div>
@@ -2030,6 +2030,23 @@ const muscleLabels={
 };
 
 const exerciseLibrary=[
+  {id:'home_arm_swing',name:'قدم جانبی با حرکت دست',en:'Step Touch + Arm Swing',muscles:['legs','shoulders'],compound:0,equipment:'bodyweight',equipmentFa:'بدون تجهیزات',baseWeight:0},
+  {id:'home_dead_bug',name:'ددباگ',en:'Dead Bug',muscles:['core'],compound:0,equipment:'bodyweight',equipmentFa:'بدون تجهیزات',baseWeight:0},
+  {id:'home_bird_dog',name:'برد داگ',en:'Bird Dog',muscles:['core','back'],compound:0,equipment:'bodyweight',equipmentFa:'بدون تجهیزات',baseWeight:0},
+  {id:'home_cat_cow',name:'کت–کاو',en:'Cat–Cow',muscles:['back','core'],compound:0,equipment:'bodyweight',equipmentFa:'بدون تجهیزات',baseWeight:0},
+  {id:'home_hip_flexor',name:'کشش فلکسور لگن',en:'Hip Flexor Stretch',muscles:['legs'],compound:0,equipment:'bodyweight',equipmentFa:'بدون تجهیزات',baseWeight:0},
+  {id:'home_hamstring_stretch',name:'کشش همسترینگ',en:'Hamstring Stretch',muscles:['legs'],compound:0,equipment:'bodyweight',equipmentFa:'بدون تجهیزات',baseWeight:0},
+  {id:'home_thoracic_rotation',name:'چرخش ستون فقرات سینه‌ای',en:'Thoracic Rotation',muscles:['back','core'],compound:0,equipment:'bodyweight',equipmentFa:'بدون تجهیزات',baseWeight:0},
+  {id:'home_child_pose',name:'حالت کودک',en:"Child's Pose",muscles:['back'],compound:0,equipment:'bodyweight',equipmentFa:'بدون تجهیزات',baseWeight:0},
+  {id:'home_shoulder_mobility',name:'موبیلیتی شانه و سینه',en:'Shoulder / Chest Mobility',muscles:['shoulders','chest'],compound:0,equipment:'bodyweight',equipmentFa:'بدون تجهیزات',baseWeight:0},
+  {id:'home_breathing',name:'تنفس آرام',en:'Relaxed Breathing',muscles:['core'],compound:0,equipment:'bodyweight',equipmentFa:'بدون تجهیزات',baseWeight:0},
+  {id:'home_march',name:'راه رفتن سریع درجا',en:'March in Place',muscles:['legs','core'],compound:0,equipment:'bodyweight',equipmentFa:'بدون تجهیزات',baseWeight:0},
+  {id:'home_step_touch',name:'قدم به چپ و راست',en:'Step Touch',muscles:['legs'],compound:0,equipment:'bodyweight',equipmentFa:'بدون تجهیزات',baseWeight:0},
+  {id:'home_knee_drive',name:'زانو بالا تناوبی',en:'Standing Knee Drive',muscles:['core','legs'],compound:0,equipment:'bodyweight',equipmentFa:'بدون تجهیزات',baseWeight:0},
+  {id:'home_side_reach',name:'قدم جانبی همراه دست‌ها',en:'Side Step + Reach',muscles:['legs','shoulders'],compound:0,equipment:'bodyweight',equipmentFa:'بدون تجهیزات',baseWeight:0},
+  {id:'home_low_jack',name:'جک بدون پرش',en:'Low-Impact Jack',muscles:['legs','shoulders'],compound:0,equipment:'bodyweight',equipmentFa:'بدون تجهیزات',baseWeight:0},
+  {id:'home_cross_crunch',name:'کرانچ ایستاده ضربدری',en:'Standing Cross Crunch',muscles:['core'],compound:0,equipment:'bodyweight',equipmentFa:'بدون تجهیزات',baseWeight:0},
+  {id:'home_fast_feet',name:'قدم‌های سریع درجا',en:'Fast Feet — Low Impact',muscles:['legs'],compound:0,equipment:'bodyweight',equipmentFa:'بدون تجهیزات',baseWeight:0},
   {id:'smith_bench',name:'پرس سینه اسمیت',en:'Smith Bench Press',muscles:['chest','triceps','shoulders'],compound:1,equipment:'smith',equipmentFa:'اسمیت',baseWeight:30},
   {id:'smith_incline',name:'پرس بالا سینه اسمیت',en:'Smith Incline Press',muscles:['chest','shoulders','triceps'],compound:1,equipment:'smith',equipmentFa:'اسمیت',baseWeight:25},
   {id:'db_bench',name:'پرس سینه دمبل',en:'Dumbbell Bench Press',muscles:['chest','triceps','shoulders'],compound:1,equipment:'dumbbell',equipmentFa:'دمبل',baseWeight:15},
@@ -3837,8 +3854,8 @@ document.querySelectorAll('[data-quick]').forEach(b=>b.onclick=()=>sendMessage(b
 // === SVEN V4.10 Premium Workouts + Six-Pack Priority + Dedicated Exercise Images ===
 const MANUAL_PLAN_KEY='sven.manualPlan.v1';
 const SVEN_V43_PLAN={
-  version:'4.5',
-  title:'برنامه ۴روزه من · Six-Pack Priority',
+  version:'4.16',
+  title:'برنامه Sven · قدرتی + چربی‌سوزی خانگی',
   days:[
     {id:'v43_sat',name:'شنبه — سینه + پشت‌بازو + تردمیل',exercises:[
       {exerciseId:'smith_bench',sets:3,repMin:6,repMax:8,rest:120},
@@ -3877,6 +3894,33 @@ const SVEN_V43_PLAN={
       {exerciseId:'cable_crunch',sets:3,repMin:10,repMax:15,rest:60,priority:'abs'},
       {exerciseId:'reverse_crunch',sets:3,repMin:10,repMax:15,rest:60,priority:'abs'},
       {exerciseId:'treadmill_walk',mode:'cardio',durationMin:15,durationMax:20,intensity:'سبک',sets:1,rest:0}
+    ]},
+    {id:'v43_wed',name:'چهارشنبه — چربی‌سوزی خانگی کم‌فشار',sessionType:'home_interval',rounds:4,workSec:45,transitionSec:15,roundRestSec:60,exercises:[
+      {exerciseId:'home_march',sets:4,repMin:45,repMax:45,rest:15,mode:'timed',durationSec:45},
+      {exerciseId:'home_step_touch',sets:4,repMin:45,repMax:45,rest:15,mode:'timed',durationSec:45},
+      {exerciseId:'home_knee_drive',sets:4,repMin:45,repMax:45,rest:15,mode:'timed',durationSec:45},
+      {exerciseId:'home_side_reach',sets:4,repMin:45,repMax:45,rest:15,mode:'timed',durationSec:45},
+      {exerciseId:'home_low_jack',sets:4,repMin:45,repMax:45,rest:15,mode:'timed',durationSec:45},
+      {exerciseId:'home_cross_crunch',sets:4,repMin:45,repMax:45,rest:15,mode:'timed',durationSec:45},
+      {exerciseId:'home_fast_feet',sets:4,repMin:45,repMax:45,rest:15,mode:'timed',durationSec:45}
+    ]},
+    {id:'v43_thu',name:'پنجشنبه — کاندیشنینگ خانگی + میان‌تنه',sessionType:'home_conditioning',rounds:3,exercises:[
+      {exerciseId:'home_march',sets:3,mode:'timed',durationSec:60,repMin:60,repMax:60,rest:15},
+      {exerciseId:'home_arm_swing',sets:3,mode:'timed',durationSec:45,repMin:45,repMax:45,rest:15},
+      {exerciseId:'home_knee_drive',sets:3,mode:'timed',durationSec:45,repMin:45,repMax:45,rest:15},
+      {exerciseId:'home_dead_bug',sets:3,repMin:10,repMax:10,rest:15},
+      {exerciseId:'home_bird_dog',sets:3,repMin:10,repMax:10,rest:15},
+      {exerciseId:'reverse_crunch',sets:3,repMin:12,repMax:15,rest:15,priority:'abs'}
+    ]},
+    {id:'v43_fri',name:'جمعه — ریکاوری فعال خانگی',sessionType:'active_recovery',exercises:[
+      {exerciseId:'home_march',sets:1,mode:'timed',durationSec:180,repMin:180,repMax:180,rest:15},
+      {exerciseId:'home_cat_cow',sets:1,repMin:8,repMax:10,rest:15},
+      {exerciseId:'home_hip_flexor',sets:2,mode:'timed',durationSec:30,repMin:30,repMax:30,rest:10},
+      {exerciseId:'home_hamstring_stretch',sets:2,mode:'timed',durationSec:30,repMin:30,repMax:30,rest:10},
+      {exerciseId:'home_thoracic_rotation',sets:2,repMin:8,repMax:8,rest:10},
+      {exerciseId:'home_child_pose',sets:1,mode:'timed',durationSec:45,repMin:45,repMax:45,rest:10},
+      {exerciseId:'home_shoulder_mobility',sets:1,mode:'timed',durationSec:60,repMin:60,repMax:60,rest:10},
+      {exerciseId:'home_breathing',sets:1,mode:'timed',durationSec:120,repMin:120,repMax:120,rest:0}
     ]}
   ]
 };
@@ -3886,7 +3930,15 @@ function loadManualPlan(){try{return JSON.parse(localStorage.getItem(MANUAL_PLAN
 function saveManualPlan(x){localStorage.setItem(MANUAL_PLAN_KEY,JSON.stringify(x));renderManualPlan();refreshProgramUI();}
 function installV43Plan(force=false){
   const current=loadManualPlan();
-  if(!force && current.days?.length)return false;
+  if(!force && current.days?.length){
+    let changed=false;
+    ['v43_wed','v43_thu','v43_fri'].forEach(id=>{
+      const extra=SVEN_V43_PLAN.days.find(d=>d.id===id);
+      if(extra && !current.days.some(d=>d.id===id)){current.days.push(JSON.parse(JSON.stringify(extra)));changed=true;}
+    });
+    if(changed)localStorage.setItem(MANUAL_PLAN_KEY,JSON.stringify(current));
+    return changed;
+  }
   localStorage.setItem(MANUAL_PLAN_KEY,JSON.stringify(cloneV43Plan()));
   selectedManualDayId=null;
   return true;
@@ -3914,7 +3966,7 @@ function renderManualPlan(){
   const strength=(today.exercises||[]).filter(x=>x.mode!=='cardio');
   const cardio=(today.exercises||[]).find(x=>x.mode==='cardio');
   const mins=Math.max(35, strength.reduce((n,x)=>n+(Number(x.sets)||3)*3,0)+(cardio?Number(cardio.durationMin)||15:0));
-  const title=(today.name||'تمرین امروز').replace(/^(شنبه|یکشنبه|دوشنبه|سه‌شنبه)\s*[—-]\s*/,'').replace(/\s*\+\s*(تردمیل|دوچرخه).*$/,'');
+  const title=(today.name||'تمرین امروز').replace(/^(شنبه|یکشنبه|دوشنبه|سه‌شنبه|چهارشنبه|پنجشنبه|جمعه)\s*[—-]\s*/,'').replace(/\s*\+\s*(تردمیل|دوچرخه).*$/,'');
   if(todayRoot)todayRoot.innerHTML=`<div class="workout-today"><div class="workout-today-kicker"><i></i> برنامه امروز</div><h3>${escapeHtml(title)}</h3><div class="workout-today-meta"><span>🏋️ <b>${fa(strength.length)}</b> حرکت</span><span>◷ حدود <b>${fa(mins)}</b> دقیقه</span>${cardio?'<span>＋ کاردیو</span>':''}</div><button class="workout-start-main" onclick="startManualDay('${today.id}')">شروع تمرین امروز ←</button></div>`;
   root.innerHTML=p.days.map((d,di)=>{const isToday=d.id===today.id;const count=(d.exercises||[]).filter(x=>x.mode!=='cardio').length;return `<div class="manual-day ${isToday?'is-today':''}" onclick="startManualDay('${d.id}')"><div class="manual-day-top"><div class="week-row-check">${isToday?'✓':'○'}</div><div><div class="manual-day-name">${escapeHtml(d.name||('روز '+(di+1)))}</div><small>${fa(count)} حرکت${(d.exercises||[]).some(x=>x.mode==='cardio')?' · کاردیو':''}</small></div><span class="week-row-arrow">‹</span></div></div>`}).join('');
 }
@@ -3957,12 +4009,12 @@ function renderHomeWeeklyPlan(){
   const p=loadManualPlan();
   if(!p.days?.length){root.innerHTML='<div class="manual-empty">هنوز برنامه‌ای ثبت نشده است.</div>';return}
   const jsDay=new Date().getDay();
-  const todayId={6:'v43_sat',0:'v43_sun',1:'v43_mon',2:'v43_tue'}[jsDay];
+  const todayId={6:'v43_sat',0:'v43_sun',1:'v43_mon',2:'v43_tue',3:'v43_wed',4:'v43_thu',5:'v43_fri'}[jsDay];
   root.innerHTML=p.days.map((d,i)=>{
     const strength=(d.exercises||[]).filter(x=>x.mode!=='cardio');
     const cardio=(d.exercises||[]).some(x=>x.mode==='cardio');
     const dayName=(d.name||('روز '+(i+1))).split('—')[0].trim();
-    const workoutName=(d.name||'').replace(/^(شنبه|یکشنبه|دوشنبه|سه‌شنبه)\s*[—-]\s*/,'').replace(/\s*\+\s*(تردمیل|دوچرخه).*$/,'');
+    const workoutName=(d.name||'').replace(/^(شنبه|یکشنبه|دوشنبه|سه‌شنبه|چهارشنبه|پنجشنبه|جمعه)\s*[—-]\s*/,'').replace(/\s*\+\s*(تردمیل|دوچرخه).*$/,'');
     return `<div class="home-week-row ${d.id===todayId?'today':''}" onclick="startManualDay('${d.id}')"><div class="home-week-dot">${d.id===todayId?'امروز':fa(i+1)}</div><div><b>${escapeHtml(dayName+' · '+workoutName)}</b><small>${fa(strength.length)} حرکت${cardio?' · کاردیو':''}</small></div><span>‹</span></div>`;
   }).join('');
 }
@@ -3996,7 +4048,7 @@ document.getElementById('openFullProgress')?.addEventListener('click',()=>showPa
 
 function svenTodayManualDay(){
   const p=loadManualPlan();
-  const map={6:'v43_sat',0:'v43_sun',1:'v43_mon',2:'v43_tue'};
+  const map={6:'v43_sat',0:'v43_sun',1:'v43_mon',2:'v43_tue',3:'v43_wed',4:'v43_thu',5:'v43_fri'};
   const id=map[new Date().getDay()];
   return id ? (p.days||[]).find(d=>d.id===id) : null;
 }
@@ -4032,18 +4084,22 @@ function refreshHomePerformanceCard(){
 
   const strength=(day.exercises||[]).filter(x=>x.mode!=='cardio');
   const cardio=(day.exercises||[]).find(x=>x.mode==='cardio');
-  const mins=Math.max(35,strength.reduce((n,x)=>n+(Number(x.sets)||3)*3,0)+(cardio?(Number(cardio.durationMin)||15):0));
+  const isIntervalDay=day.sessionType==='home_interval';
+  const isConditioning=day.sessionType==='home_conditioning';
+  const isRecovery=day.sessionType==='active_recovery';
+  const mins=isIntervalDay?35:(isConditioning?30:(isRecovery?25:Math.max(35,strength.reduce((n,x)=>n+(Number(x.sets)||3)*3,0)+(cardio?(Number(cardio.durationMin)||15):0))));
   const cleanTitle=(day.name||'تمرین امروز')
-    .replace(/^(شنبه|یکشنبه|دوشنبه|سه‌شنبه)\s*[—-]\s*/,'')
+    .replace(/^(شنبه|یکشنبه|دوشنبه|سه‌شنبه|چهارشنبه|پنجشنبه|جمعه)\s*[—-]\s*/,'')
     .replace(/\s*\+\s*(تردمیل|دوچرخه).*$/,'');
 
   if(title)title.textContent=cleanTitle;
-  if(subtitle)subtitle.textContent='جلسه قدرتی · تقویت و رشد عضلات';
+  const isHomeInterval=isIntervalDay;
+  if(subtitle)subtitle.textContent=isHomeInterval?'کاردیو کم‌فشار · بدون تجهیزات · قابل انجام در منزل':(isConditioning?'کاندیشنینگ + میان‌تنه · بدون تجهیزات · RPE 5/10':(isRecovery?'ریکاوری فعال · موبیلیتی · RPE 2–3/10':'جلسه قدرتی · تقویت و رشد عضلات'));
   if(countEl)countEl.textContent=fa(strength.length)+' حرکت';
   if(durationEl)durationEl.textContent=fa(mins)+' دقیقه';
-  if(typeEl)typeEl.textContent='قدرتی';
-  if(goalTitle)goalTitle.textContent='Progressive Overload فعال';
-  if(goalText)goalText.textContent='هر ست را بهتر از جلسه قبل انجام بده.';
+  if(typeEl)typeEl.textContent=isHomeInterval?'Home Cardio':(isConditioning?'Conditioning':(isRecovery?'Recovery':'قدرتی'));
+  if(goalTitle)goalTitle.textContent=isHomeInterval?'چربی‌سوزی با حداقل تداخل ریکاوری':(isConditioning?'مصرف انرژی + میان‌تنه بدون فشار سنگین':(isRecovery?'آمادگی کامل برای تمرین شنبه':'Progressive Overload فعال'));
+  if(goalText)goalText.textContent=isHomeInterval?'۴ دور · هر حرکت ۴۵ ثانیه · ۱۵ ثانیه تعویض · شدت RPE 5–6':(isConditioning?'۳ دور · حدود ۳۰ دقیقه · بدون پرش · RPE 5/10':(isRecovery?'۲۰–۲۵ دقیقه · حرکات آرام و موبیلیتی · RPE 2–3/10':'هر ست را بهتر از جلسه قبل انجام بده.'));
   if(btn){
     btn.disabled=false;
     const first=btn.querySelector('span'); if(first)first.textContent='شروع تمرین امروز';

@@ -74,3 +74,24 @@ Changes from V4.4:
 - Home progress summary uses real saved session data: sessions, volume, time, best set, latest session.
 - Fixed stale Home hero references that could cause runtime errors after earlier redesigns.
 - JS syntax check: PASS.
+
+
+## V4.15 — Wednesday Home Fat Burn
+- Added Wednesday as a real weekday-aware session.
+- 35-minute low-impact home cardio, no equipment and no jumping.
+- 4 rounds: 45 sec work / 15 sec transition; 60 sec between rounds.
+- Movements: March in Place, Step Touch, Standing Knee Drive, Side Step + Reach, Low-Impact Jack, Standing Cross Crunch, Fast Feet.
+- Target intensity: RPE 5–6/10 to raise energy expenditure without turning the day into another hard strength/HIIT session.
+- Existing users are migrated automatically: Wednesday is appended without overwriting Saturday–Tuesday.
+- Home Today card and Weekly Plan recognize Wednesday.
+- JS syntax check: PASS.
+
+
+## V4.16 — Full 7-Day Plan
+- Thursday added: Home Conditioning + Core, ~30 min, 3 rounds, no equipment/no jumping, RPE 5/10.
+- Friday added: Active Recovery at home, 20–25 min, mobility + easy movement, RPE 2–3/10.
+- Thursday and Friday are recognized by the actual weekday in Today Workout.
+- Weekly Plan now displays Saturday through Friday.
+- Existing users are migrated by appending Wed/Thu/Fri without overwriting their Saturday–Tuesday strength plan.
+- Friday remains intentionally low-load to protect Saturday strength performance.
+- JS syntax check: PASS.
