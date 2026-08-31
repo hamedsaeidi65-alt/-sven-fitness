@@ -15,7 +15,7 @@ Changes from V4.4:
 - Assets are bundled under assets/exercises/ and precached for offline PWA use.
 - Existing manual plan, 13 direct weekly ab sets, RIR and Progressive Overload logic are preserved.
 
-## V4.7 — Workout Console cleanup
+## V4.8 — Workout Console cleanup
 - Removed the exercise image card from the live workout screen.
 - Removed the involved-muscles/anatomy image card from the live workout screen.
 - Muscle chips in exercise metadata remain available as compact text information.
