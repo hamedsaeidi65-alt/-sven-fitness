@@ -117,3 +117,15 @@ Changes from V4.4:
 - Protein and fat stay stable; carbohydrate target is recalculated to keep calories/macros internally consistent.
 - Initial target corrected to an internally consistent 2350 kcal: 180 g protein, 250 g carbs, 70 g fat.
 - JS syntax check: PASS.
+
+
+## V4.19 — 100-Food Library
+- Added exactly 100 curated base foods suitable for Sven's fat-loss/high-protein nutrition workflow.
+- Categories include protein, eggs/dairy, legumes, carbohydrates, vegetables, fruit, nuts/fats, snacks/supplements and composed meals.
+- Each item includes serving reference, calories, protein, carbohydrates and fat.
+- Search and category filters are built into a mobile bottom-sheet Food Library.
+- Tapping a food opens amount + meal selection; nutrition recalculates automatically for the chosen amount.
+- Foods can be added directly to breakfast, lunch, snack or dinner and immediately update the Nutrition Dashboard.
+- Values are labeled as reference/approximate because brand and cooking method can change nutrition.
+- Library count: 100.
+- JS syntax check: PASS.
