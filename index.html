@@ -1113,7 +1113,23 @@
 </style>
 <style id="sven-v423-editable-meals">
 .nutrition-meal-card{background:#101216;border:1px solid #282a30;border-radius:16px;margin:8px 0;overflow:hidden}.nutrition-meal-card .nutrition-meal-row{margin:0;border:0;border-radius:0;background:transparent}.nutrition-food-entry{display:grid;grid-template-columns:1fr 38px;align-items:stretch;border-top:1px solid #24272c}.nutrition-food-main{border:0;background:#0d0f12;color:#e9eaec;font-family:inherit;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;text-align:right;gap:8px}.nutrition-food-main span b,.nutrition-food-main span small{display:block}.nutrition-food-main span b{font-size:9px}.nutrition-food-main span small{font-size:7px;color:#777b84;margin-top:4px;direction:ltr;text-align:right}.nutrition-food-main strong{font-size:8px;color:var(--lime);white-space:nowrap;direction:ltr}.nutrition-food-delete{border:0;border-right:1px solid #24272c;background:#111318;color:#9b9ea5;font-size:18px;min-width:38px}.nutrition-food-delete:active{color:#fff;background:#1b1d22}
-</style></head>
+</style>
+<style id="sven-v424-scroll-safe-sheets">
+.food-library-sheet,.food-add-sheet{
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-y;
+}
+.food-library-handle{
+  width:52px!important;height:5px!important;
+  margin:2px auto 14px!important;
+  cursor:grab;touch-action:none;
+  position:sticky;top:0;z-index:30;
+}
+.food-library-list{touch-action:pan-y}
+</style>
+</head>
 <body>
 
 <!--
@@ -1833,7 +1849,7 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
 
 <div class="food-library-overlay" id="foodLibraryOverlay" hidden onclick="if(event.target===this)this.hidden=true">
   <section class="food-library-sheet" dir="rtl">
-    <div class="food-library-handle"></div>
+    <div class="food-library-handle" id="foodLibraryDragHandle"></div>
     <div class="food-library-head"><div><small>SVEN FOOD LIBRARY</small><h3>انتخاب غذا</h3></div><button type="button" id="closeFoodLibrary" aria-label="بستن" onclick="document.getElementById('foodLibraryOverlay').hidden=true">×</button></div>
     <div class="food-library-search"><span>⌕</span><input id="foodSearch" placeholder="جست‌وجوی غذا..." autocomplete="off"></div>
     <div class="food-category-chips" id="foodCategoryChips"></div>
@@ -1843,7 +1859,7 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
 </div>
 <div class="food-add-overlay" id="foodAddOverlay" hidden onclick="if(event.target===this)this.hidden=true">
   <section class="food-add-sheet" dir="rtl">
-    <div class="food-library-handle"></div>
+    <div class="food-library-handle" id="foodAddDragHandle"></div>
     <div class="food-library-head"><div><small>افزودن به وعده</small><h3 id="foodAddTitle">غذا</h3></div><button type="button" id="closeFoodAdd" aria-label="بستن" onclick="document.getElementById('foodAddOverlay').hidden=true">×</button></div>
     <div class="food-add-nutrition" id="foodAddNutrition"></div>
     <label>وعده<select id="foodMealSelect"><option value="breakfast">صبحانه</option><option value="lunch">ناهار</option><option value="snack">میان‌وعده</option><option value="dinner">شام</option></select></label>
@@ -2091,25 +2107,47 @@ document.getElementById('confirmFoodAdd')?.addEventListener('click',confirmLibra
 document.getElementById('foodLibraryOverlay')?.addEventListener('click',e=>{if(e.target.id==='foodLibraryOverlay')closeFoodLibrary()});
 document.getElementById('foodAddOverlay')?.addEventListener('click',e=>{if(e.target.id==='foodAddOverlay')closeFoodAdd()});
 
-function enableSwipeToClose(sheetSelector, closeFn){
-  const sheet=document.querySelector(sheetSelector); if(!sheet)return;
-  let startY=null, currentY=null;
-  sheet.addEventListener('touchstart',e=>{if(e.touches.length===1){startY=e.touches[0].clientY;currentY=startY;}},{passive:true});
-  sheet.addEventListener('touchmove',e=>{
-    if(startY==null||e.touches.length!==1)return;
+
+
+function enableHandleSwipeClose(handleId,sheetSelector,closeFn){
+  const handle=document.getElementById(handleId);
+  const sheet=document.querySelector(sheetSelector);
+  if(!handle||!sheet)return;
+  let startY=null,currentY=null,dragging=false;
+
+  handle.addEventListener('touchstart',e=>{
+    if(e.touches.length!==1)return;
+    startY=e.touches[0].clientY;
+    currentY=startY;
+    dragging=true;
+    sheet.style.transition='none';
+  },{passive:true});
+
+  handle.addEventListener('touchmove',e=>{
+    if(!dragging||startY==null||e.touches.length!==1)return;
     currentY=e.touches[0].clientY;
     const dy=Math.max(0,currentY-startY);
-    if(dy>0)sheet.style.transform=`translateY(${Math.min(dy,120)}px)`;
+    sheet.style.transform=`translateY(${Math.min(dy,140)}px)`;
   },{passive:true});
-  sheet.addEventListener('touchend',()=>{
+
+  handle.addEventListener('touchend',()=>{
+    if(!dragging)return;
     const dy=(currentY??startY??0)-(startY??0);
+    sheet.style.transition='transform .18s ease';
     sheet.style.transform='';
-    if(dy>70)closeFn();
-    startY=currentY=null;
+    if(dy>80)closeFn();
+    setTimeout(()=>{sheet.style.transition=''},200);
+    dragging=false;startY=currentY=null;
+  },{passive:true});
+
+  handle.addEventListener('touchcancel',()=>{
+    sheet.style.transform='';
+    sheet.style.transition='';
+    dragging=false;startY=currentY=null;
   },{passive:true});
 }
-enableSwipeToClose('.food-library-sheet',closeFoodLibrary);
-enableSwipeToClose('.food-add-sheet',closeFoodAdd);
+enableHandleSwipeClose('foodLibraryDragHandle','.food-library-sheet',closeFoodLibrary);
+enableHandleSwipeClose('foodAddDragHandle','.food-add-sheet',closeFoodAdd);
 
 document.getElementById('nutritionAddFood')?.addEventListener('click',()=>openFoodLibrary('dinner'));
 document.querySelectorAll('[data-log-mode]').forEach(b=>b.addEventListener('click',()=>{

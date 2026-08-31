@@ -163,3 +163,11 @@ Changes from V4.4:
 - Meal and daily calories/macros are recalculated from the remaining items after every edit/delete.
 - Legacy aggregate meals are preserved as a removable legacy item rather than discarded.
 - JavaScript syntax check: PASS.
+
+## V4.24 — Scroll-safe Food Sheet
+- Fixed Food Library closing while the user scrolls/drags the food list.
+- Swipe-to-close no longer listens on the whole bottom sheet.
+- The sheet can only be drag-closed from the small top handle.
+- Food list uses normal native vertical scrolling on iOS.
+- Dark backdrop and × close controls still work.
+- JavaScript syntax check: PASS.
