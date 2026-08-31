@@ -1044,6 +1044,24 @@
 }
 .today-start-btn:disabled{background:#1a1b1f;color:#6e7077;box-shadow:none}
 </style>
+
+<style id="sven-v414-home-tabs">
+.home-tab-panel{display:none}.home-tab-panel.active{display:block}
+.home-tab-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;direction:rtl}
+.home-tab-heading small{display:block;color:var(--lime);font-size:8px;font-weight:950;margin-bottom:4px}
+.home-tab-heading h3{margin:0;font-size:18px}.home-tab-heading>span{color:#7d8088;font-size:9px}
+.home-tab-heading button{border:0;background:none;color:var(--lime);font-family:inherit;font-size:9px;font-weight:900}
+.home-week-card,.home-progress-summary{direction:rtl;text-align:right;background:#101115;border:1px solid #26282e;border-radius:22px;padding:17px;margin:18px 0 26px}
+.home-week-row{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;padding:13px 0;border-top:1px solid #22242a}
+.home-week-row:first-child{border-top:0}.home-week-dot{width:30px;height:30px;border:1px solid #34373e;border-radius:50%;display:grid;place-items:center;color:#777;font-size:9px}
+.home-week-row.today .home-week-dot{border-color:var(--lime);color:var(--lime);box-shadow:0 0 0 3px rgba(183,255,0,.04)}
+.home-week-row b{display:block;font-size:11px}.home-week-row small{display:block;color:#777b84;font-size:8px;margin-top:4px}.home-week-row>span{color:#71747c;font-size:17px}
+.home-week-row.today b{color:#f4f5f6}.home-week-row.today small{color:#9da08f}
+.home-progress-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.home-progress-kpi{background:#0c0d10;border:1px solid #24262c;border-radius:16px;padding:14px}
+.home-progress-kpi small{display:block;color:#7c7f87;font-size:8px}.home-progress-kpi b{display:block;font-size:22px;margin:6px 0 3px;direction:ltr;text-align:right}.home-progress-kpi span{display:block;color:#6e7179;font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-progress-latest{margin-top:10px;background:#0d0f0c;border:1px solid rgba(183,255,0,.14);border-radius:14px;padding:12px;color:#9b9ea5;font-size:9px;line-height:1.8}
+</style>
 </head>
 <body>
 
@@ -1066,13 +1084,14 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
     <div class="sub" id="greeting">عصر بخیر</div>
     <h1 class="headline">برای <span class="lime">تمرین</span> آماده‌ای؟</h1>
 
-    <div class="segment">
-      <button class="active">تمرین امروز</button>
-      <button>برنامه هفتگی</button>
-      <button>پیشرفت</button>
+    <div class="segment home-tabs" id="homeTabs">
+      <button class="active" data-home-tab="today">تمرین امروز</button>
+      <button data-home-tab="week">برنامه هفتگی</button>
+      <button data-home-tab="progress">پیشرفت</button>
     </div>
 
-    <section class="smart-reminder" id="smartReminderCard" aria-live="polite">
+    <div class="home-tab-panel active" id="homeTabToday">
+<section class="smart-reminder" id="smartReminderCard" aria-live="polite">
       <div class="smart-reminder-icon">🔔</div>
       <div class="smart-reminder-copy">
         <small id="smartReminderKicker">SVEN REMINDER</small>
@@ -1129,11 +1148,26 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
       </button>
     </section>
 
-    <div class="section-head"><h3>این هفته</h3><span>مشاهده جزئیات</span></div>
-    <div class="stats">
-      <div class="stat"><small>تمرین‌ها</small><strong>۴/۶</strong><em>۶۷٪ تکمیل</em></div>
-      <div class="stat"><small>کالری</small><strong>۲.۳K</strong><em>kcal</em></div>
-      <div class="stat"><small>فعالیت</small><strong>۵.۴h</strong><em>+۱۲٪</em></div>
+    </div>
+
+    <div class="home-tab-panel" id="homeTabWeek">
+      <section class="home-week-card">
+        <div class="home-tab-heading"><div><small>برنامه هفتگی</small><h3>چهار روز تمرین</h3></div><span>شنبه تا سه‌شنبه</span></div>
+        <div id="homeWeeklyPlan"></div>
+      </section>
+    </div>
+
+    <div class="home-tab-panel" id="homeTabProgress">
+      <section class="home-progress-summary">
+        <div class="home-tab-heading"><div><small>چکیده پیشرفت</small><h3>وضعیت تمرین</h3></div><button id="openFullProgress">جزئیات کامل ←</button></div>
+        <div class="home-progress-grid">
+          <div class="home-progress-kpi"><small>جلسات</small><b id="homeProgressSessions">۰</b><span>ثبت‌شده</span></div>
+          <div class="home-progress-kpi"><small>حجم کل</small><b id="homeProgressVolume">۰</b><span>kg × reps</span></div>
+          <div class="home-progress-kpi"><small>زمان تمرین</small><b id="homeProgressTime">۰m</b><span>مجموع</span></div>
+          <div class="home-progress-kpi"><small>بهترین ست</small><b id="homeProgressBest">—</b><span id="homeProgressBestName">هنوز رکوردی نیست</span></div>
+        </div>
+        <div class="home-progress-latest" id="homeProgressLatest">هنوز جلسه‌ای ثبت نشده است.</div>
+      </section>
     </div>
   </main>
 
@@ -3202,6 +3236,7 @@ function renderProgress(){
     best?fa(best.weight)+'×'+fa(best.reps):'—';
   document.getElementById('progressBestHint').textContent=
     best?best.exercise:'هنوز رکوردی نیست';
+  renderHomeProgressSummary();
 
   const history=document.getElementById('workoutHistory');
   if(!sessions.length){
@@ -3610,21 +3645,17 @@ const onboardingState={step:1,goal:'',level:'',days:''};
 function refreshProgramUI(){
   workoutPlan=buildWorkoutPlanFromProfile();
   const meta=getProgramMeta();
-  const p=profileForProgram();
 
-  document.getElementById('heroWorkoutTitle').textContent=meta.name;
-  document.getElementById('heroDuration').textContent=fa(meta.duration)+' دقیقه';
-  document.getElementById('heroLevel').textContent='سطح '+meta.level;
-  document.getElementById('heroExerciseCount').textContent=fa(meta.count)+' حرکت';
-  document.getElementById('heroFocus').textContent='تمرکز: '+meta.focus;
-  document.getElementById('heroReason').textContent=meta.reason;
-
-  document.getElementById('workoutCardTitle').textContent=meta.name;
-  document.getElementById('workoutCardMeta').textContent=fa(meta.duration)+' دقیقه · '+meta.level+' · '+fa(meta.count)+' حرکت';
-  document.getElementById('workoutCardFocus').textContent=meta.focus.replace(/، /g,' · ');
+  const setText=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value};
+  setText('workoutCardTitle',meta.name);
+  setText('workoutCardMeta',fa(meta.duration)+' دقیقه · '+meta.level+' · '+fa(meta.count)+' حرکت');
+  setText('workoutCardFocus',meta.focus.replace(/، /g,' · '));
 
   renderProfile();
   renderRecoveryPanel();
+  refreshHomePerformanceCard();
+  renderHomeWeeklyPlan();
+  renderHomeProgressSummary();
 }
 
 function syncOnboardingState(){
@@ -3908,6 +3939,61 @@ function renderExerciseInfo(){const e=exerciseLibrary.find(x=>x.id===mex?.value)
 [mes,mmf,mef,mtf].forEach(el=>el?.addEventListener(el===mes?'input':'change',renderExercisePicker));mex?.addEventListener('change',renderExerciseInfo);renderExercisePicker();
 document.getElementById('manualSaveExercise')?.addEventListener('click',()=>{const p=loadManualPlan(),d=p.days.find(x=>x.id===document.getElementById('manualExerciseDayId').value);if(!d)return;const min=Number(document.getElementById('manualRepMin').value),max=Number(document.getElementById('manualRepMax').value);if(min<1||max<min)return alert('بازه تکرار صحیح نیست.');const picked=exerciseLibrary.find(e=>e.id===mex.value);if(picked?.equipment==='cardio')d.exercises.push({exerciseId:mex.value,mode:'cardio',durationMin:15,durationMax:20,intensity:'متوسط',sets:1,rest:0});else d.exercises.push({exerciseId:mex.value,sets:Number(document.getElementById('manualSets').value)||3,repMin:min,repMax:max,rest:Number(document.getElementById('manualRest').value)||90});saveManualPlan(p);document.getElementById('manualExerciseModal').classList.remove('open')});
 
+
+function showHomeTab(name){
+  document.querySelectorAll('#homeTabs [data-home-tab]').forEach(b=>b.classList.toggle('active',b.dataset.homeTab===name));
+  document.querySelectorAll('#home .home-tab-panel').forEach(p=>p.classList.remove('active'));
+  const map={today:'homeTabToday',week:'homeTabWeek',progress:'homeTabProgress'};
+  document.getElementById(map[name]||map.today)?.classList.add('active');
+  if(name==='week')renderHomeWeeklyPlan();
+  if(name==='progress')renderHomeProgressSummary();
+}
+document.querySelectorAll('#homeTabs [data-home-tab]').forEach(b=>b.addEventListener('click',e=>{
+  e.stopPropagation();showHomeTab(b.dataset.homeTab);
+}));
+
+function renderHomeWeeklyPlan(){
+  const root=document.getElementById('homeWeeklyPlan');if(!root)return;
+  const p=loadManualPlan();
+  if(!p.days?.length){root.innerHTML='<div class="manual-empty">هنوز برنامه‌ای ثبت نشده است.</div>';return}
+  const jsDay=new Date().getDay();
+  const todayId={6:'v43_sat',0:'v43_sun',1:'v43_mon',2:'v43_tue'}[jsDay];
+  root.innerHTML=p.days.map((d,i)=>{
+    const strength=(d.exercises||[]).filter(x=>x.mode!=='cardio');
+    const cardio=(d.exercises||[]).some(x=>x.mode==='cardio');
+    const dayName=(d.name||('روز '+(i+1))).split('—')[0].trim();
+    const workoutName=(d.name||'').replace(/^(شنبه|یکشنبه|دوشنبه|سه‌شنبه)\s*[—-]\s*/,'').replace(/\s*\+\s*(تردمیل|دوچرخه).*$/,'');
+    return `<div class="home-week-row ${d.id===todayId?'today':''}" onclick="startManualDay('${d.id}')"><div class="home-week-dot">${d.id===todayId?'امروز':fa(i+1)}</div><div><b>${escapeHtml(dayName+' · '+workoutName)}</b><small>${fa(strength.length)} حرکت${cardio?' · کاردیو':''}</small></div><span>‹</span></div>`;
+  }).join('');
+}
+
+function renderHomeProgressSummary(){
+  const sessions=getSessions();
+  const count=sessions.length;
+  const volume=sessions.reduce((n,x)=>n+Number(x.volume||0),0);
+  const mins=sessions.reduce((n,x)=>n+Number(x.durationMin||0),0);
+  let best=null;
+  sessions.forEach(sess=>(sess.exercises||[]).forEach(ex=>(ex.loggedSets||[]).forEach(set=>{
+    const score=Number(set.weight||0)*Number(set.reps||0);
+    if(!best||score>best.score)best={score,exercise:ex.name,weight:Number(set.weight||0),reps:Number(set.reps||0)};
+  })));
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val};
+  set('homeProgressSessions',fa(count));
+  set('homeProgressVolume',volume>=1000?fa((volume/1000).toFixed(1))+'K':fa(Math.round(volume)));
+  set('homeProgressTime',mins>=60?fa((mins/60).toFixed(1))+'h':fa(mins)+'m');
+  set('homeProgressBest',best?fa(best.weight)+'×'+fa(best.reps):'—');
+  set('homeProgressBestName',best?best.exercise:'هنوز رکوردی نیست');
+  const latest=document.getElementById('homeProgressLatest');
+  if(latest){
+    if(!sessions.length) latest.textContent='هنوز جلسه‌ای ثبت نشده است.';
+    else{
+      const x=sessions[0],d=new Date(x.completedAt||x.startedAt);
+      latest.textContent=`آخرین جلسه: ${x.name||'تمرین'} · ${d.toLocaleDateString('fa-IR',{month:'short',day:'numeric'})} · ${fa(x.durationMin||0)} دقیقه`;
+    }
+  }
+}
+document.getElementById('openFullProgress')?.addEventListener('click',()=>showPage('progress'));
+
 function svenTodayManualDay(){
   const p=loadManualPlan();
   const map={6:'v43_sat',0:'v43_sun',1:'v43_mon',2:'v43_tue'};
@@ -3965,7 +4051,7 @@ function refreshHomePerformanceCard(){
   }
 }
 
-window.addEventListener('load',()=>{installV43Plan(false);renderManualPlan();refreshProgramUI();refreshHomePerformanceCard();});
+window.addEventListener('load',()=>{installV43Plan(false);renderManualPlan();refreshProgramUI();refreshHomePerformanceCard();renderHomeWeeklyPlan();renderHomeProgressSummary();showHomeTab('today');});
 
 </script>
 </body>

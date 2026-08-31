@@ -63,3 +63,14 @@ Changes from V4.4:
 - Wednesday–Friday display recovery state.
 - Coach remains removed from Home and bottom navigation.
 - JS syntax check: PASS.
+
+
+## V4.14 — Functional Home Tabs
+- Home tabs now actually switch content.
+- “تمرین امروز” shows the weekday-aware daily workout.
+- “برنامه هفتگی” shows the real manual four-day plan and can launch each day.
+- Home “پیشرفت” is intentionally a compact summary only.
+- Bottom-nav Progress page remains the full analytical Progress page.
+- Home progress summary uses real saved session data: sessions, volume, time, best set, latest session.
+- Fixed stale Home hero references that could cause runtime errors after earlier redesigns.
+- JS syntax check: PASS.
