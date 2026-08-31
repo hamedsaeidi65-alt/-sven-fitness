@@ -1,7 +1,7 @@
 {
   "name": "Sven Fitness",
   "short_name": "Sven",
-  "description": "AI Powered Fitness App",
+  "description": "Sven Fitness V4.3 — Manual Workout + Six-Pack Priority",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
