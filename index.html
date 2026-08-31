@@ -155,7 +155,7 @@
 
     .nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);z-index:50;width:min(100%,470px);
       height:calc(76px + env(safe-area-inset-bottom));padding:8px 8px env(safe-area-inset-bottom);
-      display:grid;grid-template-columns:repeat(4,1fr);align-items:center;direction:ltr;
+      display:grid;grid-template-columns:repeat(5,1fr);align-items:center;direction:ltr;
       background:rgba(6,6,8,.96);backdrop-filter:blur(18px);border-top:1px solid rgba(255,255,255,.08)}
     .nav button{border:0;background:transparent;color:#65676f;display:grid;place-items:center;gap:4px;font-size:9px;font-weight:800}
     .nav button.active{color:var(--lime)}
@@ -392,7 +392,7 @@
     .ob-top{display:flex;align-items:center;justify-content:space-between;direction:ltr;margin-bottom:12px}
     .ob-brand{font-size:23px;font-weight:950;letter-spacing:4px}.ob-brand b{color:var(--lime)}
     .ob-close{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:#131419;color:#fff;font-size:20px}
-    .ob-progress{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:6px 0 25px}
+    .ob-progress{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:6px 0 25px}
     .ob-progress i{display:block;height:4px;border-radius:999px;background:#222329}
     .ob-progress i.done,.ob-progress i.active{background:var(--lime)}
     .ob-step{display:none;flex:1}.ob-step.active{display:block;animation:fade .2s ease}
@@ -629,7 +629,7 @@
     }
     .exercise-summary.show{display:block}
     .exercise-summary h4{margin:0 0 10px;font-size:13px}
-    .summary-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+    .summary-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
     .summary-stats div{padding:9px 4px;border-radius:13px;background:#0b0c0f;text-align:center;border:1px solid var(--line)}
     .summary-stats strong{display:block;font-size:13px}
     .summary-stats span{font-size:8px;color:#74757d}
@@ -749,7 +749,7 @@
     .records-hero h2{margin:5px 0 4px;font-size:24px}
     .records-hero p{margin:0;color:#8f9098;font-size:10px;line-height:1.75}
     .records-overview{
-      display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:13px
+      display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:13px
     }
     .records-overview div{
       padding:10px 4px;border-radius:14px;text-align:center;
@@ -1062,6 +1062,21 @@
 .home-progress-kpi small{display:block;color:#7c7f87;font-size:8px}.home-progress-kpi b{display:block;font-size:22px;margin:6px 0 3px;direction:ltr;text-align:right}.home-progress-kpi span{display:block;color:#6e7179;font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .home-progress-latest{margin-top:10px;background:#0d0f0c;border:1px solid rgba(183,255,0,.14);border-radius:14px;padding:12px;color:#9b9ea5;font-size:9px;line-height:1.8}
 </style>
+
+<style id="sven-v417-nutrition-b">
+#nutrition{direction:rtl;text-align:right;padding-bottom:120px}
+.nutrition-summary{background:linear-gradient(145deg,#12150d,#0c0d0f 72%);border:1px solid rgba(183,255,0,.65);border-radius:22px;padding:18px;margin-top:12px}
+.nutrition-kicker{font-size:9px;color:#a2a5ac;font-weight:850}
+.nutrition-cal-row{display:flex;align-items:baseline;gap:7px;margin-top:7px}.nutrition-cal-row strong{font-size:34px;color:var(--lime);direction:ltr}.nutrition-cal-row span{font-size:12px;color:#b6b8be;direction:ltr}.nutrition-cal-row em{font-style:normal;margin-right:auto;color:var(--lime);font-size:11px;font-weight:950}
+.nutrition-progress{height:8px;border-radius:99px;background:#24262a;overflow:hidden;margin:8px 0 16px}.nutrition-progress i{display:block;height:100%;width:0;background:var(--lime);border-radius:inherit;transition:.25s}
+.nutrition-macros{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #2a2c31;padding-top:14px}.nutrition-macros>div{padding:0 10px;border-left:1px solid #292b30}.nutrition-macros>div:last-child{border-left:0}.nutrition-macros small,.nutrition-macros b{display:block;text-align:center}.nutrition-macros small{font-size:8px;color:#8c8f97}.nutrition-macros b{font-size:10px;margin:5px 0;direction:ltr}.nutrition-macros i{display:block;height:4px;background:#27292e;border-radius:10px;overflow:hidden}.nutrition-macros u{display:block;height:100%;width:0;background:var(--lime);border-radius:inherit}
+.nutrition-section-title{display:flex;justify-content:space-between;align-items:center;margin:24px 2px 10px}.nutrition-section-title b{font-size:15px}.nutrition-section-title span{font-size:8px;color:#73767e}
+.nutrition-meal-row{display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:center;position:relative;background:#111216;border:1px solid #282a30;border-radius:14px;padding:11px 12px;margin:7px 0}.nutrition-meal-row:before{content:"";position:absolute;right:29px;top:-8px;height:8px;border-right:1px solid rgba(183,255,0,.28)}.nutrition-meal-row:first-child:before{display:none}.nutrition-meal-icon{width:32px;height:32px;border:1px solid rgba(183,255,0,.35);border-radius:50%;display:grid;place-items:center;color:var(--lime)}.nutrition-meal-copy b{display:block;font-size:10px}.nutrition-meal-copy small{display:block;color:#858891;font-size:8px;margin-top:3px}.nutrition-meal-kcal{color:var(--lime);font-size:9px;font-weight:900;direction:ltr}
+.nutrition-remaining{display:grid;grid-template-columns:1fr 1fr 1.1fr;gap:10px;align-items:center;background:#111216;border:1px solid #292b31;border-radius:18px;padding:14px;margin-top:14px}.nutrition-remaining small,.nutrition-remaining span{display:block;font-size:7px;color:#858891}.nutrition-remaining b{display:block;font-size:17px;margin:5px 0;direction:ltr;text-align:right}.nutrition-protein-ring{height:84px;border:7px solid rgba(183,255,0,.2);border-top-color:var(--lime);border-radius:50%;display:flex;flex-direction:column;justify-content:center;text-align:center}.nutrition-protein-ring strong{font-size:12px;direction:ltr}.nutrition-targets span{margin-top:4px}
+.nutrition-suggestion{display:grid;grid-template-columns:38px 1fr auto;gap:10px;align-items:center;background:#11120e;border:1px solid rgba(183,255,0,.35);border-radius:16px;padding:13px;margin-top:10px}.nutrition-bulb{width:34px;height:34px;border-radius:50%;background:rgba(183,255,0,.08);display:grid;place-items:center;color:var(--lime)}.nutrition-suggestion small{display:block;color:var(--lime);font-size:8px}.nutrition-suggestion b{display:block;font-size:10px;margin-top:3px}.nutrition-suggestion p{font-size:8px;color:#858891;margin:4px 0 0}
+.nutrition-add-main{width:100%;border:0;border-radius:14px;background:var(--lime);color:#050505;font-family:inherit;font-weight:950;font-size:13px;padding:14px;margin-top:12px}
+.nutrition-log-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:9px}.nutrition-log-modes button{background:#111216;border:1px solid #292b31;color:#e7e8ea;border-radius:14px;padding:11px 6px;font-family:inherit}.nutrition-log-modes b,.nutrition-log-modes small{display:block}.nutrition-log-modes b{font-size:9px}.nutrition-log-modes small{font-size:7px;color:#777b84;margin-top:4px}
+</style>
 </head>
 <body>
 
@@ -1206,6 +1221,44 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
     </div>
   </main>
 
+
+  <main id="nutrition" class="page">
+    <div class="header nutrition-header"><h2>تغذیه</h2><div class="circle">⌁</div></div>
+
+    <section class="nutrition-summary">
+      <div class="nutrition-kicker">تغذیه امروز</div>
+      <div class="nutrition-cal-row"><strong id="nutritionCalories">۰</strong><span>/ <b id="nutritionCalTarget">۲۲۰۰</b> kcal</span><em id="nutritionCalPct">۰٪</em></div>
+      <div class="nutrition-progress"><i id="nutritionCalBar"></i></div>
+      <div class="nutrition-macros">
+        <div><small>پروتئین</small><b><span id="nutritionProtein">۰</span> / <span id="nutritionProteinTarget">۱۷۰</span> g</b><i><u id="nutritionProteinBar"></u></i></div>
+        <div><small>کربوهیدرات</small><b><span id="nutritionCarbs">۰</span> / <span id="nutritionCarbsTarget">۱۹۰</span> g</b><i><u id="nutritionCarbsBar"></u></i></div>
+        <div><small>چربی</small><b><span id="nutritionFat">۰</span> / <span id="nutritionFatTarget">۷۰</span> g</b><i><u id="nutritionFatBar"></u></i></div>
+      </div>
+    </section>
+
+    <section class="nutrition-meals">
+      <div class="nutrition-section-title"><b>وعده‌های امروز</b><span id="nutritionDate"></span></div>
+      <div id="nutritionMealList"></div>
+    </section>
+
+    <section class="nutrition-remaining">
+      <div><small>تا هدف امروز</small><b><span id="nutritionRemainingCal">۲۲۰۰</span> kcal</b><span>باقی‌مانده</span></div>
+      <div class="nutrition-protein-ring"><strong id="nutritionRemainingProtein">۱۷۰ g</strong><small>پروتئین باقی‌مانده</small></div>
+      <div class="nutrition-targets"><small>هدف روزانه</small><span>۲۲۰۰ kcal</span><span>۱۷۰ g پروتئین</span><span>۱۹۰ g کربوهیدرات</span><span>۷۰ g چربی</span></div>
+    </section>
+
+    <section class="nutrition-suggestion">
+      <div class="nutrition-bulb">◉</div><div><small>پیشنهاد شام</small><b id="nutritionDinnerSuggestion">مرغ + سالاد حجیم + ماست یونانی</b><p id="nutritionDinnerMeta">حدود ۵۵۰ kcal · پروتئین بالا</p></div><span>‹</span>
+    </section>
+
+    <button class="nutrition-add-main" id="nutritionAddFood">＋ ثبت غذا</button>
+    <div class="nutrition-log-modes">
+      <button data-log-mode="saved"><b>غذاهای من</b><small>غذاهای ذخیره‌شده</small></button>
+      <button data-log-mode="quick"><b>ثبت سریع</b><small>کالری و ماکرو</small></button>
+      <button data-log-mode="new"><b>غذای جدید</b><small>تعریف غذای جدید</small></button>
+    </div>
+  </main>
+
   <main id="progress" class="page">
     <div class="header"><h2>پیشرفت</h2><div class="circle">⌁</div></div>
     <div class="segment"><button class="active">هفته</button><button>ماه</button><button>سال</button></div>
@@ -1343,6 +1396,7 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
   <nav class="nav">
     <button class="navbtn active" data-page="home"><span class="icon">⌂</span><span class="label">خانه</span></button>
     <button class="navbtn" data-page="workouts"><span class="icon">▥</span><span class="label">تمرینات</span></button>
+    <button class="navbtn" data-page="nutrition"><span class="icon">♜</span><span class="label">تغذیه</span></button>
     <button class="navbtn" data-page="progress"><span class="icon">↗</span><span class="label">پیشرفت</span></button>
     
     <button class="navbtn" data-page="profile"><span class="icon">○</span><span class="label">پروفایل</span></button>
@@ -1726,9 +1780,67 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
 </div>
 
 <script>
+
+const NUTRITION_KEY='sven.nutrition.v1';
+const NUTRITION_TARGETS={calories:2200,protein:170,carbs:190,fat:70};
+const NUTRITION_DEFAULT_MEALS=[
+ {id:'breakfast',name:'صبحانه',icon:'☀',items:'هنوز ثبت نشده',calories:0,protein:0,carbs:0,fat:0},
+ {id:'lunch',name:'ناهار',icon:'◉',items:'هنوز ثبت نشده',calories:0,protein:0,carbs:0,fat:0},
+ {id:'snack',name:'میان‌وعده',icon:'◫',items:'هنوز ثبت نشده',calories:0,protein:0,carbs:0,fat:0},
+ {id:'dinner',name:'شام',icon:'☾',items:'＋ ثبت شام',calories:0,protein:0,carbs:0,fat:0}
+];
+function nutritionDateKey(){return new Date().toISOString().slice(0,10)}
+function loadNutrition(){
+ try{
+   const all=JSON.parse(localStorage.getItem(NUTRITION_KEY)||'{}');
+   const d=all[nutritionDateKey()];
+   return d&&Array.isArray(d.meals)?d:{meals:JSON.parse(JSON.stringify(NUTRITION_DEFAULT_MEALS))};
+ }catch(e){return {meals:JSON.parse(JSON.stringify(NUTRITION_DEFAULT_MEALS))}}
+}
+function saveNutrition(day){
+ const all=JSON.parse(localStorage.getItem(NUTRITION_KEY)||'{}');
+ all[nutritionDateKey()]=day;localStorage.setItem(NUTRITION_KEY,JSON.stringify(all));renderNutrition();
+}
+function nutritionPct(v,t){return Math.min(100,Math.max(0,Math.round((Number(v)||0)/t*100)))}
+function renderNutrition(){
+ const day=loadNutrition(), meals=day.meals||[];
+ const sum=k=>meals.reduce((n,m)=>n+(Number(m[k])||0),0);
+ const cal=sum('calories'),pro=sum('protein'),carb=sum('carbs'),fat=sum('fat');
+ const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+ set('nutritionCalories',fa(cal));set('nutritionCalTarget',fa(NUTRITION_TARGETS.calories));set('nutritionCalPct',fa(nutritionPct(cal,NUTRITION_TARGETS.calories))+'٪');
+ set('nutritionProtein',fa(pro));set('nutritionProteinTarget',fa(NUTRITION_TARGETS.protein));set('nutritionCarbs',fa(carb));set('nutritionCarbsTarget',fa(NUTRITION_TARGETS.carbs));set('nutritionFat',fa(fat));set('nutritionFatTarget',fa(NUTRITION_TARGETS.fat));
+ set('nutritionRemainingCal',fa(Math.max(0,NUTRITION_TARGETS.calories-cal)));set('nutritionRemainingProtein',fa(Math.max(0,NUTRITION_TARGETS.protein-pro))+' g');
+ const width=(id,p)=>{const e=document.getElementById(id);if(e)e.style.width=p+'%'};
+ width('nutritionCalBar',nutritionPct(cal,NUTRITION_TARGETS.calories));width('nutritionProteinBar',nutritionPct(pro,NUTRITION_TARGETS.protein));width('nutritionCarbsBar',nutritionPct(carb,NUTRITION_TARGETS.carbs));width('nutritionFatBar',nutritionPct(fat,NUTRITION_TARGETS.fat));
+ set('nutritionDate',new Date().toLocaleDateString('fa-IR',{weekday:'long',day:'numeric',month:'long'}));
+ const root=document.getElementById('nutritionMealList');
+ if(root)root.innerHTML=meals.map(m=>`<div class="nutrition-meal-row" onclick="quickLogMeal('${m.id}')"><div class="nutrition-meal-icon">${m.icon}</div><div class="nutrition-meal-copy"><b>${m.name}</b><small>${m.items||'هنوز ثبت نشده'}</small></div><div class="nutrition-meal-kcal">${m.calories?fa(m.calories)+' kcal':'＋'}</div></div>`).join('');
+ const remainPro=Math.max(0,NUTRITION_TARGETS.protein-pro);
+ set('nutritionDinnerSuggestion',remainPro>50?'مرغ + سالاد حجیم + ماست یونانی':'یک شام سبک و پروتئینی');
+ set('nutritionDinnerMeta',remainPro>50?'حدود ۵۵۰ kcal · پروتئین بالا':'کالری باقی‌مانده امروز را رعایت کن');
+}
+function quickLogMeal(id){
+ const day=loadNutrition(),meal=day.meals.find(x=>x.id===id);if(!meal)return;
+ const cal=prompt('کالری این وعده:',meal.calories||'');if(cal===null)return;
+ const protein=prompt('پروتئین (گرم):',meal.protein||'');if(protein===null)return;
+ const carbs=prompt('کربوهیدرات (گرم):',meal.carbs||'0');if(carbs===null)return;
+ const fat=prompt('چربی (گرم):',meal.fat||'0');if(fat===null)return;
+ const items=prompt('نام غذا / توضیح وعده:',meal.items==='هنوز ثبت نشده'||meal.items==='＋ ثبت شام'?'':meal.items);if(items===null)return;
+ Object.assign(meal,{calories:Number(cal)||0,protein:Number(protein)||0,carbs:Number(carbs)||0,fat:Number(fat)||0,items:items||'ثبت سریع'});
+ saveNutrition(day);
+}
+document.getElementById('nutritionAddFood')?.addEventListener('click',()=>quickLogMeal('dinner'));
+document.querySelectorAll('[data-log-mode]').forEach(b=>b.addEventListener('click',()=>{
+ const mode=b.dataset.logMode;
+ if(mode==='quick')quickLogMeal('snack');
+ else if(mode==='new')quickLogMeal('lunch');
+ else quickLogMeal('breakfast');
+}));
+
 const pages=[...document.querySelectorAll('.page')];
 const nav=[...document.querySelectorAll('.navbtn')];
 function showPage(id){
+  if(id==='nutrition')renderNutrition();
   pages.forEach(p=>p.classList.toggle('active',p.id===id));
   nav.forEach(b=>b.classList.toggle('active',b.dataset.page===id));
   window.scrollTo({top:0,behavior:'instant'});
@@ -1747,6 +1859,7 @@ function setGreeting(){
 }
 window.addEventListener('load', async()=>{
   setGreeting();
+  renderNutrition();
   cleanupLegacyTargetMuscles();
   renderProfile();
   renderProgress();

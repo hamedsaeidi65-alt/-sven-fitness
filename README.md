@@ -95,3 +95,12 @@ Changes from V4.4:
 - Existing users are migrated by appending Wed/Thu/Fri without overwriting their Saturday–Tuesday strength plan.
 - Friday remains intentionally low-load to protect Saturday strength performance.
 - JS syntax check: PASS.
+
+
+## V4.17 — Nutrition Dashboard / Concept B
+- Added a dedicated Nutrition tab to bottom navigation.
+- Implemented approved Concept B in RTL: calorie progress, protein/carbs/fat, meal timeline, remaining targets, dinner suggestion and food logging.
+- Nutrition entries persist per day in localStorage.
+- Initial daily targets: 2200 kcal, 170 g protein, 190 g carbs, 70 g fat.
+- Meal rows support quick manual logging and immediate dashboard recalculation.
+- JS syntax check: PASS.
