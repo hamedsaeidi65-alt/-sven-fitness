@@ -361,6 +361,16 @@
     .complete-stats span{color:#787982;font-size:9px}
 
 
+    /* V4.0 — Progressive Overload Engine */
+    .v4-progression{margin:12px 0;padding:13px;border:1px solid rgba(183,255,0,.16);border-radius:17px;background:linear-gradient(145deg,rgba(183,255,0,.055),rgba(123,60,255,.04))}
+    .v4-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+    .v4-head b{font-size:12px}.v4-decision{font-size:9px;font-weight:900;padding:5px 8px;border-radius:999px;border:1px solid var(--line);color:var(--lime);background:#0b0c0f}
+    .v4-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+    .v4-cell{padding:9px 7px;border-radius:12px;background:#0d0e11;border:1px solid var(--line);min-width:0}
+    .v4-cell small{display:block;color:#777982;font-size:8px;margin-bottom:5px}.v4-cell strong{display:block;font-size:10px;direction:ltr;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .v4-reason{margin-top:9px;color:#92949d;font-size:9px;line-height:1.75}
+    .v4-progress{height:5px;border-radius:999px;background:#202126;overflow:hidden;margin-top:9px}.v4-progress i{display:block;height:100%;background:var(--lime);border-radius:999px}
+
     /* V3.0 — Smart Onboarding */
     .onboarding{
       position:fixed;inset:0;z-index:220;display:none;overflow:auto;
@@ -1441,15 +1451,15 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
 
     <div class="technique-hint" id="techniqueHint"><b>نکته فرم:</b> حرکت را کنترل‌شده اجرا کن.</div>
 
-    <div class="smart-record-grid">
-      <div class="smart-record">
-        <small>رکورد جلسه قبل</small>
-        <strong id="previousRecord">هنوز ثبت نشده</strong>
+    <div class="v4-progression">
+      <div class="v4-head"><b>SVEN PROGRESSIVE OVERLOAD</b><span class="v4-decision" id="v4Decision">BASELINE</span></div>
+      <div class="v4-grid">
+        <div class="v4-cell"><small>جلسه قبل</small><strong id="previousRecord">هنوز ثبت نشده</strong></div>
+        <div class="v4-cell"><small>هدف امروز</small><strong id="startingSuggestion">—</strong></div>
+        <div class="v4-cell"><small>جلسه بعد</small><strong id="nextSessionSuggestion">—</strong></div>
       </div>
-      <div class="smart-record">
-        <small>پیشنهاد شروع امروز</small>
-        <strong id="startingSuggestion">—</strong>
-      </div>
+      <div class="v4-reason" id="v4Reason">با ثبت جلسات، Sven هدف هر حرکت را به‌صورت خودکار تنظیم می‌کند.</div>
+      <div class="v4-progress"><i id="v4ProgressBar" style="width:0%"></i></div>
     </div>
 
     <div class="set-status" id="setStatus"></div>
@@ -2232,6 +2242,125 @@ function suggestNextWeight(ex,lastSet){
   return {weight:next,reason:q.text,label:q.label};
 }
 
+
+function repRangeForProfile(){
+  const goal=profileForProgram().goal||'recomp';
+  if(goal==='strength')return {min:4,max:6};
+  if(goal==='fat_loss')return {min:10,max:15};
+  if(goal==='muscle_gain')return {min:8,max:12};
+  return {min:8,max:12};
+}
+
+function exerciseSessionHistory(exerciseId,limit=5){
+  return getSessions().map(s=>{
+    const ex=s.exercises?.find(x=>x.id===exerciseId);
+    if(!ex?.loggedSets?.length)return null;
+    const sets=ex.loggedSets.filter(x=>Number(x.reps)>0);
+    if(!sets.length)return null;
+    const totalReps=sets.reduce((a,x)=>a+Number(x.reps||0),0);
+    const weighted=sets.filter(x=>Number(x.weight)>0);
+    const avgWeight=weighted.length?weighted.reduce((a,x)=>a+Number(x.weight),0)/weighted.length:0;
+    const avgRir=sets.reduce((a,x)=>a+Number(x.rir??2),0)/sets.length;
+    const bestE1rm=Math.max(...sets.map(x=>estimatedOneRM(x.weight,x.reps)));
+    return {sessionId:s.id,date:s.completedAt||s.startedAt,sets,totalReps,avgWeight,avgRir,bestE1rm};
+  }).filter(Boolean).slice(0,limit);
+}
+
+function formatPrescription(weight,repsArray){
+  const reps=(repsArray||[]).join('/');
+  return (Number(weight)?fa(Number(weight))+'kg × ':'')+fa(reps||'—');
+}
+
+function sessionPerformanceScore(h){
+  if(!h)return 0;
+  return h.bestE1rm*10 + h.totalReps + Math.max(0,3-h.avgRir)*.5;
+}
+
+function progressionPlan(ex){
+  const range=repRangeForProfile();
+  const history=exerciseSessionHistory(ex.id,5);
+  const last=history[0];
+  const primary=(ex.muscleKeys||[])[0];
+  const recovery=getMuscleRecoveryState()[primary]?.recoveryPct ?? 100;
+  const step=weightIncrement(ex)||2.5;
+  const baseWeight=Number(last?.avgWeight||ex.weight||0);
+  const setCount=Number(ex.sets||3);
+  let decision='BASELINE', targetWeight=baseWeight, targetReps=Array(setCount).fill(Number(ex.reps||range.min));
+  let nextWeight=baseWeight, nextReps=[...targetReps], reason='اولین مبنا برای این حرکت ثبت می‌شود.';
+  let plateauCount=0;
+
+  if(last){
+    const lastReps=last.sets.slice(0,setCount).map(x=>Number(x.reps||range.min));
+    while(lastReps.length<setCount)lastReps.push(range.min);
+    const allAtMax=lastReps.every(r=>r>=range.max);
+    const avgRir=last.avgRir;
+    const prev=history[1];
+    const improved=prev ? (last.bestE1rm>prev.bestE1rm*1.007 || last.totalReps>prev.totalReps) : true;
+
+    for(let i=0;i<history.length-1;i++){
+      const a=history[i], b=history[i+1];
+      const meaningful=a.bestE1rm>b.bestE1rm*1.007 || a.totalReps>b.totalReps;
+      if(meaningful)break;
+      plateauCount++;
+    }
+
+    if(recovery<55 && history.length>=2 && sessionPerformanceScore(last)<sessionPerformanceScore(history[1])*.98){
+      decision='DELOAD';
+      targetWeight=roundToStep(baseWeight*.9,step);
+      targetReps=Array(setCount).fill(range.min);
+      reason='ریکاوری پایین و افت عملکرد دیده شده؛ شدت موقتاً کاهش می‌یابد.';
+    }else if(plateauCount>=2){
+      decision=recovery<70?'REDUCE VOLUME':'PLATEAU';
+      targetWeight=baseWeight;
+      targetReps=lastReps.map(r=>Math.max(range.min,Math.min(range.max,r)));
+      reason=recovery<70?'چند جلسه بدون پیشرفت همراه با ریکاوری پایین؛ فشار جلسه را کنترل کن.':'سه عملکرد متوالی تقریباً بدون پیشرفت؛ فعلاً وزنه را تثبیت و کیفیت تکرار را بالا ببر.';
+    }else if(allAtMax && avgRir>=1){
+      decision='INCREASE LOAD';
+      targetWeight=roundToStep(baseWeight+step,step);
+      targetReps=Array(setCount).fill(range.min);
+      reason='سقف بازه تکرار با RIR مناسب تکمیل شده؛ زمان افزایش وزنه است.';
+    }else if(improved || avgRir>=1){
+      decision='BUILD REPS';
+      targetWeight=baseWeight;
+      targetReps=[...lastReps];
+      for(let i=0;i<targetReps.length;i++){
+        if(targetReps[i]<range.max){targetReps[i]++;break}
+      }
+      reason='وزنه حفظ می‌شود و هدف امروز یک تکرار بیشتر در مجموع است.';
+    }else{
+      decision='MAINTAIN';
+      targetWeight=baseWeight;
+      targetReps=lastReps;
+      reason='شدت جلسه قبل بالا بوده؛ امروز همان نسخه را با فرم بهتر تکرار کن.';
+    }
+  }
+
+  // Projection for the next session if today's target is achieved with RIR 1–3.
+  const todayAtMax=targetReps.every(r=>r>=range.max);
+  if(todayAtMax && decision!=='DELOAD'){
+    nextWeight=roundToStep(targetWeight+step,step);
+    nextReps=Array(setCount).fill(range.min);
+  }else{
+    nextWeight=targetWeight;
+    nextReps=[...targetReps];
+    for(let i=0;i<nextReps.length;i++)if(nextReps[i]<range.max){nextReps[i]++;break}
+  }
+
+  const repProgress=targetReps.reduce((a,r)=>a+Math.max(0,Math.min(range.max,r)-range.min),0);
+  const repCapacity=setCount*(range.max-range.min)||1;
+  const progress=Math.max(0,Math.min(100,Math.round(repProgress/repCapacity*100)));
+  return {decision,targetWeight,targetReps,nextWeight,nextReps,reason,progress,range,recovery,plateauCount,last};
+}
+
+function ensureProgressionTarget(ex){
+  if(!ex.v4Plan){
+    const p=progressionPlan(ex);
+    ex.v4Plan={...p,createdAt:new Date().toISOString()};
+    saveActive();
+  }
+  return ex.v4Plan;
+}
+
 function movementType(ex){
   const id=ex.id||'';
   if(/bench|press|fly|push/.test(id))return 'press';
@@ -2390,9 +2519,11 @@ function renderWorkout(){
   const ex=getCurrentExercise();
   currentSetIndex=Math.min(ex.loggedSets.length,ex.sets-1);
 
-  // Keep the last used prescription as the starting point for the next set.
-  reps=Number(ex.reps||10);
-  weight=Number(ex.weight||0);
+  // V4: prescribe each unlogged set from the historical progression target.
+  const v4=ensureProgressionTarget(ex);
+  const targetIndex=Math.min(ex.loggedSets.length,Math.max(0,v4.targetReps.length-1));
+  reps=Number(v4.targetReps[targetIndex]||ex.reps||10);
+  weight=Number(v4.targetWeight||ex.weight||0);
 
   document.getElementById('workoutCounter').textContent='تمرین امروز · '+fa(currentExerciseIndex+1)+' از '+fa(currentSession.exercises.length);
   document.getElementById('exerciseTitle').textContent=ex.name;
@@ -2405,19 +2536,22 @@ function renderWorkout(){
   renderNextPreview();
 
   const histBest=previousBest(ex.id);
-  document.getElementById('previousRecord').textContent=
-    histBest ? fa(histBest.weight)+' kg × '+fa(histBest.reps)+' تکرار' : 'هنوز ثبت نشده';
-
-  // Starting suggestion: historical best if available, otherwise program prescription.
-  const startWeight=histBest?.weight ?? ex.weight;
-  const startReps=histBest?.reps ?? ex.reps;
-  document.getElementById('startingSuggestion').textContent=
-    Number(startWeight) ? fa(startWeight)+' kg × '+fa(startReps) : fa(startReps)+' تکرار';
+  const lastHist=v4.last;
+  document.getElementById('previousRecord').textContent=lastHist
+    ? formatPrescription(lastHist.avgWeight,lastHist.sets.map(x=>x.reps)) : 'هنوز ثبت نشده';
+  document.getElementById('startingSuggestion').textContent=formatPrescription(v4.targetWeight,v4.targetReps);
+  document.getElementById('nextSessionSuggestion').textContent=formatPrescription(v4.nextWeight,v4.nextReps);
+  document.getElementById('v4Decision').textContent=v4.decision;
+  document.getElementById('v4Reason').textContent=v4.reason+' · Recovery '+fa(v4.recovery)+'٪';
+  document.getElementById('v4ProgressBar').style.width=v4.progress+'%';
+  const startWeight=v4.targetWeight;
+  const startReps=v4.targetReps[0];
 
   const last=ex.loggedSets.at(-1);
   if(last){
-    reps=Number(ex.reps||last.reps);
-    weight=Number(ex.weight||last.weight);
+    // Keep V4's prescribed target for the next unlogged set.
+    reps=Number(v4.targetReps[targetIndex]||last.reps||ex.reps);
+    weight=Number(v4.targetWeight||last.weight||ex.weight);
     const sug=suggestNextWeight(ex,last);
     suggestedWeight=sug.weight;
     document.getElementById('setQuality').textContent=sug.label||qualityFromRir(last.rir??2).label;
@@ -2581,6 +2715,14 @@ function finishCurrentWorkout(){
   currentSession.volume=Math.round(currentSession.exercises.reduce(
     (sum,e)=>sum+e.loggedSets.reduce((s,x)=>s+Number(x.weight)*Number(x.reps),0),0
   ));
+  currentSession.progressionVersion=4;
+  currentSession.exercises.forEach(ex=>{
+    if(!ex.loggedSets?.length)return;
+    const p=ex.v4Plan||progressionPlan(ex);
+    const avgRir=ex.loggedSets.reduce((a,x)=>a+Number(x.rir??2),0)/ex.loggedSets.length;
+    const completedTarget=ex.loggedSets.length>=ex.sets && ex.loggedSets.every((x,i)=>Number(x.reps)>=Number(p.targetReps[Math.min(i,p.targetReps.length-1)]||0));
+    ex.v4Result={decision:p.decision,targetWeight:p.targetWeight,targetReps:p.targetReps,completedTarget,avgRir:Number(avgRir.toFixed(1))};
+  });
 
   const sessions=getSessions();
   sessions.unshift(currentSession);
