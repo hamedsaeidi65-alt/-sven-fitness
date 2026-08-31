@@ -1457,28 +1457,6 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
 
     <div class="session-progress"><i id="sessionProgressBar"></i></div>
 
-    <div class="smart-visual">
-      <div class="smart-visual-card muscle-boost" id="muscleVisualCard">
-        <span class="smart-card-label">عضلات درگیر</span>
-        <button class="anatomy-toggle" id="anatomyToggle">هایلایت بیشتر</button>
-
-        <div class="real-athlete-shell">
-          <div class="real-athlete-image muscle-shot" id="muscleShot"></div>
-          <div class="real-overlay">
-            <div class="real-muscle-list" id="realMuscleList"></div>
-            <div class="real-focus-note" id="focusNote">عضلات اصلی این حرکت در Sven برجسته شده‌اند.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="smart-visual-card">
-        <span class="smart-card-label">تصویر حرکت</span>
-        <div class="real-athlete-shell motion-media-shell" id="exerciseMotionHost">
-          <div class="motion-missing">در حال بارگذاری تصویر…</div>
-        </div>
-      </div>
-    </div>
-
     <div class="technique-hint" id="techniqueHint"><b>نکته فرم:</b> حرکت را کنترل‌شده اجرا کن.</div>
 
     <div class="v4-progression">
@@ -2528,7 +2506,7 @@ const VERIFIED_EXERCISE_IMAGE_IDS=new Set([
   'shoulder_press','lateral_raise','biceps_curl','hammer_curl'
 ]);
 
-// V4.6 — every exercise used by the user's four-day plan has its own dedicated
+// V4.7 — every exercise used by the user's four-day plan has its own dedicated
 // START/END movement asset. These local SVG files are bundled with the PWA and
 // are intentionally mapped one-to-one: no shared fallback image is allowed.
 const V46_INLINE_EXERCISE_IMAGES = {
@@ -2787,21 +2765,18 @@ function renderWorkout(){
   const suggestionCard=document.querySelector('#workoutModal .suggestion-card');
   const restWrap=document.querySelector('#workoutModal .restwrap');
   const toggleTimerBtn=document.getElementById('toggleTimer');
-  const smartVisual=document.querySelector('#workoutModal .smart-visual');
   const techniqueHint=document.getElementById('techniqueHint');
   if(isCardio){
     document.getElementById('exerciseMeta').innerHTML='<span>'+fa(ex.durationMin)+'–'+fa(ex.durationMax)+' دقیقه</span><span>شدت '+escapeHtml(ex.intensity||'متوسط')+'</span>';
     if(controlCards[0]){controlCards[0].querySelector('small').textContent='مدت (دقیقه)';controlCards[0].style.display='block'}
     if(controlCards[1])controlCards[1].style.display='none';
-    if(rirCard)rirCard.style.display='none';if(suggestionCard)suggestionCard.style.display='none';if(restWrap)restWrap.style.display='none';if(toggleTimerBtn)toggleTimerBtn.style.display='none';if(smartVisual)smartVisual.style.display='none';if(techniqueHint)techniqueHint.style.display='none';
+    if(rirCard)rirCard.style.display='none';if(suggestionCard)suggestionCard.style.display='none';if(restWrap)restWrap.style.display='none';if(toggleTimerBtn)toggleTimerBtn.style.display='none';if(techniqueHint)techniqueHint.style.display='none';
   }else{
     if(controlCards[0]){controlCards[0].querySelector('small').textContent='تکرار';controlCards[0].style.display='block'}
     if(controlCards[1])controlCards[1].style.display='block';
-    if(rirCard)rirCard.style.display='block';if(suggestionCard)suggestionCard.style.display='block';if(restWrap)restWrap.style.display='block';if(toggleTimerBtn)toggleTimerBtn.style.display='inline-block';if(smartVisual)smartVisual.style.display='grid';if(techniqueHint)techniqueHint.style.display='block';
+    if(rirCard)rirCard.style.display='block';if(suggestionCard)suggestionCard.style.display='block';if(restWrap)restWrap.style.display='block';if(toggleTimerBtn)toggleTimerBtn.style.display='inline-block';if(techniqueHint)techniqueHint.style.display='block';
   }
 
-  renderExerciseAnatomy(ex);
-  renderExerciseStill(ex);
   renderNextPreview();
 
   const histBest=previousBest(ex.id);
@@ -2901,12 +2876,6 @@ document.getElementById('applySuggestion').addEventListener('click',()=>{
   document.getElementById('applySuggestion').disabled=true;
   document.getElementById('applySuggestion').textContent='اعمال شد ✓';
   navigator.vibrate?.(20);
-});
-
-document.getElementById('anatomyToggle').addEventListener('click',()=>{
-  const card=document.getElementById('muscleVisualCard');
-  const active=card.classList.toggle('muscle-boost');
-  document.getElementById('anatomyToggle').textContent=active?'هایلایت کمتر':'هایلایت بیشتر';
 });
 
 function renderTimer(){
@@ -3709,7 +3678,7 @@ document.getElementById('sendChat').onclick=()=>sendMessage(input.value);
 input.addEventListener('keydown',e=>{ if(e.key==='Enter') sendMessage(input.value); });
 document.querySelectorAll('[data-quick]').forEach(b=>b.onclick=()=>sendMessage(b.dataset.quick));
 
-// === SVEN V4.6 Manual Workout + Six-Pack Priority + Dedicated Exercise Images ===
+// === SVEN V4.7 Manual Workout + Six-Pack Priority + Dedicated Exercise Images ===
 const MANUAL_PLAN_KEY='sven.manualPlan.v1';
 const SVEN_V43_PLAN={
   version:'4.5',

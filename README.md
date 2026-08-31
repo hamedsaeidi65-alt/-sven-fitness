@@ -14,3 +14,9 @@ Changes from V4.4:
 - No shared/fallback image is used for any movement in the four-day plan.
 - Assets are bundled under assets/exercises/ and precached for offline PWA use.
 - Existing manual plan, 13 direct weekly ab sets, RIR and Progressive Overload logic are preserved.
+
+## V4.7 — Workout Console cleanup
+- Removed the exercise image card from the live workout screen.
+- Removed the involved-muscles/anatomy image card from the live workout screen.
+- Muscle chips in exercise metadata remain available as compact text information.
+- Removed exercise image assets from the package; workout execution now prioritizes sets, load, reps, RIR and progressive overload.
