@@ -104,3 +104,16 @@ Changes from V4.4:
 - Initial daily targets: 2200 kcal, 170 g protein, 190 g carbs, 70 g fat.
 - Meal rows support quick manual logging and immediate dashboard recalculation.
 - JS syntax check: PASS.
+
+
+## V4.18 — Adaptive Weekly Calories
+- Added weekly weight check-in inside Nutrition.
+- Sven compares the newest weekly weight with a prior weigh-in at least 5 days earlier.
+- Target loss zone: approximately 0.4–0.9% of body weight per week.
+- Slower than target: suggests -100 kcal/day.
+- Faster than target: suggests +100 kcal/day.
+- In target range: keeps calories unchanged.
+- Calorie changes are NEVER automatic: user must tap “اعمال پیشنهاد” and confirm.
+- Protein and fat stay stable; carbohydrate target is recalculated to keep calories/macros internally consistent.
+- Initial target corrected to an internally consistent 2350 kcal: 180 g protein, 250 g carbs, 70 g fat.
+- JS syntax check: PASS.

@@ -1077,6 +1077,14 @@
 .nutrition-add-main{width:100%;border:0;border-radius:14px;background:var(--lime);color:#050505;font-family:inherit;font-weight:950;font-size:13px;padding:14px;margin-top:12px}
 .nutrition-log-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:9px}.nutrition-log-modes button{background:#111216;border:1px solid #292b31;color:#e7e8ea;border-radius:14px;padding:11px 6px;font-family:inherit}.nutrition-log-modes b,.nutrition-log-modes small{display:block}.nutrition-log-modes b{font-size:9px}.nutrition-log-modes small{font-size:7px;color:#777b84;margin-top:4px}
 </style>
+
+<style id="sven-v418-adaptive-calories">
+.nutrition-weekly-review{background:#111216;border:1px solid #2b2e34;border-radius:18px;padding:15px;margin-top:12px;direction:rtl;text-align:right}
+.nutrition-review-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.nutrition-review-head small{display:block;color:var(--lime);font-size:8px;font-weight:950}.nutrition-review-head b{display:block;font-size:12px;margin-top:3px}.nutrition-review-head>span{font-size:8px;color:#8b8e96;border:1px solid #30333a;border-radius:99px;padding:6px 8px}
+.nutrition-review-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}.nutrition-review-grid>div{background:#0c0d10;border:1px solid #24272c;border-radius:13px;padding:10px}.nutrition-review-grid small{display:block;color:#777b84;font-size:7px}.nutrition-review-grid b{display:block;font-size:14px;margin-top:5px;direction:ltr;text-align:right}
+.nutrition-weekly-review p{color:#8d9098;font-size:8px;line-height:1.8;margin:11px 2px}
+.nutrition-review-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.nutrition-review-actions button{border-radius:13px;padding:11px 8px;font-family:inherit;font-size:9px;font-weight:900;border:1px solid #34373e;background:#15171b;color:#e9eaec}.nutrition-review-actions button:last-child{background:var(--lime);border-color:var(--lime);color:#050505}.nutrition-review-actions button:disabled{background:#1a1c20;border-color:#292c31;color:#656870}
+</style>
 </head>
 <body>
 
@@ -1227,11 +1235,11 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
 
     <section class="nutrition-summary">
       <div class="nutrition-kicker">تغذیه امروز</div>
-      <div class="nutrition-cal-row"><strong id="nutritionCalories">۰</strong><span>/ <b id="nutritionCalTarget">۲۲۰۰</b> kcal</span><em id="nutritionCalPct">۰٪</em></div>
+      <div class="nutrition-cal-row"><strong id="nutritionCalories">۰</strong><span>/ <b id="nutritionCalTarget">۲۳۵۰</b> kcal</span><em id="nutritionCalPct">۰٪</em></div>
       <div class="nutrition-progress"><i id="nutritionCalBar"></i></div>
       <div class="nutrition-macros">
-        <div><small>پروتئین</small><b><span id="nutritionProtein">۰</span> / <span id="nutritionProteinTarget">۱۷۰</span> g</b><i><u id="nutritionProteinBar"></u></i></div>
-        <div><small>کربوهیدرات</small><b><span id="nutritionCarbs">۰</span> / <span id="nutritionCarbsTarget">۱۹۰</span> g</b><i><u id="nutritionCarbsBar"></u></i></div>
+        <div><small>پروتئین</small><b><span id="nutritionProtein">۰</span> / <span id="nutritionProteinTarget">۱۸۰</span> g</b><i><u id="nutritionProteinBar"></u></i></div>
+        <div><small>کربوهیدرات</small><b><span id="nutritionCarbs">۰</span> / <span id="nutritionCarbsTarget">۲۵۰</span> g</b><i><u id="nutritionCarbsBar"></u></i></div>
         <div><small>چربی</small><b><span id="nutritionFat">۰</span> / <span id="nutritionFatTarget">۷۰</span> g</b><i><u id="nutritionFatBar"></u></i></div>
       </div>
     </section>
@@ -1242,9 +1250,25 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
     </section>
 
     <section class="nutrition-remaining">
-      <div><small>تا هدف امروز</small><b><span id="nutritionRemainingCal">۲۲۰۰</span> kcal</b><span>باقی‌مانده</span></div>
-      <div class="nutrition-protein-ring"><strong id="nutritionRemainingProtein">۱۷۰ g</strong><small>پروتئین باقی‌مانده</small></div>
-      <div class="nutrition-targets"><small>هدف روزانه</small><span>۲۲۰۰ kcal</span><span>۱۷۰ g پروتئین</span><span>۱۹۰ g کربوهیدرات</span><span>۷۰ g چربی</span></div>
+      <div><small>تا هدف امروز</small><b><span id="nutritionRemainingCal">۲۳۵۰</span> kcal</b><span>باقی‌مانده</span></div>
+      <div class="nutrition-protein-ring"><strong id="nutritionRemainingProtein">۱۸۰ g</strong><small>پروتئین باقی‌مانده</small></div>
+      <div class="nutrition-targets"><small>هدف روزانه</small><span>۲۳۵۰ kcal</span><span>۱۸۰ g پروتئین</span><span>۲۵۰ g کربوهیدرات</span><span>۷۰ g چربی</span></div>
+    </section>
+
+
+    <section class="nutrition-weekly-review">
+      <div class="nutrition-review-head"><div><small>بررسی هفتگی Sven</small><b>تنظیم هوشمند کالری</b></div><span id="nutritionReviewStatus">در انتظار وزن</span></div>
+      <div class="nutrition-review-grid">
+        <div><small>وزن این هفته</small><b id="nutritionReviewWeight">—</b></div>
+        <div><small>روند هفتگی</small><b id="nutritionReviewTrend">—</b></div>
+        <div><small>کالری فعلی</small><b id="nutritionReviewCurrent">—</b></div>
+        <div><small>پیشنهاد هفته بعد</small><b id="nutritionReviewProposed">—</b></div>
+      </div>
+      <p id="nutritionReviewReason">برای اولین بررسی، وزن هفتگی را ثبت کن.</p>
+      <div class="nutrition-review-actions">
+        <button id="nutritionWeeklyWeightBtn">ثبت وزن هفتگی</button>
+        <button id="nutritionApplyCalories" disabled>اعمال پیشنهاد</button>
+      </div>
     </section>
 
     <section class="nutrition-suggestion">
@@ -1782,7 +1806,18 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
 <script>
 
 const NUTRITION_KEY='sven.nutrition.v1';
-const NUTRITION_TARGETS={calories:2200,protein:170,carbs:190,fat:70};
+const NUTRITION_SETTINGS_KEY='sven.nutrition.settings.v2';
+const NUTRITION_WEIGHT_KEY='sven.nutrition.weeklyWeight.v1';
+const DEFAULT_NUTRITION_TARGETS={calories:2350,protein:180,carbs:250,fat:70};
+function loadNutritionSettings(){
+  try{return {...DEFAULT_NUTRITION_TARGETS,...JSON.parse(localStorage.getItem(NUTRITION_SETTINGS_KEY)||'{}')}}catch(e){return {...DEFAULT_NUTRITION_TARGETS}}
+}
+function saveNutritionSettings(x){localStorage.setItem(NUTRITION_SETTINGS_KEY,JSON.stringify(x))}
+function nutritionTargets(){return loadNutritionSettings()}
+function macroTargetsForCalories(calories,protein=180,fat=70){
+  const carbs=Math.max(80,Math.round((calories-protein*4-fat*9)/4));
+  return {calories,protein,carbs,fat};
+}
 const NUTRITION_DEFAULT_MEALS=[
  {id:'breakfast',name:'صبحانه',icon:'☀',items:'هنوز ثبت نشده',calories:0,protein:0,carbs:0,fat:0},
  {id:'lunch',name:'ناهار',icon:'◉',items:'هنوز ثبت نشده',calories:0,protein:0,carbs:0,fat:0},
@@ -1804,10 +1839,13 @@ function saveNutrition(day){
 function nutritionPct(v,t){return Math.min(100,Math.max(0,Math.round((Number(v)||0)/t*100)))}
 function renderNutrition(){
  const day=loadNutrition(), meals=day.meals||[];
+ const NUTRITION_TARGETS=nutritionTargets();
  const sum=k=>meals.reduce((n,m)=>n+(Number(m[k])||0),0);
  const cal=sum('calories'),pro=sum('protein'),carb=sum('carbs'),fat=sum('fat');
  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
- set('nutritionCalories',fa(cal));set('nutritionCalTarget',fa(NUTRITION_TARGETS.calories));set('nutritionCalPct',fa(nutritionPct(cal,NUTRITION_TARGETS.calories))+'٪');
+ set('nutritionCalories',fa(cal));set('nutritionCalTarget',fa(NUTRITION_TARGETS.calories));set('nutritionProteinTarget',fa(NUTRITION_TARGETS.protein));set('nutritionCarbsTarget',fa(NUTRITION_TARGETS.carbs));set('nutritionFatTarget',fa(NUTRITION_TARGETS.fat));
+ const targetSpans=document.querySelectorAll('.nutrition-targets span');
+ if(targetSpans.length>=4){targetSpans[0].textContent=fa(NUTRITION_TARGETS.calories)+' kcal';targetSpans[1].textContent=fa(NUTRITION_TARGETS.protein)+' g پروتئین';targetSpans[2].textContent=fa(NUTRITION_TARGETS.carbs)+' g کربوهیدرات';targetSpans[3].textContent=fa(NUTRITION_TARGETS.fat)+' g چربی';}set('nutritionCalPct',fa(nutritionPct(cal,NUTRITION_TARGETS.calories))+'٪');
  set('nutritionProtein',fa(pro));set('nutritionProteinTarget',fa(NUTRITION_TARGETS.protein));set('nutritionCarbs',fa(carb));set('nutritionCarbsTarget',fa(NUTRITION_TARGETS.carbs));set('nutritionFat',fa(fat));set('nutritionFatTarget',fa(NUTRITION_TARGETS.fat));
  set('nutritionRemainingCal',fa(Math.max(0,NUTRITION_TARGETS.calories-cal)));set('nutritionRemainingProtein',fa(Math.max(0,NUTRITION_TARGETS.protein-pro))+' g');
  const width=(id,p)=>{const e=document.getElementById(id);if(e)e.style.width=p+'%'};
@@ -1817,7 +1855,8 @@ function renderNutrition(){
  if(root)root.innerHTML=meals.map(m=>`<div class="nutrition-meal-row" onclick="quickLogMeal('${m.id}')"><div class="nutrition-meal-icon">${m.icon}</div><div class="nutrition-meal-copy"><b>${m.name}</b><small>${m.items||'هنوز ثبت نشده'}</small></div><div class="nutrition-meal-kcal">${m.calories?fa(m.calories)+' kcal':'＋'}</div></div>`).join('');
  const remainPro=Math.max(0,NUTRITION_TARGETS.protein-pro);
  set('nutritionDinnerSuggestion',remainPro>50?'مرغ + سالاد حجیم + ماست یونانی':'یک شام سبک و پروتئینی');
- set('nutritionDinnerMeta',remainPro>50?'حدود ۵۵۰ kcal · پروتئین بالا':'کالری باقی‌مانده امروز را رعایت کن');
+ set('nutritionDinnerMeta',remainPro>50?'پروتئین بالا · متناسب با کالری باقی‌مانده':'کالری باقی‌مانده امروز را رعایت کن');
+ renderNutritionWeeklyReview();
 }
 function quickLogMeal(id){
  const day=loadNutrition(),meal=day.meals.find(x=>x.id===id);if(!meal)return;
@@ -1829,6 +1868,62 @@ function quickLogMeal(id){
  Object.assign(meal,{calories:Number(cal)||0,protein:Number(protein)||0,carbs:Number(carbs)||0,fat:Number(fat)||0,items:items||'ثبت سریع'});
  saveNutrition(day);
 }
+
+function loadWeeklyWeights(){try{return JSON.parse(localStorage.getItem(NUTRITION_WEIGHT_KEY)||'[]')}catch(e){return []}}
+function saveWeeklyWeights(x){localStorage.setItem(NUTRITION_WEIGHT_KEY,JSON.stringify(x))}
+function latestWeeklyPair(){
+  const a=loadWeeklyWeights().slice().sort((x,y)=>new Date(x.date)-new Date(y.date));
+  if(a.length<2)return [a[a.length-1]||null,null];
+  const latest=a[a.length-1];
+  let prev=null;
+  for(let i=a.length-2;i>=0;i--){if((new Date(latest.date)-new Date(a[i].date))/86400000>=5){prev=a[i];break}}
+  return [latest,prev];
+}
+function calorieRecommendation(){
+  const settings=nutritionTargets(), [latest,prev]=latestWeeklyPair();
+  if(!latest)return {current:settings.calories,proposed:null,reason:'برای اولین بررسی، وزن هفتگی را ثبت کن.',status:'در انتظار وزن',latest:null,trend:null};
+  if(!prev)return {current:settings.calories,proposed:null,reason:'وزن پایه ثبت شد. برای تصمیم‌گیری به ثبت وزن هفته بعد نیاز داریم.',status:'وزن پایه ثبت شد',latest,trend:null};
+  const delta=latest.weight-prev.weight;
+  const pct=delta/prev.weight*100;
+  let change=0,reason='',status='';
+  // Fat-loss target zone: roughly -0.4% to -0.9% bodyweight/week.
+  if(pct>-0.4){change=-100;status='کاهش کمتر از هدف';reason='روند کاهش وزن کمتر از محدوده هدف بوده؛ کاهش ۱۰۰ کالری پیشنهاد می‌شود.'}
+  else if(pct<-0.9){change=100;status='کاهش سریع';reason='روند کاهش وزن سریع بوده؛ برای حفظ عملکرد و عضله ۱۰۰ کالری افزایش پیشنهاد می‌شود.'}
+  else {change=0;status='در محدوده هدف';reason='سرعت کاهش وزن مناسب است؛ فعلاً نیازی به تغییر کالری نیست.'}
+  const proposed=Math.max(1900,Math.min(3000,settings.calories+change));
+  return {current:settings.calories,proposed,reason,status,latest,trend:delta,pct};
+}
+function renderNutritionWeeklyReview(){
+  const r=calorieRecommendation(), set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+  set('nutritionReviewStatus',r.status);
+  set('nutritionReviewWeight',r.latest?fa(Number(r.latest.weight).toFixed(1))+' kg':'—');
+  set('nutritionReviewTrend',r.trend==null?'—':(r.trend>0?'+':'')+fa(Number(r.trend).toFixed(1))+' kg');
+  set('nutritionReviewCurrent',fa(r.current)+' kcal');
+  set('nutritionReviewProposed',r.proposed==null?'—':fa(r.proposed)+' kcal');
+  set('nutritionReviewReason',r.reason);
+  const btn=document.getElementById('nutritionApplyCalories');
+  if(btn){btn.disabled=r.proposed==null||r.proposed===r.current;btn.dataset.calories=r.proposed||''}
+}
+function logWeeklyWeight(){
+  const a=loadWeeklyWeights(), last=a[a.length-1];
+  const v=prompt('وزن این هفته (کیلوگرم):',last?.weight||'');
+  if(v===null)return;
+  const weight=Number(String(v).replace(',','.'));
+  if(!weight||weight<35||weight>250){alert('وزن معتبر وارد کن.');return}
+  const today=new Date().toISOString().slice(0,10);
+  const existing=a.find(x=>x.date===today);
+  if(existing)existing.weight=weight;else a.push({date:today,weight});
+  saveWeeklyWeights(a);renderNutritionWeeklyReview();
+}
+function applyCalorieRecommendation(){
+  const r=calorieRecommendation();if(r.proposed==null||r.proposed===r.current)return;
+  const next=macroTargetsForCalories(r.proposed,nutritionTargets().protein,nutritionTargets().fat);
+  if(!confirm(`هدف کالری از ${r.current} به ${r.proposed} kcal تغییر کند؟`))return;
+  saveNutritionSettings(next);renderNutrition();
+}
+document.getElementById('nutritionWeeklyWeightBtn')?.addEventListener('click',logWeeklyWeight);
+document.getElementById('nutritionApplyCalories')?.addEventListener('click',applyCalorieRecommendation);
+
 document.getElementById('nutritionAddFood')?.addEventListener('click',()=>quickLogMeal('dinner'));
 document.querySelectorAll('[data-log-mode]').forEach(b=>b.addEventListener('click',()=>{
  const mode=b.dataset.logMode;
