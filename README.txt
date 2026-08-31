@@ -1,6 +1,8 @@
-Sven Fitness V4.4 — Exercise Image Integrity
+Sven Fitness V4.5 — Dedicated Exercise Images
 
-- Removed the incline-dumbbell fallback that caused repeated/wrong exercise images.
-- Audited embedded exercise photos and whitelisted only verified matches.
-- Every missing/unverified movement now gets a dedicated schematic guide with its own name, equipment, target muscles and movement pattern.
-- V4.3 four-day Six-Pack Priority plan and progression logic are preserved.
+Changes from V4.4:
+- 25 movements used in the four-day Six-Pack Priority plan now have one-to-one local exercise visual assets.
+- Each visual shows START and END positions and the correct equipment context.
+- No shared/fallback image is used for any movement in the four-day plan.
+- Assets are bundled under assets/exercises/ and precached for offline PWA use.
+- Existing manual plan, 13 direct weekly ab sets, RIR and Progressive Overload logic are preserved.

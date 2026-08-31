@@ -2528,6 +2528,20 @@ const VERIFIED_EXERCISE_IMAGE_IDS=new Set([
   'shoulder_press','lateral_raise','biceps_curl','hammer_curl'
 ]);
 
+// V4.5 — every exercise used by the user's four-day plan has its own dedicated
+// START/END movement asset. These local SVG files are bundled with the PWA and
+// are intentionally mapped one-to-one: no shared fallback image is allowed.
+const V45_DEDICATED_IMAGE_IDS=new Set([
+  'smith_bench','incline_db','cable_fly','triceps_push','overhead_tri','treadmill_walk',
+  'smith_squat','smith_rdl','bulgarian_split','cable_leg_curl','smith_calf','cable_crunch','reverse_crunch',
+  'lat_pull','seated_row','db_row','straight_arm_pull','ez_curl','hammer_curl','stationary_bike',
+  'shoulder_press','cable_lateral','face_pull','cable_curl','incline_curl'
+]);
+function dedicatedExerciseImagePath(ex){
+  return V45_DEDICATED_IMAGE_IDS.has(ex.id) ? `./assets/exercises/${ex.id}.svg` : null;
+}
+
+
 function escapeSvgText(v){
   return String(v??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]||c));
 }
@@ -2600,6 +2614,10 @@ function schematicExerciseImage(ex){
 }
 
 function exerciseImageSource(ex){
+  const dedicated=dedicatedExerciseImagePath(ex);
+  if(dedicated){
+    return {src:dedicated,kind:'dedicated'};
+  }
   if(VERIFIED_EXERCISE_IMAGE_IDS.has(ex.id) && EXERCISE_IMAGES[ex.id]){
     return {src:EXERCISE_IMAGES[ex.id],kind:'photo'};
   }
@@ -2614,7 +2632,7 @@ function renderExerciseStill(ex){
   const img=document.createElement('img');
   img.className='exercise-motion-media';
   img.src=media.src;
-  img.alt=(media.kind==='photo'?'تصویر حرکت ':'راهنمای شماتیک حرکت ')+ex.name;
+  img.alt=(media.kind==='photo'?'تصویر حرکت ':media.kind==='dedicated'?'راهنمای اختصاصی شروع و پایان حرکت ':'راهنمای شماتیک حرکت ')+ex.name;
   img.loading='eager';
   img.dataset.imageKind=media.kind;
   host.appendChild(img);
@@ -3656,10 +3674,10 @@ document.getElementById('sendChat').onclick=()=>sendMessage(input.value);
 input.addEventListener('keydown',e=>{ if(e.key==='Enter') sendMessage(input.value); });
 document.querySelectorAll('[data-quick]').forEach(b=>b.onclick=()=>sendMessage(b.dataset.quick));
 
-// === SVEN V4.4 Manual Workout + Six-Pack Priority + Image Integrity ===
+// === SVEN V4.5 Manual Workout + Six-Pack Priority + Dedicated Exercise Images ===
 const MANUAL_PLAN_KEY='sven.manualPlan.v1';
 const SVEN_V43_PLAN={
-  version:'4.4',
+  version:'4.5',
   title:'برنامه ۴روزه من · Six-Pack Priority',
   days:[
     {id:'v43_sat',name:'شنبه — سینه + پشت‌بازو + تردمیل',exercises:[
