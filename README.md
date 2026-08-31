@@ -129,3 +129,11 @@ Changes from V4.4:
 - Values are labeled as reference/approximate because brand and cooking method can change nutrition.
 - Library count: 100.
 - JS syntax check: PASS.
+
+## V4.20 — Bottom Sheet Close Fix
+- Fixed the × button on the food detail/add-to-meal sheet.
+- Added explicit non-submit close buttons.
+- Added delegated click handling for reliable iOS Safari behavior.
+- Tapping the dark backdrop now closes both Food Library and Food Add sheets.
+- Added swipe-down-to-close on both mobile bottom sheets.
+- JavaScript syntax check: PASS.

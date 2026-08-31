@@ -1987,11 +1987,41 @@ function confirmLibraryFood(){
  saveNutrition(day);document.getElementById('foodAddOverlay').hidden=true;document.getElementById('foodLibraryOverlay').hidden=true;
 }
 document.getElementById('foodSearch')?.addEventListener('input',renderFoodLibrary);
-document.getElementById('closeFoodLibrary')?.addEventListener('click',closeFoodLibrary);
-document.getElementById('closeFoodAdd')?.addEventListener('click',()=>document.getElementById('foodAddOverlay').hidden=true);
+function closeFoodAdd(){
+  const el=document.getElementById('foodAddOverlay');
+  if(el) el.hidden=true;
+}
+document.addEventListener('click',function(e){
+  const closeLibrary=e.target.closest && e.target.closest('#closeFoodLibrary');
+  const closeAdd=e.target.closest && e.target.closest('#closeFoodAdd');
+  if(closeLibrary){e.preventDefault();e.stopPropagation();closeFoodLibrary();return;}
+  if(closeAdd){e.preventDefault();e.stopPropagation();closeFoodAdd();return;}
+});
 document.getElementById('foodAmount')?.addEventListener('input',updateFoodAddNutrition);
 document.getElementById('confirmFoodAdd')?.addEventListener('click',confirmLibraryFood);
 document.getElementById('foodLibraryOverlay')?.addEventListener('click',e=>{if(e.target.id==='foodLibraryOverlay')closeFoodLibrary()});
+document.getElementById('foodAddOverlay')?.addEventListener('click',e=>{if(e.target.id==='foodAddOverlay')closeFoodAdd()});
+
+function enableSwipeToClose(sheetSelector, closeFn){
+  const sheet=document.querySelector(sheetSelector); if(!sheet)return;
+  let startY=null, currentY=null;
+  sheet.addEventListener('touchstart',e=>{if(e.touches.length===1){startY=e.touches[0].clientY;currentY=startY;}},{passive:true});
+  sheet.addEventListener('touchmove',e=>{
+    if(startY==null||e.touches.length!==1)return;
+    currentY=e.touches[0].clientY;
+    const dy=Math.max(0,currentY-startY);
+    if(dy>0)sheet.style.transform=`translateY(${Math.min(dy,120)}px)`;
+  },{passive:true});
+  sheet.addEventListener('touchend',()=>{
+    const dy=(currentY??startY??0)-(startY??0);
+    sheet.style.transform='';
+    if(dy>70)closeFn();
+    startY=currentY=null;
+  },{passive:true});
+}
+enableSwipeToClose('.food-library-sheet',closeFoodLibrary);
+enableSwipeToClose('.food-add-sheet',closeFoodAdd);
+
 document.getElementById('nutritionAddFood')?.addEventListener('click',openFoodLibrary);
 document.querySelectorAll('[data-log-mode]').forEach(b=>b.addEventListener('click',()=>{
  const mode=b.dataset.logMode;
@@ -4390,7 +4420,7 @@ window.addEventListener('load',()=>{installV43Plan(false);renderManualPlan();ref
 <div class="food-library-overlay" id="foodLibraryOverlay" hidden>
   <section class="food-library-sheet" dir="rtl">
     <div class="food-library-handle"></div>
-    <div class="food-library-head"><div><small>SVEN FOOD LIBRARY</small><h3>انتخاب غذا</h3></div><button id="closeFoodLibrary">×</button></div>
+    <div class="food-library-head"><div><small>SVEN FOOD LIBRARY</small><h3>انتخاب غذا</h3></div><button type="button" id="closeFoodLibrary" aria-label="بستن">×</button></div>
     <div class="food-library-search"><span>⌕</span><input id="foodSearch" placeholder="جست‌وجوی غذا..." autocomplete="off"></div>
     <div class="food-category-chips" id="foodCategoryChips"></div>
     <div class="food-library-count"><span id="foodResultCount">۱۰۰ غذا</span><small>ارزش غذایی تقریبی است و با برند/روش پخت تغییر می‌کند.</small></div>
@@ -4400,7 +4430,7 @@ window.addEventListener('load',()=>{installV43Plan(false);renderManualPlan();ref
 <div class="food-add-overlay" id="foodAddOverlay" hidden>
   <section class="food-add-sheet" dir="rtl">
     <div class="food-library-handle"></div>
-    <div class="food-library-head"><div><small>افزودن به وعده</small><h3 id="foodAddTitle">غذا</h3></div><button id="closeFoodAdd">×</button></div>
+    <div class="food-library-head"><div><small>افزودن به وعده</small><h3 id="foodAddTitle">غذا</h3></div><button type="button" id="closeFoodAdd" aria-label="بستن">×</button></div>
     <div class="food-add-nutrition" id="foodAddNutrition"></div>
     <label>وعده<select id="foodMealSelect"><option value="breakfast">صبحانه</option><option value="lunch">ناهار</option><option value="snack">میان‌وعده</option><option value="dinner">شام</option></select></label>
     <label>مقدار مصرف<input id="foodAmount" type="number" inputmode="decimal" min="1" value="100"><span id="foodAmountUnit">گرم</span></label>
