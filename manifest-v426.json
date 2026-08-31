@@ -1,0 +1,23 @@
+{
+  "name": "Sven Fitness",
+  "short_name": "Sven",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#B7FF00",
+  "icons": [
+    {
+      "src": "sven-icon-192-v426.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "sven-icon-512-v426.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

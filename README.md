@@ -179,3 +179,12 @@ Changes from V4.4:
 - Added browser favicon sizes.
 - Added/updated manifest.json and head icon links.
 - JavaScript syntax check: PASS.
+
+## V4.26 — iOS Icon Cache Bypass
+- Root cause workaround for iOS/Safari persistent Home Screen icon caching.
+- Apple Touch Icon now uses a brand-new URL: apple-touch-icon-v426.png.
+- Also ships root-level apple-touch-icon.png and apple-touch-icon-precomposed.png fallbacks.
+- Manifest icon filenames are unique in this version.
+- Added cache-busting query strings to icon/manifest links.
+- Uses the selected geometric lime/white Sven icon.
+- JavaScript syntax check: PASS.
