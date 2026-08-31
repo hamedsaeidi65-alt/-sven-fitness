@@ -35,3 +35,12 @@ Changes from V4.4:
 - Compact weekly plan rows.
 - Removed prototype/version/promotional copy from main UI.
 - Existing manual plan and workout engine preserved.
+
+
+## V4.11 — Daily RTL Performance Card
+- Home “Today” card redesigned from approved Concept 2.
+- Card is fully RTL/right-aligned.
+- Workout is selected automatically from the actual weekday: Saturday, Sunday, Monday, Tuesday.
+- Wednesday–Friday show recovery/no scheduled resistance workout instead of the wrong workout.
+- Broken hero exercise image is removed.
+- Shows exercise count, estimated duration, session type and Progressive Overload status.
