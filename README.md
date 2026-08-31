@@ -146,3 +146,11 @@ Changes from V4.4:
 - Dark backdrop closes the sheet directly.
 - Swipe-down handlers can now bind because the sheets exist when JS initializes.
 - JavaScript syntax check: PASS.
+
+## V4.22 — Meal → Food Picker
+- Tapping Breakfast, Lunch, Snack, or Dinner now opens the Food Library instead of a prompt.
+- The tapped meal is remembered and preselected automatically.
+- After choosing a food, the Add Food sheet opens with that meal already selected.
+- Food amount and macros are still recalculated before saving.
+- Main “ثبت غذا” button continues to open Food Library with Dinner as default.
+- JavaScript syntax check: PASS.

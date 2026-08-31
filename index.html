@@ -1105,6 +1105,12 @@
 }
 .food-library-sheet,.food-add-sheet{touch-action:pan-y}
 </style>
+
+<style id="sven-v422-meal-picker">
+.nutrition-meal-row{cursor:pointer;transition:transform .12s ease,border-color .12s ease}
+.nutrition-meal-row:active{transform:scale(.985);border-color:rgba(183,255,0,.45)}
+.nutrition-meal-kcal{min-width:42px;text-align:left}
+</style>
 </head>
 <body>
 
@@ -1894,7 +1900,7 @@ function renderNutrition(){
  width('nutritionCalBar',nutritionPct(cal,NUTRITION_TARGETS.calories));width('nutritionProteinBar',nutritionPct(pro,NUTRITION_TARGETS.protein));width('nutritionCarbsBar',nutritionPct(carb,NUTRITION_TARGETS.carbs));width('nutritionFatBar',nutritionPct(fat,NUTRITION_TARGETS.fat));
  set('nutritionDate',new Date().toLocaleDateString('fa-IR',{weekday:'long',day:'numeric',month:'long'}));
  const root=document.getElementById('nutritionMealList');
- if(root)root.innerHTML=meals.map(m=>`<div class="nutrition-meal-row" onclick="quickLogMeal('${m.id}')"><div class="nutrition-meal-icon">${m.icon}</div><div class="nutrition-meal-copy"><b>${m.name}</b><small>${m.items||'هنوز ثبت نشده'}</small></div><div class="nutrition-meal-kcal">${m.calories?fa(m.calories)+' kcal':'＋'}</div></div>`).join('');
+ if(root)root.innerHTML=meals.map(m=>`<div class="nutrition-meal-row" onclick="openFoodLibrary('${m.id}')"><div class="nutrition-meal-icon">${m.icon}</div><div class="nutrition-meal-copy"><b>${m.name}</b><small>${m.items||'هنوز ثبت نشده'}</small></div><div class="nutrition-meal-kcal">${m.calories?fa(m.calories)+' kcal':'＋'}</div></div>`).join('');
  const remainPro=Math.max(0,NUTRITION_TARGETS.protein-pro);
  set('nutritionDinnerSuggestion',remainPro>50?'مرغ + سالاد حجیم + ماست یونانی':'یک شام سبک و پروتئینی');
  set('nutritionDinnerMeta',remainPro>50?'پروتئین بالا · متناسب با کالری باقی‌مانده':'کالری باقی‌مانده امروز را رعایت کن');
@@ -1967,9 +1973,12 @@ document.getElementById('nutritionWeeklyWeightBtn')?.addEventListener('click',lo
 document.getElementById('nutritionApplyCalories')?.addEventListener('click',applyCalorieRecommendation);
 
 
-let activeFoodCategory='همه', selectedLibraryFood=null;
+let activeFoodCategory='همه', selectedLibraryFood=null, selectedTargetMeal='dinner';
 function foodCategories(){return ['همه',...new Set(SVEN_FOOD_LIBRARY.map(x=>x.category))]}
-function openFoodLibrary(){
+function openFoodLibrary(mealId='dinner'){
+ selectedTargetMeal=mealId||'dinner';
+ const mealSelect=document.getElementById('foodMealSelect');
+ if(mealSelect)mealSelect.value=selectedTargetMeal;
  document.getElementById('foodLibraryOverlay').hidden=false;
  renderFoodCategories();renderFoodLibrary();
 }
@@ -1992,6 +2001,8 @@ function openFoodAdd(id){
  document.getElementById('foodAddTitle').textContent=selectedLibraryFood.name;
  document.getElementById('foodAmount').value=selectedLibraryFood.serving.includes('1 ') ? 1 : 100;
  document.getElementById('foodAmountUnit').textContent=selectedLibraryFood.serving.includes('1 ') ? 'سهم' : (selectedLibraryFood.serving.includes('میلی')?'میلی‌لیتر':'گرم');
+ const mealSelect=document.getElementById('foodMealSelect');
+ if(mealSelect)mealSelect.value=selectedTargetMeal||'dinner';
  updateFoodAddNutrition();
  document.getElementById('foodAddOverlay').hidden=false;
 }
@@ -2054,12 +2065,12 @@ function enableSwipeToClose(sheetSelector, closeFn){
 enableSwipeToClose('.food-library-sheet',closeFoodLibrary);
 enableSwipeToClose('.food-add-sheet',closeFoodAdd);
 
-document.getElementById('nutritionAddFood')?.addEventListener('click',openFoodLibrary);
+document.getElementById('nutritionAddFood')?.addEventListener('click',()=>openFoodLibrary('dinner'));
 document.querySelectorAll('[data-log-mode]').forEach(b=>b.addEventListener('click',()=>{
  const mode=b.dataset.logMode;
  if(mode==='quick')quickLogMeal('snack');
  else if(mode==='new')quickLogMeal('lunch');
- else openFoodLibrary();
+ else openFoodLibrary('dinner');
 }));
 
 const pages=[...document.querySelectorAll('.page')];
