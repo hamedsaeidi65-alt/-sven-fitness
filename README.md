@@ -171,3 +171,11 @@ Changes from V4.4:
 - Food list uses normal native vertical scrolling on iOS.
 - Dark backdrop and × close controls still work.
 - JavaScript syntax check: PASS.
+
+## V4.25 — Sven App Icon
+- Applied the selected geometric Sven “S” icon.
+- Added PWA icons: 192×192 and 512×512.
+- Added iOS Apple Touch icons: 180×180 and 152×152.
+- Added browser favicon sizes.
+- Added/updated manifest.json and head icon links.
+- JavaScript syntax check: PASS.
