@@ -155,7 +155,7 @@
 
     .nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);z-index:50;width:min(100%,470px);
       height:calc(76px + env(safe-area-inset-bottom));padding:8px 8px env(safe-area-inset-bottom);
-      display:grid;grid-template-columns:repeat(5,1fr);align-items:center;direction:ltr;
+      display:grid;grid-template-columns:repeat(4,1fr);align-items:center;direction:ltr;
       background:rgba(6,6,8,.96);backdrop-filter:blur(18px);border-top:1px solid rgba(255,255,255,.08)}
     .nav button{border:0;background:transparent;color:#65676f;display:grid;place-items:center;gap:4px;font-size:9px;font-weight:800}
     .nav button.active{color:var(--lime)}
@@ -982,6 +982,10 @@
 .home-goal{margin-top:12px;padding:12px 13px;border-radius:14px;background:#10120e;border:1px solid rgba(183,255,0,.15);direction:rtl;text-align:right}
 .home-goal small{color:var(--lime);font-size:8px;font-weight:900}.home-goal b{display:block;margin-top:4px;font-size:10px}
 </style>
+
+<style id="sven-v412-no-coach">
+#coach{display:none!important}
+</style>
 </head>
 <body>
 
@@ -1045,15 +1049,6 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
       <div class="stat"><small>کالری</small><strong>۲.۳K</strong><em>kcal</em></div>
       <div class="stat"><small>فعالیت</small><strong>۵.۴h</strong><em>+۱۲٪</em></div>
     </div>
-
-    <div class="section-head"><h3>مربی هوشمند</h3><span>SVEN AI</span></div>
-    <section class="coach">
-      <div class="coach-row">
-        <div class="ai">AI</div>
-        <div style="text-align:center"><h4>ریکاوری بدنت خوب به نظر می‌رسد.</h4><small style="color:#74767e">بر اساس فعالیت‌های اخیر</small></div>
-      </div>
-      <p>امروز برای یک جلسه قوی‌تر آماده‌ای. اگر احساس خوبی داری، وزنه حرکات اصلی را کمی افزایش بده.</p>
-    </section>
   </main>
 
   <main id="workouts" class="page">
@@ -1229,7 +1224,7 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
     <button class="navbtn active" data-page="home"><span class="icon">⌂</span><span class="label">خانه</span></button>
     <button class="navbtn" data-page="workouts"><span class="icon">▥</span><span class="label">تمرینات</span></button>
     <button class="navbtn" data-page="progress"><span class="icon">↗</span><span class="label">پیشرفت</span></button>
-    <button class="navbtn" data-page="coach"><span class="icon">✦</span><span class="label">مربی</span></button>
+    
     <button class="navbtn" data-page="profile"><span class="icon">○</span><span class="label">پروفایل</span></button>
   </nav>
 </div>

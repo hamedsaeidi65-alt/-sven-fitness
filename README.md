@@ -44,3 +44,12 @@ Changes from V4.4:
 - Wednesday–Friday show recovery/no scheduled resistance workout instead of the wrong workout.
 - Broken hero exercise image is removed.
 - Shows exercise count, estimated duration, session type and Progressive Overload status.
+
+
+## V4.12 — Coach Removed
+- Removed the “مربی هوشمند / SVEN AI” card from Home.
+- Removed the “مربی” tab from bottom navigation.
+- Bottom navigation is now a balanced 4-column layout: Home, Workouts, Progress, Profile.
+- Coach page is no longer reachable from the UI.
+- Existing workout, progression and daily-plan logic is unchanged.
+- JS syntax check: PASS.
