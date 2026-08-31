@@ -154,3 +154,12 @@ Changes from V4.4:
 - Food amount and macros are still recalculated before saving.
 - Main “ثبت غذا” button continues to open Food Library with Dinner as default.
 - JavaScript syntax check: PASS.
+
+## V4.23 — Editable Meal Items
+- Meals now store individual foodItems with independent IDs instead of only aggregate macros/text.
+- Each registered food appears as its own row under Breakfast/Lunch/Snack/Dinner.
+- Tap a food row to edit amount or move it to another meal.
+- × deletes only that food item after confirmation.
+- Meal and daily calories/macros are recalculated from the remaining items after every edit/delete.
+- Legacy aggregate meals are preserved as a removable legacy item rather than discarded.
+- JavaScript syntax check: PASS.
