@@ -137,3 +137,12 @@ Changes from V4.4:
 - Tapping the dark backdrop now closes both Food Library and Food Add sheets.
 - Added swipe-down-to-close on both mobile bottom sheets.
 - JavaScript syntax check: PASS.
+
+## V4.21 — Food Sheet Close Hard Fix
+- Root cause fixed: Food Library and Add Food sheets were located after the main script, so direct DOM listeners/swipe handlers could not bind at script execution time.
+- Both sheets are now placed before the script.
+- × buttons have direct listeners plus an inline Safari-safe fallback.
+- × touch targets increased to at least 44×44 px.
+- Dark backdrop closes the sheet directly.
+- Swipe-down handlers can now bind because the sheets exist when JS initializes.
+- JavaScript syntax check: PASS.
