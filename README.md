@@ -53,3 +53,13 @@ Changes from V4.4:
 - Coach page is no longer reachable from the UI.
 - Existing workout, progression and daily-plan logic is unchanged.
 - JS syntax check: PASS.
+
+
+## V4.13 — Fixed Home Today Card
+- Rebuilt the Home “تمرین امروز” card as a dedicated independent component.
+- Fully RTL/right-aligned.
+- No hero image dependency.
+- Shows weekday-aware workout title, exercise count, estimated duration, strength session type and Progressive Overload goal.
+- Wednesday–Friday display recovery state.
+- Coach remains removed from Home and bottom navigation.
+- JS syntax check: PASS.
