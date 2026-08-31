@@ -926,6 +926,8 @@
     .sven-toast b{display:block;font-size:10.5px}
     .sven-toast small{display:block;color:#7c7e87;font-size:8.5px;margin-top:3px;line-height:1.55}
 
+
+#manualExerciseSelect{min-height:190px} #manualExerciseInfo{margin-top:7px;color:#a7a9b2}.manual-row select{font-size:9px}
 </style>
 
 <style id="manual-plan-styles">
@@ -1191,7 +1193,9 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
 </div></div>
 <div class="manual-modal" id="manualExerciseModal"><div class="manual-sheet">
 <button class="manual-close" data-manual-close="exercise">×</button><h3>افزودن حرکت</h3>
-<div class="manual-field"><label>حرکت</label><select id="manualExerciseSelect"></select></div>
+<div class="manual-field"><label>جست‌وجوی حرکت</label><input id="manualExerciseSearch" placeholder="مثلاً سینه، Cable، اسمیت یا جلو بازو"></div>
+<div class="manual-row"><div class="manual-field"><label>عضله</label><select id="manualMuscleFilter"><option value="">همه عضلات</option></select></div><div class="manual-field"><label>تجهیزات</label><select id="manualEquipmentFilter"><option value="">همه تجهیزات</option></select></div><div class="manual-field"><label>نوع</label><select id="manualTypeFilter"><option value="">همه</option><option value="1">چندمفصلی</option><option value="0">تک‌مفصلی</option></select></div></div>
+<div class="manual-field"><label>حرکت</label><select id="manualExerciseSelect" size="7"></select><div id="manualExerciseInfo" class="manual-note"></div></div>
 <div class="manual-row">
 <div class="manual-field"><label>ست</label><input id="manualSets" type="number" min="1" max="8" value="3"></div>
 <div class="manual-field"><label>حداقل تکرار</label><input id="manualRepMin" type="number" min="1" max="50" value="8"></div>
@@ -1885,26 +1889,52 @@ const muscleLabels={
 };
 
 const exerciseLibrary=[
-  {id:'db_bench',name:'پرس سینه دمبل',muscles:['chest','triceps','shoulders'],compound:1,baseWeight:24},
-  {id:'incline_db',name:'پرس بالا سینه دمبل',muscles:['chest','shoulders','triceps'],compound:1,baseWeight:18},
-  {id:'chest_fly',name:'فلای سینه',muscles:['chest'],compound:0,baseWeight:12},
-  {id:'lat_pull',name:'لت از جلو',muscles:['back','biceps'],compound:1,baseWeight:45},
-  {id:'seated_row',name:'قایقی نشسته',muscles:['back','biceps'],compound:1,baseWeight:40},
-  {id:'db_row',name:'پارویی دمبل تک‌دست',muscles:['back','biceps'],compound:1,baseWeight:22},
-  {id:'shoulder_press',name:'پرس سرشانه دمبل',muscles:['shoulders','triceps'],compound:1,baseWeight:14},
-  {id:'lateral_raise',name:'نشر جانب',muscles:['shoulders'],compound:0,baseWeight:7},
-  {id:'biceps_curl',name:'جلو بازو دمبل',muscles:['biceps'],compound:0,baseWeight:10},
-  {id:'hammer_curl',name:'جلو بازو چکشی',muscles:['biceps'],compound:0,baseWeight:10},
-  {id:'triceps_push',name:'پشت بازو سیم‌کش',muscles:['triceps'],compound:0,baseWeight:25},
-  {id:'overhead_tri',name:'پشت بازو بالای سر',muscles:['triceps'],compound:0,baseWeight:18},
-  {id:'goblet_squat',name:'اسکوات گابلت',muscles:['quads','glutes'],compound:1,baseWeight:24},
-  {id:'leg_press',name:'پرس پا',muscles:['quads','glutes'],compound:1,baseWeight:70},
-  {id:'romanian_deadlift',name:'ددلیفت رومانیایی',muscles:['hamstrings','glutes','back'],compound:1,baseWeight:40},
-  {id:'leg_curl',name:'پشت پا دستگاه',muscles:['hamstrings'],compound:0,baseWeight:30},
-  {id:'hip_thrust',name:'هیپ تراست',muscles:['glutes','hamstrings'],compound:1,baseWeight:50},
-  {id:'calf_raise',name:'ساق ایستاده',muscles:['calves'],compound:0,baseWeight:35},
-  {id:'plank',name:'پلانک',muscles:['abs'],compound:0,baseWeight:0},
-  {id:'cable_crunch',name:'کرانچ سیم‌کش',muscles:['abs'],compound:0,baseWeight:25}
+  {id:'smith_bench',name:'پرس سینه اسمیت',en:'Smith Bench Press',muscles:['chest','triceps','shoulders'],compound:1,equipment:'smith',equipmentFa:'اسمیت',baseWeight:30},
+  {id:'smith_incline',name:'پرس بالا سینه اسمیت',en:'Smith Incline Press',muscles:['chest','shoulders','triceps'],compound:1,equipment:'smith',equipmentFa:'اسمیت',baseWeight:25},
+  {id:'db_bench',name:'پرس سینه دمبل',en:'Dumbbell Bench Press',muscles:['chest','triceps','shoulders'],compound:1,equipment:'dumbbell',equipmentFa:'دمبل',baseWeight:15},
+  {id:'incline_db',name:'پرس بالا سینه دمبل',en:'Incline Dumbbell Press',muscles:['chest','shoulders','triceps'],compound:1,equipment:'dumbbell',equipmentFa:'دمبل',baseWeight:15},
+  {id:'cable_fly',name:'فلای سینه سیم‌کش',en:'Cable Chest Fly',muscles:['chest'],compound:0,equipment:'cable',equipmentFa:'کابل',baseWeight:15},
+  {id:'cable_crossover',name:'کراس‌اور سیم‌کش',en:'Cable Crossover',muscles:['chest'],compound:0,equipment:'cable',equipmentFa:'کابل',baseWeight:15},
+  {id:'pushup',name:'شنا سوئدی',en:'Push-up',muscles:['chest','triceps','shoulders'],compound:1,equipment:'bodyweight',equipmentFa:'وزن بدن',baseWeight:0},
+  {id:'lat_pull',name:'لت از جلو سیم‌کش',en:'Lat Pulldown',muscles:['back','biceps'],compound:1,equipment:'cable',equipmentFa:'کابل بالا',baseWeight:40},
+  {id:'seated_row',name:'قایقی سیم‌کش نشسته',en:'Seated Cable Row',muscles:['back','biceps'],compound:1,equipment:'cable',equipmentFa:'کابل پایین',baseWeight:35},
+  {id:'tbar_row',name:'پارویی تی‌بار',en:'T-Bar Row',muscles:['back','biceps'],compound:1,equipment:'tbar',equipmentFa:'تی‌بار',baseWeight:30},
+  {id:'barbell_row',name:'پارویی هالتر خم',en:'Barbell Bent-over Row',muscles:['back','biceps'],compound:1,equipment:'barbell',equipmentFa:'هالتر',baseWeight:30},
+  {id:'db_row',name:'پارویی دمبل تک‌دست',en:'One-arm Dumbbell Row',muscles:['back','biceps'],compound:1,equipment:'dumbbell',equipmentFa:'دمبل',baseWeight:15},
+  {id:'straight_arm_pull',name:'پول‌داون دست صاف',en:'Straight-arm Pulldown',muscles:['back'],compound:0,equipment:'cable',equipmentFa:'کابل بالا',baseWeight:20},
+  {id:'back_extension',name:'فیله کمر',en:'Back Extension',muscles:['back','glutes','hamstrings'],compound:0,equipment:'back_extension',equipmentFa:'دستگاه فیله کمر',baseWeight:0},
+  {id:'smith_shoulder_press',name:'پرس سرشانه اسمیت',en:'Smith Shoulder Press',muscles:['shoulders','triceps'],compound:1,equipment:'smith',equipmentFa:'اسمیت',baseWeight:20},
+  {id:'shoulder_press',name:'پرس سرشانه دمبل',en:'Dumbbell Shoulder Press',muscles:['shoulders','triceps'],compound:1,equipment:'dumbbell',equipmentFa:'دمبل',baseWeight:10},
+  {id:'lateral_raise',name:'نشر جانب دمبل',en:'Dumbbell Lateral Raise',muscles:['shoulders'],compound:0,equipment:'dumbbell',equipmentFa:'دمبل',baseWeight:5},
+  {id:'cable_lateral',name:'نشر جانب سیم‌کش',en:'Cable Lateral Raise',muscles:['shoulders'],compound:0,equipment:'cable',equipmentFa:'کابل پایین',baseWeight:7.5},
+  {id:'face_pull',name:'فیس پول',en:'Face Pull',muscles:['shoulders','back'],compound:0,equipment:'cable',equipmentFa:'کابل',baseWeight:15},
+  {id:'rear_delt_fly',name:'فلای معکوس دمبل',en:'Rear Delt Fly',muscles:['shoulders','back'],compound:0,equipment:'dumbbell',equipmentFa:'دمبل',baseWeight:5},
+  {id:'ez_curl',name:'جلو بازو EZ',en:'EZ-Bar Curl',muscles:['biceps'],compound:0,equipment:'ez',equipmentFa:'میله EZ',baseWeight:15},
+  {id:'biceps_curl',name:'جلو بازو دمبل',en:'Dumbbell Curl',muscles:['biceps'],compound:0,equipment:'dumbbell',equipmentFa:'دمبل',baseWeight:10},
+  {id:'hammer_curl',name:'جلو بازو چکشی',en:'Hammer Curl',muscles:['biceps'],compound:0,equipment:'dumbbell',equipmentFa:'دمبل',baseWeight:10},
+  {id:'cable_curl',name:'جلو بازو سیم‌کش',en:'Cable Curl',muscles:['biceps'],compound:0,equipment:'cable',equipmentFa:'کابل پایین',baseWeight:15},
+  {id:'incline_curl',name:'جلو بازو دمبل روی نیمکت شیب‌دار',en:'Incline Dumbbell Curl',muscles:['biceps'],compound:0,equipment:'dumbbell',equipmentFa:'دمبل + نیمکت',baseWeight:7.5},
+  {id:'triceps_push',name:'پشت بازو سیم‌کش',en:'Cable Triceps Pushdown',muscles:['triceps'],compound:0,equipment:'cable',equipmentFa:'کابل بالا',baseWeight:20},
+  {id:'overhead_tri',name:'پشت بازو بالای سر سیم‌کش',en:'Overhead Cable Extension',muscles:['triceps'],compound:0,equipment:'cable',equipmentFa:'کابل',baseWeight:15},
+  {id:'ez_skullcrusher',name:'پشت بازو خوابیده EZ',en:'EZ-Bar Skull Crusher',muscles:['triceps'],compound:0,equipment:'ez',equipmentFa:'میله EZ + نیمکت',baseWeight:15},
+  {id:'close_grip_smith',name:'پرس دست جمع اسمیت',en:'Smith Close-grip Bench Press',muscles:['triceps','chest'],compound:1,equipment:'smith',equipmentFa:'اسمیت',baseWeight:25},
+  {id:'smith_squat',name:'اسکوات اسمیت',en:'Smith Squat',muscles:['quads','glutes','hamstrings'],compound:1,equipment:'smith',equipmentFa:'اسمیت',baseWeight:30},
+  {id:'barbell_squat',name:'اسکوات هالتر',en:'Barbell Squat',muscles:['quads','glutes','hamstrings'],compound:1,equipment:'barbell',equipmentFa:'هالتر',baseWeight:30},
+  {id:'goblet_squat',name:'اسکوات گابلت',en:'Goblet Squat',muscles:['quads','glutes'],compound:1,equipment:'dumbbell',equipmentFa:'دمبل',baseWeight:15},
+  {id:'bulgarian_split',name:'اسکوات بلغاری دمبل',en:'Bulgarian Split Squat',muscles:['quads','glutes'],compound:1,equipment:'dumbbell',equipmentFa:'دمبل + نیمکت',baseWeight:10},
+  {id:'romanian_deadlift',name:'ددلیفت رومانیایی هالتر',en:'Barbell Romanian Deadlift',muscles:['hamstrings','glutes','back'],compound:1,equipment:'barbell',equipmentFa:'هالتر',baseWeight:30},
+  {id:'smith_rdl',name:'ددلیفت رومانیایی اسمیت',en:'Smith Romanian Deadlift',muscles:['hamstrings','glutes','back'],compound:1,equipment:'smith',equipmentFa:'اسمیت',baseWeight:30},
+  {id:'db_rdl',name:'ددلیفت رومانیایی دمبل',en:'Dumbbell Romanian Deadlift',muscles:['hamstrings','glutes'],compound:1,equipment:'dumbbell',equipmentFa:'دمبل',baseWeight:15},
+  {id:'cable_pullthrough',name:'پول ترو سیم‌کش',en:'Cable Pull-through',muscles:['glutes','hamstrings'],compound:1,equipment:'cable',equipmentFa:'کابل پایین',baseWeight:25},
+  {id:'hip_thrust',name:'هیپ تراست هالتر',en:'Barbell Hip Thrust',muscles:['glutes','hamstrings'],compound:1,equipment:'barbell',equipmentFa:'هالتر + نیمکت',baseWeight:30},
+  {id:'smith_calf',name:'ساق ایستاده اسمیت',en:'Smith Standing Calf Raise',muscles:['calves'],compound:0,equipment:'smith',equipmentFa:'اسمیت',baseWeight:30},
+  {id:'db_calf',name:'ساق ایستاده دمبل',en:'Dumbbell Calf Raise',muscles:['calves'],compound:0,equipment:'dumbbell',equipmentFa:'دمبل',baseWeight:15},
+  {id:'plank',name:'پلانک',en:'Plank',muscles:['abs'],compound:0,equipment:'bodyweight',equipmentFa:'وزن بدن',baseWeight:0},
+  {id:'cable_crunch',name:'کرانچ سیم‌کش',en:'Cable Crunch',muscles:['abs'],compound:0,equipment:'cable',equipmentFa:'کابل بالا',baseWeight:20},
+  {id:'reverse_crunch',name:'کرانچ معکوس',en:'Reverse Crunch',muscles:['abs'],compound:0,equipment:'bodyweight',equipmentFa:'وزن بدن',baseWeight:0},
+  {id:'treadmill_walk',name:'پیاده‌روی تردمیل',en:'Treadmill Walk',muscles:['quads','calves'],compound:0,equipment:'cardio',equipmentFa:'تردمیل',baseWeight:0},
+  {id:'treadmill_run',name:'دویدن روی تردمیل',en:'Treadmill Run',muscles:['quads','calves'],compound:0,equipment:'cardio',equipmentFa:'تردمیل',baseWeight:0},
+  {id:'stationary_bike',name:'دوچرخه ثابت',en:'Stationary Bike',muscles:['quads','glutes'],compound:0,equipment:'cardio',equipmentFa:'دوچرخه ثابت',baseWeight:0}
 ];
 
 const sessionSplits={
@@ -3472,7 +3502,13 @@ function deleteManualExercise(dayId,index){const p=loadManualPlan(),d=p.days.fin
 document.getElementById('manualAddDayBtn')?.addEventListener('click',()=>openManualDay());document.getElementById('manualPlanAddDay')?.addEventListener('click',()=>openManualDay());
 document.querySelectorAll('[data-manual-close]').forEach(b=>b.addEventListener('click',()=>b.closest('.manual-modal').classList.remove('open')));
 document.getElementById('manualSaveDay')?.addEventListener('click',()=>{const name=document.getElementById('manualDayName').value.trim();if(!name)return alert('نام روز یا جلسه را وارد کن.');const id=document.getElementById('manualDayId').value,p=loadManualPlan();if(id){const d=p.days.find(x=>x.id===id);if(d)d.name=name}else p.days.push({id:'day_'+Date.now(),name,exercises:[]});saveManualPlan(p);document.getElementById('manualDayModal').classList.remove('open')});
-const mex=document.getElementById('manualExerciseSelect');if(mex)mex.innerHTML=exerciseLibrary.map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
+const mex=document.getElementById('manualExerciseSelect');
+const mmf=document.getElementById('manualMuscleFilter'), mef=document.getElementById('manualEquipmentFilter'), mtf=document.getElementById('manualTypeFilter'), mes=document.getElementById('manualExerciseSearch');
+if(mmf)mmf.innerHTML='<option value="">همه عضلات</option>'+Object.entries(muscleLabels).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+if(mef){const eq=[...new Map(exerciseLibrary.map(e=>[e.equipment,e.equipmentFa])).entries()];mef.innerHTML='<option value="">همه تجهیزات</option>'+eq.map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}
+function renderExercisePicker(){if(!mex)return;const q=(mes?.value||'').trim().toLowerCase(),m=mmf?.value||'',eq=mef?.value||'',t=mtf?.value??'';const list=exerciseLibrary.filter(e=>(!q||(e.name+' '+(e.en||'')+' '+e.equipmentFa+' '+e.muscles.map(x=>muscleLabels[x]).join(' ')).toLowerCase().includes(q))&&(!m||e.muscles.includes(m))&&(!eq||e.equipment===eq)&&(t===''||String(e.compound)===t));mex.innerHTML=list.map(e=>`<option value="${e.id}">${e.name} · ${e.equipmentFa}</option>`).join('');if(list.length)mex.value=list[0].id;renderExerciseInfo()}
+function renderExerciseInfo(){const e=exerciseLibrary.find(x=>x.id===mex?.value),el=document.getElementById('manualExerciseInfo');if(el)el.textContent=e?`${e.en} · ${e.muscles.map(x=>muscleLabels[x]).join('، ')} · ${e.compound?'چندمفصلی':'تک‌مفصلی'} · ${e.equipmentFa}`:'حرکتی با این فیلتر پیدا نشد.'}
+[mes,mmf,mef,mtf].forEach(el=>el?.addEventListener(el===mes?'input':'change',renderExercisePicker));mex?.addEventListener('change',renderExerciseInfo);renderExercisePicker();
 document.getElementById('manualSaveExercise')?.addEventListener('click',()=>{const p=loadManualPlan(),d=p.days.find(x=>x.id===document.getElementById('manualExerciseDayId').value);if(!d)return;const min=Number(document.getElementById('manualRepMin').value),max=Number(document.getElementById('manualRepMax').value);if(min<1||max<min)return alert('بازه تکرار صحیح نیست.');d.exercises.push({exerciseId:mex.value,sets:Number(document.getElementById('manualSets').value)||3,repMin:min,repMax:max,rest:Number(document.getElementById('manualRest').value)||90});saveManualPlan(p);document.getElementById('manualExerciseModal').classList.remove('open')});
 window.addEventListener('load',renderManualPlan);
 
