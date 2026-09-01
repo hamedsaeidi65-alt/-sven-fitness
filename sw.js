@@ -1,4 +1,4 @@
-const CACHE = "sven-v4.9-dinner-ui";
+const CACHE = "sven-v4.10-dinner-scope-fix";
 const ASSETS = ["./", "./index.html", "./manifest.json"];
 
 self.addEventListener("install", (event) => {
