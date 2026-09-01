@@ -1,4 +1,4 @@
-const CACHE = "sven-v4.15-cloud-offline-video";
+const CACHE = "sven-v4.16.1-google-drive-no-svg";
 const ASSETS = ["./manifest.json"];
 
 self.addEventListener("install", (event) => {
