@@ -4770,9 +4770,16 @@ async function uploadSelectedRecipeVideo(file){
  driveStatus('در حال آماده‌سازی پوشه Google Drive…');const choose=document.getElementById('chooseDriveVideo');if(choose)choose.disabled=true;
  try{const root=await findOrCreateDriveFolder('Sven Fitness');const recipes=await findOrCreateDriveFolder('Recipes',root);const meal=await findOrCreateDriveFolder(mealFolderName(),recipes);
   driveStatus(`در حال آپلود ${prettyBytes(file.size)}…`);
-  const meta={name:finalName,parents:[meal]};const boundary='sven_'+Date.now();const pre=`--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n--${boundary}\r\nContent-Type: ${file.type||'video/mp4'}\r\n\r\n`;const post=`\r\n--${boundary}--`;
-  const body=new Blob([pre,file,post],{type:'multipart/related; boundary='+boundary});
-  const r=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink,size',{method:'POST',headers:{Authorization:'Bearer '+svenDriveToken,'Content-Type':'multipart/related; boundary='+boundary},body});if(!r.ok)throw new Error('UPLOAD_'+r.status);const j=await r.json();pendingDriveMeta={driveFileId:j.id,driveFileName:j.name,videoUrl:j.webViewLink||`https://drive.google.com/file/d/${j.id}/view`};drVideoUrl.value=pendingDriveMeta.videoUrl;const fn=document.getElementById('driveFileName');if(fn)fn.textContent='✓ '+j.name;driveStatus('آپلود کامل شد؛ با ذخیره دستور، ویدیو به غذا متصل می‌شود.',true);scheduleRecipeDraft();
+  const meta={name:finalName,parents:[meal]};
+  // Resumable upload: the second request body is the original File object itself.
+  // No Base64, no Data URL and no multipart wrapping, so Drive receives the exact bytes.
+  const init=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&fields=id,name,webViewLink,size',{method:'POST',headers:{Authorization:'Bearer '+svenDriveToken,'Content-Type':'application/json; charset=UTF-8','X-Upload-Content-Type':file.type||'video/mp4','X-Upload-Content-Length':String(file.size)},body:JSON.stringify(meta)});
+  if(!init.ok)throw new Error('UPLOAD_INIT_'+init.status);
+  const uploadUrl=init.headers.get('Location');if(!uploadUrl)throw new Error('UPLOAD_NO_LOCATION');
+  const r=await fetch(uploadUrl,{method:'PUT',headers:{'Content-Type':file.type||'video/mp4','Content-Length':String(file.size)},body:file});
+  if(!r.ok)throw new Error('UPLOAD_'+r.status);const j=await r.json();
+  const remoteSize=Number(j.size||0);if(remoteSize&&remoteSize!==file.size)throw new Error('SIZE_MISMATCH_'+remoteSize+'_'+file.size);
+  pendingDriveMeta={driveFileId:j.id,driveFileName:j.name,videoUrl:j.webViewLink||`https://drive.google.com/file/d/${j.id}/view`};drVideoUrl.value=pendingDriveMeta.videoUrl;const fn=document.getElementById('driveFileName');if(fn)fn.textContent='✓ '+j.name+' · '+prettyBytes(file.size);driveStatus('آپلود کامل شد؛ حجم فایل در Drive با فایل انتخابی یکسان است.',true);scheduleRecipeDraft();
  }catch(e){if(String(e.message).includes('TOKEN')){pendingDriveFile=file;svenDriveToken='';driveStatus('مجوز منقضی شده؛ دوباره اتصال را تأیید کن.');requestDriveAccess()}else{console.error(e);driveStatus('آپلود انجام نشد. اتصال اینترنت و مجوز Drive را بررسی کن.')}}finally{if(choose)choose.disabled=false}
 }
 async function fetchDriveVideoBlob(fileId){const r=await driveApi('files/'+encodeURIComponent(fileId)+'?alt=media');return await r.blob()}
