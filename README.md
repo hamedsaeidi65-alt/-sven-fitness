@@ -1,3 +1,8 @@
+## v4.13
+- Added Breakfast Library and Lunch Library alongside Dinner Library in Nutrition.
+- All three use the same title-only list → recipe detail flow with video, ingredients, macros, steps, servings and Meal Prep.
+- Existing Dinner Library data is preserved in sven.dinner.v1.
+
 # Sven Fitness V4.6 — GitHub Pages Image Reliability Fix
 
 - 25 dedicated exercise SVGs are now embedded directly inside `index.html` as data URIs.
