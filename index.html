@@ -935,6 +935,13 @@
 
 
 #manualExerciseSelect{min-height:190px} #manualExerciseInfo{margin-top:7px;color:#a7a9b2}.manual-row select{font-size:9px}
+
+/* v4.12 — strict title-only Dinner Library */
+#dinnerLibrary .recipe-list-item{display:flex;align-items:center;gap:12px;min-height:58px;padding:12px 15px;background:#121419;border:1px solid rgba(255,255,255,.08);border-radius:16px;color:#fff;text-align:right}
+#dinnerLibrary .recipe-list-title{flex:1;display:block;font-size:16px;line-height:1.55;font-weight:950;color:#fff;white-space:normal;overflow:visible;text-overflow:clip}
+#dinnerLibrary .recipe-list-arrow{flex:0 0 32px;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#1d2026;color:var(--lime);font-size:20px;font-weight:950}
+#dinnerLibrary .recipe-list-main,#dinnerLibrary .recipe-list-meta{display:none!important}
+
 </style>
 
 <style id="manual-plan-styles">
@@ -1441,7 +1448,7 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
   </main>
 
 
-  <main id="dinnerLibrary" class="page">
+  <main id="dinnerLibrary" class="page" data-dinner-version="4.12">
     <div class="dl-head"><button class="dl-back" id="dinnerBack">→</button><h2>Dinner Library</h2><span id="dinnerCount">۰ غذا</span></div>
     <div class="dl-grid" id="dinnerRecipeGrid"></div>
     <button class="dl-add" id="addDinnerRecipe">＋ افزودن دستور جدید</button>
@@ -4727,7 +4734,7 @@ async function dinnerPut(x){const db=await dinnerDB();return new Promise((ok,no)
 function dinnerEsc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function addIngredientEditor(v={}){const d=document.createElement('div');d.className='ingredient-editor';d.innerHTML=`<input class="ing-name" placeholder="مرغ" value="${dinnerEsc(v.name||'')}"><input class="ing-qty" type="number" step="0.1" placeholder="150" value="${dinnerEsc(v.qty||'')}"><select class="ing-unit"><option>g</option><option>ml</option><option>عدد</option><option>قاشق</option><option>پیمانه</option></select><button type="button">×</button>`;d.querySelector('select').value=v.unit||'g';d.querySelector('button').onclick=()=>d.remove();document.getElementById('ingredientEditors').appendChild(d)}
 function openDinnerModal(){['drTitle','drCal','drProtein','drCarbs','drFat','drTime','drSteps'].forEach(id=>document.getElementById(id).value='');document.getElementById('drServings').value=1;document.getElementById('drMealPrep').checked=false;document.getElementById('drVideo').value='';document.getElementById('ingredientEditors').innerHTML='';addIngredientEditor();document.getElementById('dinnerRecipeModal').classList.add('open')}
-async function renderDinnerLibrary(){const grid=document.getElementById('dinnerRecipeGrid');if(!grid)return;const xs=await dinnerAll();document.getElementById('dinnerCount').textContent=(window.fa?fa(xs.length):xs.length)+' غذا';grid.innerHTML='';if(!xs.length){grid.innerHTML='<div class="dl-empty"><b>هنوز شامی ثبت نشده</b><p>اولین ویدیوی دستور پختت را اضافه کن و مواد لازم را تگ کن.</p></div>';return}xs.forEach(x=>{const b=document.createElement('button');b.type='button';b.className='recipe-list-item';b.innerHTML=`<span class="recipe-list-main"><span class="recipe-list-title">${dinnerEsc(x.title)}</span><span class="recipe-list-meta">${dinnerEsc(x.cal||0)} kcal · ${dinnerEsc(x.protein||0)}g پروتئین</span></span><span class="recipe-list-arrow">‹</span>`;b.addEventListener('click',()=>openDinnerDetail(x.id));grid.appendChild(b)})}
+async function renderDinnerLibrary(){const grid=document.getElementById('dinnerRecipeGrid');if(!grid)return;const xs=await dinnerAll();document.getElementById('dinnerCount').textContent=(window.fa?fa(xs.length):xs.length)+' غذا';grid.innerHTML='';if(!xs.length){grid.innerHTML='<div class="dl-empty"><b>هنوز شامی ثبت نشده</b><p>اولین ویدیوی دستور پختت را اضافه کن و مواد لازم را تگ کن.</p></div>';return}xs.forEach(x=>{const b=document.createElement('button');b.type='button';b.className='recipe-list-item';b.setAttribute('aria-label','باز کردن '+(x.title||'غذا'));b.innerHTML=`<span class="recipe-list-title">${dinnerEsc(x.title)}</span><span class="recipe-list-arrow">‹</span>`;b.addEventListener('click',()=>openDinnerDetail(x.id));grid.appendChild(b)})}
 async function openDinnerDetail(id){const x=await dinnerGet(id);if(!x)return;if(currentDinnerVideoUrl){URL.revokeObjectURL(currentDinnerVideoUrl);currentDinnerVideoUrl=''}const card=document.getElementById('dinnerDetailCard');const header=document.getElementById('dinnerDetailHeader');header.textContent=x.title||'جزئیات شام';if(x.video)currentDinnerVideoUrl=URL.createObjectURL(x.video);const ingredients=(x.ingredients||[]).map(i=>`<span class="ingredient-tag">${dinnerEsc(i.name)} ${dinnerEsc(i.qty||'')}${dinnerEsc(i.unit||'')}</span>`).join('')||'<span style="color:#8f949e;font-size:13px">مواد اولیه ثبت نشده است.</span>';const steps=(x.steps||[]).map(z=>`<li>${dinnerEsc(z)}</li>`).join('')||'<li>مراحل پخت ثبت نشده است.</li>';card.innerHTML=`<div class="recipe-detail-video">${currentDinnerVideoUrl?`<video controls playsinline preload="metadata" src="${currentDinnerVideoUrl}"></video>`:'<div class="recipe-detail-no-video">ویدیو برای این غذا ثبت نشده است.</div>'}</div><div class="recipe-detail-body"><h3 class="recipe-detail-title">${dinnerEsc(x.title)}</h3><div class="recipe-detail-sub">${dinnerEsc(x.time||'—')} دقیقه · ${dinnerEsc(x.servings||1)} سرو</div><div class="macro-row"><span><b>${dinnerEsc(x.cal||0)}</b>kcal</span><span><b>${dinnerEsc(x.protein||0)}g</b>پروتئین</span><span><b>${dinnerEsc(x.carbs||0)}g</b>کربوهیدرات</span><span><b>${dinnerEsc(x.fat||0)}g</b>چربی</span></div><section class="detail-section"><h4>مواد لازم</h4><div class="ingredient-tags">${ingredients}</div></section><section class="detail-section"><h4>دستور پخت</h4><ol class="recipe-detail-steps">${steps}</ol></section>${x.mealPrep?'<div class="meal-prep-badge">✓ مناسب Meal Prep</div>':''}</div>`;showPage('dinnerDetail')}
 function closeDinnerDetail(){if(currentDinnerVideoUrl){URL.revokeObjectURL(currentDinnerVideoUrl);currentDinnerVideoUrl=''}showPage('dinnerLibrary');renderDinnerLibrary()}
 document.getElementById('openDinnerLibrary')?.addEventListener('click',()=>{showPage('dinnerLibrary');renderDinnerLibrary()});
