@@ -200,3 +200,10 @@ Changes from V4.4:
 - Numeric history persists in localStorage; photos persist locally in IndexedDB to avoid localStorage image limits.
 - Shows latest check-in and weight change.
 - JavaScript syntax check: PASS.
+
+
+## v4.14 Recipe management
+- Edit and delete recipes from Recipe Detail.
+- Ingredient rows are editable and individually removable.
+- Auto-save drafts for Breakfast/Lunch/Dinner forms.
+- Unsaved-change warning on close; draft restoration on reopen.
