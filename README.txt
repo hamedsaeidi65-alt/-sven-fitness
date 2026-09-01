@@ -6,3 +6,5 @@ Changes from V4.4:
 - No shared/fallback image is used for any movement in the four-day plan.
 - Assets are bundled under assets/exercises/ and precached for offline PWA use.
 - Existing manual plan, 13 direct weekly ab sets, RIR and Progressive Overload logic are preserved.
+
+Sven v4.11: Dinner Library master/detail UI. Library shows title + kcal + protein; full video, macros, ingredients and steps open in a separate detail page.

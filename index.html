@@ -1208,6 +1208,38 @@
 #dinnerRecipeModal .dl-field input::placeholder,#dinnerRecipeModal .dl-field textarea::placeholder{color:#777a82!important;-webkit-text-fill-color:#777a82!important;opacity:1}
 @media(max-width:390px){#dinnerLibrary .recipe-title-row{align-items:flex-start;flex-direction:column}#dinnerLibrary .recipe-title-row small{white-space:normal}#dinnerLibrary .macro-row{grid-template-columns:repeat(2,1fr)}}
 </style>
+
+<style id="sven-v411-dinner-master-detail">
+/* v4.11 — Dinner Library master/detail */
+#dinnerLibrary .dl-grid{display:grid;gap:10px}
+#dinnerLibrary .recipe-list-item{width:100%;border:1px solid rgba(255,255,255,.08);background:#121419;color:#fff;border-radius:18px;padding:15px 16px;display:flex;align-items:center;gap:12px;text-align:right;box-shadow:0 10px 24px rgba(0,0,0,.18);cursor:pointer}
+#dinnerLibrary .recipe-list-item:active{transform:scale(.995)}
+#dinnerLibrary .recipe-list-main{min-width:0;flex:1}
+#dinnerLibrary .recipe-list-title{display:block;font-size:16px;line-height:1.5;font-weight:950;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#dinnerLibrary .recipe-list-meta{display:block;margin-top:4px;color:#aeb2ba;font-size:12px;font-weight:800}
+#dinnerLibrary .recipe-list-arrow{flex:0 0 auto;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#1d2026;color:var(--lime);font-size:20px;font-weight:950}
+#dinnerDetail{padding:18px 18px calc(112px + env(safe-area-inset-bottom));color:#f6f7f8}
+#dinnerDetail .dl-head{min-height:58px;margin:0 0 16px;display:flex;align-items:center;gap:12px}
+#dinnerDetail .dl-head h2{margin:0;flex:1;text-align:center;font-size:23px;line-height:1.25;font-weight:950;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#dinnerDetail .detail-head-spacer{width:46px;flex:0 0 46px}
+#dinnerDetail .recipe-detail-card{background:#111318;border:1px solid rgba(255,255,255,.08);border-radius:24px;overflow:hidden;box-shadow:0 12px 34px rgba(0,0,0,.28)}
+#dinnerDetail .recipe-detail-video{aspect-ratio:16/9;background:#050607;display:grid;place-items:center}
+#dinnerDetail .recipe-detail-video video{width:100%;height:100%;object-fit:cover}
+#dinnerDetail .recipe-detail-no-video{color:#8f949e;font-size:13px;font-weight:850}
+#dinnerDetail .recipe-detail-body{padding:18px}
+#dinnerDetail .recipe-detail-title{margin:0;color:#fff;font-size:23px;line-height:1.45;font-weight:950}
+#dinnerDetail .recipe-detail-sub{margin-top:5px;color:#aeb2ba;font-size:12px;font-weight:800}
+#dinnerDetail .macro-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0}
+#dinnerDetail .macro-row span{background:#1c1f25;border:1px solid #2a2e36;color:#b9bdc6;border-radius:14px;padding:10px 4px;text-align:center;font-size:10px;font-weight:800}
+#dinnerDetail .macro-row b{display:block;color:#fff;font-size:15px;line-height:1.2;margin-bottom:3px}
+#dinnerDetail .detail-section{padding-top:16px;margin-top:16px;border-top:1px solid #292d34}
+#dinnerDetail .detail-section h4{margin:0 0 10px;color:#fff;font-size:15px;font-weight:950}
+#dinnerDetail .ingredient-tags{display:flex;flex-wrap:wrap;gap:8px;direction:rtl}
+#dinnerDetail .ingredient-tag{background:rgba(183,255,0,.12);border:1px solid rgba(183,255,0,.32);color:#e9fbc8;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:850;line-height:1.4}
+#dinnerDetail .recipe-detail-steps{margin:0;padding-right:22px;color:#d8dbe1;font-size:13px;line-height:2}
+#dinnerDetail .meal-prep-badge{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:8px 11px;border-radius:999px;background:#1b2118;color:#dfffb1;border:1px solid rgba(183,255,0,.24);font-size:12px;font-weight:900}
+@media(max-width:390px){#dinnerDetail .macro-row{grid-template-columns:repeat(2,1fr)}#dinnerDetail .recipe-detail-title{font-size:21px}}
+</style>
 </head>
 <body>
 
@@ -1413,6 +1445,11 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
     <div class="dl-head"><button class="dl-back" id="dinnerBack">→</button><h2>Dinner Library</h2><span id="dinnerCount">۰ غذا</span></div>
     <div class="dl-grid" id="dinnerRecipeGrid"></div>
     <button class="dl-add" id="addDinnerRecipe">＋ افزودن دستور جدید</button>
+  </main>
+
+  <main id="dinnerDetail" class="page">
+    <div class="dl-head"><button class="dl-back" id="dinnerDetailBack">→</button><h2 id="dinnerDetailHeader">جزئیات شام</h2><span class="detail-head-spacer"></span></div>
+    <article class="recipe-detail-card" id="dinnerDetailCard"></article>
   </main>
 
   <main id="progress" class="page">
@@ -4682,13 +4719,24 @@ window.addEventListener('load',()=>{installV43Plan(false);renderManualPlan();ref
 
 <script id="dinner-library-script">
 const DINNER_DB='sven.dinner.v1', DINNER_STORE='recipes';
+let currentDinnerVideoUrl='';
 function dinnerDB(){return new Promise((ok,no)=>{const r=indexedDB.open(DINNER_DB,1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(DINNER_STORE))r.result.createObjectStore(DINNER_STORE,{keyPath:'id'})};r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
 async function dinnerAll(){const db=await dinnerDB();return new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE).objectStore(DINNER_STORE).getAll();r.onsuccess=()=>ok(r.result.sort((a,b)=>b.createdAt-a.createdAt));r.onerror=()=>no(r.error)})}
+async function dinnerGet(id){const db=await dinnerDB();return new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE).objectStore(DINNER_STORE).get(id);r.onsuccess=()=>ok(r.result||null);r.onerror=()=>no(r.error)})}
 async function dinnerPut(x){const db=await dinnerDB();return new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE,'readwrite').objectStore(DINNER_STORE).put(x);r.onsuccess=()=>ok();r.onerror=()=>no(r.error)})}
-function addIngredientEditor(v={}){const d=document.createElement('div');d.className='ingredient-editor';d.innerHTML=`<input class="ing-name" placeholder="مرغ" value="${v.name||''}"><input class="ing-qty" type="number" step="0.1" placeholder="150" value="${v.qty||''}"><select class="ing-unit"><option>g</option><option>ml</option><option>عدد</option><option>قاشق</option><option>پیمانه</option></select><button type="button">×</button>`;d.querySelector('select').value=v.unit||'g';d.querySelector('button').onclick=()=>d.remove();document.getElementById('ingredientEditors').appendChild(d)}
+function dinnerEsc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function addIngredientEditor(v={}){const d=document.createElement('div');d.className='ingredient-editor';d.innerHTML=`<input class="ing-name" placeholder="مرغ" value="${dinnerEsc(v.name||'')}"><input class="ing-qty" type="number" step="0.1" placeholder="150" value="${dinnerEsc(v.qty||'')}"><select class="ing-unit"><option>g</option><option>ml</option><option>عدد</option><option>قاشق</option><option>پیمانه</option></select><button type="button">×</button>`;d.querySelector('select').value=v.unit||'g';d.querySelector('button').onclick=()=>d.remove();document.getElementById('ingredientEditors').appendChild(d)}
 function openDinnerModal(){['drTitle','drCal','drProtein','drCarbs','drFat','drTime','drSteps'].forEach(id=>document.getElementById(id).value='');document.getElementById('drServings').value=1;document.getElementById('drMealPrep').checked=false;document.getElementById('drVideo').value='';document.getElementById('ingredientEditors').innerHTML='';addIngredientEditor();document.getElementById('dinnerRecipeModal').classList.add('open')}
-async function renderDinnerLibrary(){const grid=document.getElementById('dinnerRecipeGrid');if(!grid)return;const xs=await dinnerAll();document.getElementById('dinnerCount').textContent=(window.fa?fa(xs.length):xs.length)+' غذا';grid.innerHTML='';if(!xs.length){grid.innerHTML='<div class="dl-empty"><b>هنوز شامی ثبت نشده</b><p>اولین ویدیوی دستور پختت را اضافه کن و مواد لازم را تگ کن.</p></div>';return}xs.forEach(x=>{const c=document.createElement('article');c.className='recipe-card';const url=x.video?URL.createObjectURL(x.video):'';c.innerHTML=`<div class="recipe-video">${url?`<video controls playsinline preload="metadata" src="${url}"></video>`:'<div class="no-video">بدون ویدیو</div>'}</div><div class="recipe-body"><div class="recipe-title-row"><h3>${x.title}</h3><small>${x.time||'—'} دقیقه · ${x.servings||1} سرو</small></div><div class="macro-row"><span><b>${x.cal||0}</b>kcal</span><span><b>${x.protein||0}g</b>پروتئین</span><span><b>${x.carbs||0}g</b>کربوهیدرات</span><span><b>${x.fat||0}g</b>چربی</span></div><div class="ingredient-tags">${(x.ingredients||[]).map(i=>`<span class="ingredient-tag">${i.name} ${i.qty||''}${i.unit||''}</span>`).join('')}</div>${x.mealPrep?'<p style="font-size:12px;font-weight:900">✓ مناسب Meal Prep</p>':''}<details class="recipe-steps"><summary>دستور پخت</summary><ol>${(x.steps||[]).map(z=>`<li>${z}</li>`).join('')}</ol></details></div>`;grid.appendChild(c)})}
-document.getElementById('openDinnerLibrary')?.addEventListener('click',()=>{showPage('dinnerLibrary');renderDinnerLibrary()});document.getElementById('dinnerBack')?.addEventListener('click',()=>showPage('nutrition'));document.getElementById('addDinnerRecipe')?.addEventListener('click',openDinnerModal);document.getElementById('closeDinnerRecipe')?.addEventListener('click',()=>document.getElementById('dinnerRecipeModal').classList.remove('open'));document.getElementById('dinnerRecipeModal')?.addEventListener('click',e=>{if(e.target.id==='dinnerRecipeModal')e.currentTarget.classList.remove('open')});document.getElementById('addIngredientRow')?.addEventListener('click',()=>addIngredientEditor());
+async function renderDinnerLibrary(){const grid=document.getElementById('dinnerRecipeGrid');if(!grid)return;const xs=await dinnerAll();document.getElementById('dinnerCount').textContent=(window.fa?fa(xs.length):xs.length)+' غذا';grid.innerHTML='';if(!xs.length){grid.innerHTML='<div class="dl-empty"><b>هنوز شامی ثبت نشده</b><p>اولین ویدیوی دستور پختت را اضافه کن و مواد لازم را تگ کن.</p></div>';return}xs.forEach(x=>{const b=document.createElement('button');b.type='button';b.className='recipe-list-item';b.innerHTML=`<span class="recipe-list-main"><span class="recipe-list-title">${dinnerEsc(x.title)}</span><span class="recipe-list-meta">${dinnerEsc(x.cal||0)} kcal · ${dinnerEsc(x.protein||0)}g پروتئین</span></span><span class="recipe-list-arrow">‹</span>`;b.addEventListener('click',()=>openDinnerDetail(x.id));grid.appendChild(b)})}
+async function openDinnerDetail(id){const x=await dinnerGet(id);if(!x)return;if(currentDinnerVideoUrl){URL.revokeObjectURL(currentDinnerVideoUrl);currentDinnerVideoUrl=''}const card=document.getElementById('dinnerDetailCard');const header=document.getElementById('dinnerDetailHeader');header.textContent=x.title||'جزئیات شام';if(x.video)currentDinnerVideoUrl=URL.createObjectURL(x.video);const ingredients=(x.ingredients||[]).map(i=>`<span class="ingredient-tag">${dinnerEsc(i.name)} ${dinnerEsc(i.qty||'')}${dinnerEsc(i.unit||'')}</span>`).join('')||'<span style="color:#8f949e;font-size:13px">مواد اولیه ثبت نشده است.</span>';const steps=(x.steps||[]).map(z=>`<li>${dinnerEsc(z)}</li>`).join('')||'<li>مراحل پخت ثبت نشده است.</li>';card.innerHTML=`<div class="recipe-detail-video">${currentDinnerVideoUrl?`<video controls playsinline preload="metadata" src="${currentDinnerVideoUrl}"></video>`:'<div class="recipe-detail-no-video">ویدیو برای این غذا ثبت نشده است.</div>'}</div><div class="recipe-detail-body"><h3 class="recipe-detail-title">${dinnerEsc(x.title)}</h3><div class="recipe-detail-sub">${dinnerEsc(x.time||'—')} دقیقه · ${dinnerEsc(x.servings||1)} سرو</div><div class="macro-row"><span><b>${dinnerEsc(x.cal||0)}</b>kcal</span><span><b>${dinnerEsc(x.protein||0)}g</b>پروتئین</span><span><b>${dinnerEsc(x.carbs||0)}g</b>کربوهیدرات</span><span><b>${dinnerEsc(x.fat||0)}g</b>چربی</span></div><section class="detail-section"><h4>مواد لازم</h4><div class="ingredient-tags">${ingredients}</div></section><section class="detail-section"><h4>دستور پخت</h4><ol class="recipe-detail-steps">${steps}</ol></section>${x.mealPrep?'<div class="meal-prep-badge">✓ مناسب Meal Prep</div>':''}</div>`;showPage('dinnerDetail')}
+function closeDinnerDetail(){if(currentDinnerVideoUrl){URL.revokeObjectURL(currentDinnerVideoUrl);currentDinnerVideoUrl=''}showPage('dinnerLibrary');renderDinnerLibrary()}
+document.getElementById('openDinnerLibrary')?.addEventListener('click',()=>{showPage('dinnerLibrary');renderDinnerLibrary()});
+document.getElementById('dinnerBack')?.addEventListener('click',()=>showPage('nutrition'));
+document.getElementById('dinnerDetailBack')?.addEventListener('click',closeDinnerDetail);
+document.getElementById('addDinnerRecipe')?.addEventListener('click',openDinnerModal);
+document.getElementById('closeDinnerRecipe')?.addEventListener('click',()=>document.getElementById('dinnerRecipeModal').classList.remove('open'));
+document.getElementById('dinnerRecipeModal')?.addEventListener('click',e=>{if(e.target.id==='dinnerRecipeModal')e.currentTarget.classList.remove('open')});
+document.getElementById('addIngredientRow')?.addEventListener('click',()=>addIngredientEditor());
 document.getElementById('saveDinnerRecipe')?.addEventListener('click',async()=>{const title=document.getElementById('drTitle').value.trim();if(!title){alert('نام غذا را وارد کن');return}const ingredients=[...document.querySelectorAll('.ingredient-editor')].map(r=>({name:r.querySelector('.ing-name').value.trim(),qty:r.querySelector('.ing-qty').value,unit:r.querySelector('.ing-unit').value})).filter(x=>x.name);const f=document.getElementById('drVideo').files[0]||null;const rec={id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),createdAt:Date.now(),title,video:f,cal:+drCal.value||0,protein:+drProtein.value||0,carbs:+drCarbs.value||0,fat:+drFat.value||0,servings:+drServings.value||1,time:+drTime.value||0,ingredients,steps:drSteps.value.split('\n').map(x=>x.trim()).filter(Boolean),mealPrep:drMealPrep.checked};try{await dinnerPut(rec);document.getElementById('dinnerRecipeModal').classList.remove('open');await renderDinnerLibrary()}catch(e){alert('ذخیره ویدیو انجام نشد. احتمالاً فضای ذخیره‌سازی مرورگر کافی نیست.')}});
 </script>
 
