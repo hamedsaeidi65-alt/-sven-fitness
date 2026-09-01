@@ -1,4 +1,4 @@
-const CACHE = "sven-v4.14-recipe-edit-draft";
+const CACHE = "sven-v4.15-cloud-offline-video";
 const ASSETS = ["./manifest.json"];
 
 self.addEventListener("install", (event) => {
