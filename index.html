@@ -2698,6 +2698,7 @@ const exerciseLibrary=[
   {id:'pushup',name:'شنا سوئدی',en:'Push-up',muscles:['chest','triceps','shoulders'],compound:1,equipment:'bodyweight',equipmentFa:'وزن بدن',baseWeight:0},
   {id:'lat_pull',name:'لت از جلو سیم‌کش',en:'Lat Pulldown',muscles:['back','biceps'],compound:1,equipment:'cable',equipmentFa:'کابل بالا',baseWeight:40},
   {id:'seated_row',name:'قایقی سیم‌کش نشسته',en:'Seated Cable Row',muscles:['back','biceps'],compound:1,equipment:'cable',equipmentFa:'کابل پایین',baseWeight:35},
+  {id:'one_arm_cable_row',name:'قایقی تک‌دست سیم‌کش',en:'One-arm Cable Row',muscles:['back','biceps'],compound:1,equipment:'cable',equipmentFa:'کابل پایین',baseWeight:20},
   {id:'tbar_row',name:'پارویی تی‌بار',en:'T-Bar Row',muscles:['back','biceps'],compound:1,equipment:'tbar',equipmentFa:'تی‌بار',baseWeight:30},
   {id:'barbell_row',name:'پارویی هالتر خم',en:'Barbell Bent-over Row',muscles:['back','biceps'],compound:1,equipment:'barbell',equipmentFa:'هالتر',baseWeight:30},
   {id:'db_row',name:'پارویی دمبل تک‌دست',en:'One-arm Dumbbell Row',muscles:['back','biceps'],compound:1,equipment:'dumbbell',equipmentFa:'دمبل',baseWeight:15},
@@ -2719,6 +2720,8 @@ const exerciseLibrary=[
   {id:'ez_skullcrusher',name:'پشت بازو خوابیده EZ',en:'EZ-Bar Skull Crusher',muscles:['triceps'],compound:0,equipment:'ez',equipmentFa:'میله EZ + نیمکت',baseWeight:15},
   {id:'close_grip_smith',name:'پرس دست جمع اسمیت',en:'Smith Close-grip Bench Press',muscles:['triceps','chest'],compound:1,equipment:'smith',equipmentFa:'اسمیت',baseWeight:25},
   {id:'smith_squat',name:'اسکوات اسمیت',en:'Smith Squat',muscles:['quads','glutes','hamstrings'],compound:1,equipment:'smith',equipmentFa:'اسمیت',baseWeight:30},
+  {id:'smith_quad_squat',name:'اسکوات اسمیت پاشنه‌بلند',en:'Heel-Elevated Smith Squat',muscles:['quads','glutes'],compound:1,equipment:'smith',equipmentFa:'اسمیت + صفحه زیر پاشنه',baseWeight:25},
+  {id:'reverse_lunge',name:'لانج معکوس',en:'Reverse Lunge',muscles:['quads','glutes'],compound:1,equipment:'dumbbell',equipmentFa:'دمبل',baseWeight:10},
   {id:'barbell_squat',name:'اسکوات هالتر',en:'Barbell Squat',muscles:['quads','glutes','hamstrings'],compound:1,equipment:'barbell',equipmentFa:'هالتر',baseWeight:30},
   {id:'goblet_squat',name:'اسکوات گابلت',en:'Goblet Squat',muscles:['quads','glutes'],compound:1,equipment:'dumbbell',equipmentFa:'دمبل',baseWeight:15},
   {id:'bulgarian_split',name:'اسکوات بلغاری دمبل',en:'Bulgarian Split Squat',muscles:['quads','glutes'],compound:1,equipment:'dumbbell',equipmentFa:'دمبل + نیمکت',baseWeight:10},
@@ -4494,75 +4497,42 @@ input.addEventListener('keydown',e=>{ if(e.key==='Enter') sendMessage(input.valu
 document.querySelectorAll('[data-quick]').forEach(b=>b.onclick=()=>sendMessage(b.dataset.quick));
 
 // === SVEN V4.10 Premium Workouts + Six-Pack Priority + Dedicated Exercise Images ===
-const MANUAL_PLAN_KEY='sven.manualPlan.v1';
+const MANUAL_PLAN_KEY='sven.manualPlan.v2';
 const SVEN_V43_PLAN={
-  version:'4.16.4',
-  title:'برنامه Sven · قدرتی + چربی‌سوزی خانگی',
+  version:'4.17.0',
+  title:'برنامه ۴ روزه اختصاصی Sven',
   days:[
-    {id:'v43_sat',name:'شنبه — سینه + پشت‌بازو + تردمیل',exercises:[
-      {exerciseId:'smith_bench',sets:3,repMin:6,repMax:8,rest:120},
-      {exerciseId:'incline_db',sets:3,repMin:8,repMax:10,rest:90},
-      {exerciseId:'cable_fly',sets:3,repMin:10,repMax:15,rest:75},
-      {exerciseId:'triceps_push',sets:3,repMin:8,repMax:12,rest:75},
-      {exerciseId:'overhead_tri',sets:2,repMin:10,repMax:15,rest:75},
-      {exerciseId:'treadmill_walk',mode:'cardio',durationMin:15,durationMax:20,intensity:'متوسط',sets:1,rest:0}
+    {id:'v43_sat',name:'شنبه — بالاتنه ۱',exercises:[
+      {exerciseId:'smith_incline',sets:3,repMin:6,repMax:10,rest:150},
+      {exerciseId:'lat_pull',sets:3,repMin:8,repMax:12,rest:120},
+      {exerciseId:'smith_bench',sets:2,repMin:8,repMax:12,rest:150},
+      {exerciseId:'seated_row',sets:3,repMin:8,repMax:12,rest:120},
+      {exerciseId:'lateral_raise',sets:3,repMin:12,repMax:20,rest:90},
+      {exerciseId:'face_pull',sets:2,repMin:12,repMax:20,rest:90},
+      {exerciseId:'triceps_push',sets:2,repMin:10,repMax:15,rest:90}
     ]},
-    {id:'v43_sun',name:'یکشنبه — پا + شکم',exercises:[
-      {exerciseId:'smith_squat',sets:3,repMin:6,repMax:8,rest:150},
-      {exerciseId:'smith_rdl',sets:3,repMin:8,repMax:10,rest:120},
-      {exerciseId:'bulgarian_split',sets:3,repMin:8,repMax:12,rest:90},
-      {exerciseId:'cable_leg_curl',sets:3,repMin:10,repMax:15,rest:75},
-      {exerciseId:'smith_calf',sets:3,repMin:10,repMax:15,rest:75},
-      {exerciseId:'cable_crunch',sets:4,repMin:8,repMax:12,rest:60,priority:'abs'},
-      {exerciseId:'reverse_crunch',sets:3,repMin:10,repMax:15,rest:60,priority:'abs'}
+    {id:'v43_sun',name:'یکشنبه — پایین‌تنه ۱',exercises:[
+      {exerciseId:'smith_squat',sets:4,repMin:6,repMax:10,rest:180},
+      {exerciseId:'smith_rdl',sets:3,repMin:8,repMax:12,rest:150},
+      {exerciseId:'bulgarian_split',sets:3,repMin:8,repMax:12,rest:120},
+      {exerciseId:'smith_calf',sets:4,repMin:10,repMax:15,rest:90},
+      {exerciseId:'cable_crunch',sets:3,repMin:10,repMax:15,rest:90,priority:'abs'}
     ]},
-    {id:'v43_mon',name:'دوشنبه — پشت + جلو‌بازو + دوچرخه',exercises:[
-      {exerciseId:'lat_pull',sets:3,repMin:8,repMax:12,rest:90},
-      {exerciseId:'seated_row',sets:3,repMin:8,repMax:12,rest:90},
-      {exerciseId:'db_row',sets:3,repMin:8,repMax:12,rest:90},
-      {exerciseId:'straight_arm_pull',sets:2,repMin:10,repMax:15,rest:75},
-      {exerciseId:'ez_curl',sets:3,repMin:8,repMax:12,rest:75},
-      {exerciseId:'hammer_curl',sets:2,repMin:10,repMax:15,rest:75},
-      {exerciseId:'stationary_bike',mode:'cardio',durationMin:15,durationMax:20,intensity:'متوسط',sets:1,rest:0}
+    {id:'v43_mon',name:'دوشنبه — بالاتنه ۲',exercises:[
+      {exerciseId:'lat_pull',sets:3,repMin:8,repMax:12,rest:120},
+      {exerciseId:'incline_db',sets:3,repMin:8,repMax:12,rest:150},
+      {exerciseId:'one_arm_cable_row',sets:3,repMin:8,repMax:12,rest:120},
+      {exerciseId:'lateral_raise',sets:3,repMin:12,repMax:20,rest:90},
+      {exerciseId:'rear_delt_fly',sets:2,repMin:12,repMax:20,rest:90},
+      {exerciseId:'ez_curl',sets:3,repMin:8,repMax:15,rest:90},
+      {exerciseId:'overhead_tri',sets:2,repMin:10,repMax:15,rest:90}
     ]},
-    {id:'v43_tue',name:'سه‌شنبه — سرشانه + بازو + شکم',exercises:[
-      {exerciseId:'shoulder_press',sets:3,repMin:6,repMax:10,rest:120},
-      {exerciseId:'cable_lateral',sets:3,repMin:10,repMax:15,rest:75},
-      {exerciseId:'face_pull',sets:3,repMin:12,repMax:15,rest:75},
-      {exerciseId:'cable_curl',sets:2,repMin:10,repMax:15,rest:75},
-      {exerciseId:'incline_curl',sets:2,repMin:10,repMax:15,rest:75},
-      {exerciseId:'triceps_push',sets:2,repMin:10,repMax:15,rest:75},
-      {exerciseId:'overhead_tri',sets:2,repMin:10,repMax:15,rest:75},
-      {exerciseId:'cable_crunch',sets:3,repMin:10,repMax:15,rest:60,priority:'abs'},
-      {exerciseId:'reverse_crunch',sets:3,repMin:10,repMax:15,rest:60,priority:'abs'},
-      {exerciseId:'treadmill_walk',mode:'cardio',durationMin:15,durationMax:20,intensity:'سبک',sets:1,rest:0}
-    ]},
-    {id:'v43_wed',name:'چهارشنبه — چربی‌سوزی خانگی کم‌فشار',sessionType:'home_interval',rounds:4,workSec:45,transitionSec:15,roundRestSec:60,exercises:[
-      {exerciseId:'home_march',sets:4,repMin:45,repMax:45,rest:15,mode:'timed',durationSec:45},
-      {exerciseId:'home_step_touch',sets:4,repMin:45,repMax:45,rest:15,mode:'timed',durationSec:45},
-      {exerciseId:'home_knee_drive',sets:4,repMin:45,repMax:45,rest:15,mode:'timed',durationSec:45},
-      {exerciseId:'home_side_reach',sets:4,repMin:45,repMax:45,rest:15,mode:'timed',durationSec:45},
-      {exerciseId:'home_low_jack',sets:4,repMin:45,repMax:45,rest:15,mode:'timed',durationSec:45},
-      {exerciseId:'home_cross_crunch',sets:4,repMin:45,repMax:45,rest:15,mode:'timed',durationSec:45},
-      {exerciseId:'home_fast_feet',sets:4,repMin:45,repMax:45,rest:15,mode:'timed',durationSec:45}
-    ]},
-    {id:'v43_thu',name:'پنجشنبه — کاندیشنینگ خانگی + میان‌تنه',sessionType:'home_conditioning',rounds:3,exercises:[
-      {exerciseId:'home_march',sets:3,mode:'timed',durationSec:60,repMin:60,repMax:60,rest:15},
-      {exerciseId:'home_arm_swing',sets:3,mode:'timed',durationSec:45,repMin:45,repMax:45,rest:15},
-      {exerciseId:'home_knee_drive',sets:3,mode:'timed',durationSec:45,repMin:45,repMax:45,rest:15},
-      {exerciseId:'home_dead_bug',sets:3,repMin:10,repMax:10,rest:15},
-      {exerciseId:'home_bird_dog',sets:3,repMin:10,repMax:10,rest:15},
-      {exerciseId:'reverse_crunch',sets:3,repMin:12,repMax:15,rest:15,priority:'abs'}
-    ]},
-    {id:'v43_fri',name:'جمعه — ریکاوری فعال خانگی',sessionType:'active_recovery',exercises:[
-      {exerciseId:'home_march',sets:1,mode:'timed',durationSec:180,repMin:180,repMax:180,rest:15},
-      {exerciseId:'home_cat_cow',sets:1,repMin:8,repMax:10,rest:15},
-      {exerciseId:'home_hip_flexor',sets:2,mode:'timed',durationSec:30,repMin:30,repMax:30,rest:10},
-      {exerciseId:'home_hamstring_stretch',sets:2,mode:'timed',durationSec:30,repMin:30,repMax:30,rest:10},
-      {exerciseId:'home_thoracic_rotation',sets:2,repMin:8,repMax:8,rest:10},
-      {exerciseId:'home_child_pose',sets:1,mode:'timed',durationSec:45,repMin:45,repMax:45,rest:10},
-      {exerciseId:'home_shoulder_mobility',sets:1,mode:'timed',durationSec:60,repMin:60,repMax:60,rest:10},
-      {exerciseId:'home_breathing',sets:1,mode:'timed',durationSec:120,repMin:120,repMax:120,rest:0}
+    {id:'v43_tue',name:'سه‌شنبه — پایین‌تنه ۲',exercises:[
+      {exerciseId:'smith_quad_squat',sets:3,repMin:10,repMax:15,rest:150},
+      {exerciseId:'reverse_lunge',sets:3,repMin:8,repMax:12,rest:120},
+      {exerciseId:'back_extension',sets:3,repMin:10,repMax:15,rest:120},
+      {exerciseId:'smith_calf',sets:4,repMin:12,repMax:20,rest:90},
+      {exerciseId:'reverse_crunch',sets:3,repMin:10,repMax:20,rest:90,priority:'abs'}
     ]}
   ]
 };
@@ -4619,7 +4589,7 @@ function editManualDay(id){openManualDay(id)}
 function deleteManualDay(id){if(!confirm('این روز تمرین و حرکاتش حذف شود؟'))return;const p=loadManualPlan();p.days=p.days.filter(d=>d.id!==id);if(selectedManualDayId===id)selectedManualDayId=null;saveManualPlan(p)}
 function openManualExercise(dayId){document.getElementById('manualExerciseDayId').value=dayId;document.getElementById('manualExerciseModal').classList.add('open')}
 function deleteManualExercise(dayId,index){const p=loadManualPlan(),d=p.days.find(x=>x.id===dayId);if(!d)return;d.exercises.splice(index,1);saveManualPlan(p)}
-document.getElementById('loadV43PlanBtn')?.addEventListener('click',()=>{const p=loadManualPlan();if(p.days?.length&&!confirm('برنامه فعلی با برنامه ۴روزه Sven V4.3 جایگزین شود؟'))return;installV43Plan(true);renderManualPlan();refreshProgramUI();showSvenToast('برنامه V4.3 بارگذاری شد','۴ روز تمرین + ۱۳ ست مستقیم شکم در هفته');});
+document.getElementById('loadV43PlanBtn')?.addEventListener('click',()=>{const p=loadManualPlan();if(p.days?.length&&!confirm('برنامه فعلی با برنامه فعلی با برنامه ۴روزه اختصاصی جدید جایگزین شود؟'))return;installV43Plan(true);renderManualPlan();refreshProgramUI();showSvenToast('برنامه جدید بارگذاری شد','۴ روز تمرین اختصاصی · بالاتنه/پایین‌تنه');});
 document.getElementById('manualAddDayBtn')?.addEventListener('click',()=>openManualDay());document.getElementById('manualPlanAddDay')?.addEventListener('click',()=>openManualDay());
 document.getElementById('premiumAddDay')?.addEventListener('click',()=>openManualDay());document.getElementById('premiumEditPlan')?.addEventListener('click',()=>{const p=loadManualPlan();if(p.days?.[0])openManualDay(p.days[0].id);});
 document.querySelectorAll('[data-manual-close]').forEach(b=>b.addEventListener('click',()=>b.closest('.manual-modal').classList.remove('open')));
