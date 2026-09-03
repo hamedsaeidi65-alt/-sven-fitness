@@ -116,7 +116,7 @@
     .play{position:absolute;left:16px;bottom:16px;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;border:0;background:var(--lime);color:#050505;font-weight:950}
     .minor{position:absolute;left:66px;bottom:14px;font-size:10px;color:#9a9aa1}
 
-    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .grid2{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
     .metric{border:1px solid var(--line);border-radius:22px;background:#101013;padding:16px}
     .metric small{font-size:11px;color:#84858d}
     .metric strong{display:block;font-size:24px;margin:8px 0 3px}
@@ -1208,6 +1208,10 @@
 #dinnerLibrary .dl-empty{background:#15171c!important;color:#aeb2ba!important;border:1px solid #2a2d34!important}
 #dinnerLibrary .dl-empty b{color:#f4f5f7!important}
 #dinnerLibrary .dl-add{position:relative!important;left:auto!important;bottom:auto!important;transform:none!important;width:100%!important;max-width:none!important;margin:18px 0 0!important;min-height:58px;display:block;z-index:1!important}
+#dinnerLibrary .recipe-data-tools{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 0}
+#dinnerLibrary .recipe-data-tools button{min-height:48px;border-radius:15px;border:1px solid rgba(255,255,255,.10);background:#171a20;color:#fff;font-weight:850;font-size:13px;padding:10px}
+#dinnerLibrary .recipe-data-tools button:active{transform:scale(.99)}
+#recipeRestoreFile{display:none}
 /* Modal styles are intentionally scoped so they cannot leak into recipe cards */
 #dinnerRecipeModal .dl-sheet{background:#101116;color:#f5f6f8}
 #dinnerRecipeModal .dl-field label{color:#e8e9ed}
@@ -1468,10 +1472,16 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
   </main>
 
 
-  <main id="dinnerLibrary" class="page" data-dinner-version="4.14">
+  <main id="dinnerLibrary" class="page" data-dinner-version="4.16.5">
     <div class="dl-head"><button class="dl-back" id="dinnerBack">→</button><h2 id="mealLibraryHeader">Dinner Library</h2><span id="dinnerCount">۰ غذا</span></div>
     <div class="dl-grid" id="dinnerRecipeGrid"></div>
     <button class="dl-add" id="addDinnerRecipe">＋ افزودن دستور جدید</button>
+    <div class="recipe-data-tools">
+      <button type="button" id="recoverRecipesBtn">↻ بازیابی غذاها</button>
+      <button type="button" id="backupRecipesBtn">↓ پشتیبان غذاها</button>
+      <button type="button" id="importRecipesBtn">↑ واردکردن پشتیبان</button>
+    </div>
+    <input type="file" id="recipeRestoreFile" accept="application/json,.json">
   </main>
 
   <main id="dinnerDetail" class="page">
@@ -4787,11 +4797,23 @@ async function uploadSelectedRecipeVideo(file){
 async function fetchDriveVideoBlob(fileId){const r=await driveApi('files/'+encodeURIComponent(fileId)+'?alt=media');return await r.blob()}
 
 function mealCfg(){return MEAL_LIBRARY_CONFIG[currentRecipeMeal]||MEAL_LIBRARY_CONFIG.dinner}
-function recipeDB(){return new Promise((ok,no)=>{const r=indexedDB.open(mealCfg().db,2);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(DINNER_STORE))r.result.createObjectStore(DINNER_STORE,{keyPath:'id'});if(!r.result.objectStoreNames.contains('offlineVideos'))r.result.createObjectStore('offlineVideos',{keyPath:'id'})};r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
-async function recipeAll(){const db=await recipeDB();return new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE).objectStore(DINNER_STORE).getAll();r.onsuccess=()=>ok(r.result.sort((a,b)=>(b.updatedAt||b.createdAt)-(a.updatedAt||a.createdAt)));r.onerror=()=>no(r.error)})}
+function recipeDBForName(name,version){return new Promise((ok,no)=>{const r=version?indexedDB.open(name,version):indexedDB.open(name);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(DINNER_STORE))r.result.createObjectStore(DINNER_STORE,{keyPath:'id'});if(version&&version>=2&&!r.result.objectStoreNames.contains('offlineVideos'))r.result.createObjectStore('offlineVideos',{keyPath:'id'})};r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
+function recipeDB(){return recipeDBForName(mealCfg().db,2)}
+function recipeSnapshotKey(meal=currentRecipeMeal){return `sven.recipeSnapshot.v1.${meal}`}
+function recipeSerializable(x){if(!x||typeof x!=='object')return null;const y={...x};delete y.video;return y}
+async function writeRecipeSnapshot(meal=currentRecipeMeal){try{const cfg=MEAL_LIBRARY_CONFIG[meal];if(!cfg)return;const db=await recipeDBForName(cfg.db);const rows=await new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE).objectStore(DINNER_STORE).getAll();r.onsuccess=()=>ok(r.result||[]);r.onerror=()=>no(r.error)});localStorage.setItem(recipeSnapshotKey(meal),JSON.stringify({version:1,meal,savedAt:Date.now(),recipes:rows.map(recipeSerializable).filter(Boolean)}))}catch(e){console.warn('snapshot failed',e)}}
+async function recipeAll(){const db=await recipeDB();return new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE).objectStore(DINNER_STORE).getAll();r.onsuccess=()=>ok((r.result||[]).sort((a,b)=>(b.updatedAt||b.createdAt)-(a.updatedAt||a.createdAt)));r.onerror=()=>no(r.error)})}
 async function recipeGet(id){const db=await recipeDB();return new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE).objectStore(DINNER_STORE).get(id);r.onsuccess=()=>ok(r.result||null);r.onerror=()=>no(r.error)})}
-async function recipePut(x){const db=await recipeDB();return new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE,'readwrite').objectStore(DINNER_STORE).put(x);r.onsuccess=()=>ok();r.onerror=()=>no(r.error)})}
-async function recipeDelete(id){const db=await recipeDB();return new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE,'readwrite').objectStore(DINNER_STORE).delete(id);r.onsuccess=()=>ok();r.onerror=()=>no(r.error)})}
+async function recipePut(x){const db=await recipeDB();return new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE,'readwrite').objectStore(DINNER_STORE).put(x);r.onsuccess=()=>{writeRecipeSnapshot(currentRecipeMeal);ok()};r.onerror=()=>no(r.error)})}
+async function recipeDelete(id){const db=await recipeDB();return new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE,'readwrite').objectStore(DINNER_STORE).delete(id);r.onsuccess=()=>{writeRecipeSnapshot(currentRecipeMeal);ok()};r.onerror=()=>no(r.error)})}
+async function putRecipeIntoMeal(meal,rec){const cfg=MEAL_LIBRARY_CONFIG[meal];if(!cfg||!rec)return false;const db=await recipeDBForName(cfg.db,2);const clean={...rec,mealType:meal,id:rec.id||(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random())};delete clean.video;return new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE,'readwrite').objectStore(DINNER_STORE).put(clean);r.onsuccess=()=>ok(true);r.onerror=()=>no(r.error)})}
+function inferMealFromName(name='',rec={}){if(['breakfast','lunch','dinner'].includes(rec?.mealType))return rec.mealType;const n=String(name).toLowerCase();if(n.includes('breakfast'))return 'breakfast';if(n.includes('lunch'))return 'lunch';if(n.includes('dinner'))return 'dinner';return null}
+async function recoverRecipesFromAvailableStorage(showMessage=true){let found=0, imported=0;const seen=new Set();for(const meal of ['breakfast','lunch','dinner']){try{const raw=localStorage.getItem(recipeSnapshotKey(meal));if(raw){const j=JSON.parse(raw);for(const rec of (j.recipes||[])){if(!rec?.id)continue;const key=meal+':'+rec.id;if(seen.has(key))continue;seen.add(key);found++;await putRecipeIntoMeal(meal,rec);imported++}}}catch(e){}}
+ try{if(indexedDB.databases){const dbs=await indexedDB.databases();for(const info of dbs){const name=info?.name;if(!name||Object.values(MEAL_LIBRARY_CONFIG).some(c=>c.db===name))continue;let db;try{db=await recipeDBForName(name)}catch(e){continue}if(!db.objectStoreNames.contains(DINNER_STORE)){db.close();continue}let rows=[];try{rows=await new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE).objectStore(DINNER_STORE).getAll();r.onsuccess=()=>ok(r.result||[]);r.onerror=()=>no(r.error)})}catch(e){}db.close();for(const rec of rows){const meal=inferMealFromName(name,rec);if(!meal||!rec?.id)continue;const key=meal+':'+rec.id;if(seen.has(key))continue;seen.add(key);found++;await putRecipeIntoMeal(meal,rec);imported++}}}}catch(e){console.warn('legacy scan failed',e)}
+ for(const meal of ['breakfast','lunch','dinner'])await writeRecipeSnapshot(meal);if(showMessage)alert(imported?`${imported} غذای قابل‌بازیابی پیدا و برگردانده شد.`:'در فضای ذخیره‌سازی فعلی غذای قدیمی دیگری پیدا نشد. اگر غذاها داخل نسخه نصب‌شده قبلی Sven هستند، همان نسخه را باز کن و از دکمه «پشتیبان غذاها» خروجی بگیر.');return imported}
+async function allMealsBackup(){const out={app:'Sven',type:'recipe-backup',version:1,createdAt:Date.now(),meals:{}};for(const meal of ['breakfast','lunch','dinner']){const cfg=MEAL_LIBRARY_CONFIG[meal],db=await recipeDBForName(cfg.db,2);const rows=await new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE).objectStore(DINNER_STORE).getAll();r.onsuccess=()=>ok(r.result||[]);r.onerror=()=>no(r.error)});out.meals[meal]=rows.map(recipeSerializable).filter(Boolean)}return out}
+async function downloadRecipeBackup(){try{const data=await allMealsBackup();const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`sven-recipes-backup-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}catch(e){alert('ساخت فایل پشتیبان انجام نشد.')}}
+async function importRecipeBackupFile(file){if(!file)return;try{const j=JSON.parse(await file.text());if(j?.type!=='recipe-backup'||!j.meals)throw new Error('FORMAT');let n=0;for(const meal of ['breakfast','lunch','dinner'])for(const rec of (j.meals[meal]||[])){await putRecipeIntoMeal(meal,rec);n++}for(const meal of ['breakfast','lunch','dinner'])await writeRecipeSnapshot(meal);alert(`${n} غذا از فایل پشتیبان بازیابی شد.`);await renderDinnerLibrary()}catch(e){alert('فایل پشتیبان Sven معتبر نیست.')}}
 async function offlineGet(id){const db=await recipeDB();return new Promise((ok,no)=>{const r=db.transaction('offlineVideos').objectStore('offlineVideos').get(id);r.onsuccess=()=>ok(r.result||null);r.onerror=()=>no(r.error)})}
 async function offlinePut(x){const db=await recipeDB();return new Promise((ok,no)=>{const r=db.transaction('offlineVideos','readwrite').objectStore('offlineVideos').put(x);r.onsuccess=()=>ok();r.onerror=()=>no(r.error)})}
 async function offlineDelete(id){const db=await recipeDB();return new Promise((ok,no)=>{const r=db.transaction('offlineVideos','readwrite').objectStore('offlineVideos').delete(id);r.onsuccess=()=>ok();r.onerror=()=>no(r.error)})}
@@ -4871,6 +4893,11 @@ openDinnerLibrary?.addEventListener('click',()=>openMealLibrary('dinner'));
 dinnerBack?.addEventListener('click',()=>showPage('nutrition'));
 dinnerDetailBack?.addEventListener('click',closeDinnerDetail);
 addDinnerRecipe?.addEventListener('click',()=>openDinnerModal('new'));
+backupRecipesBtn?.addEventListener('click',downloadRecipeBackup);
+recoverRecipesBtn?.addEventListener('click',async()=>{const n=await recoverRecipesFromAvailableStorage(true);if(n)await renderDinnerLibrary()});
+importRecipesBtn?.addEventListener('click',()=>recipeRestoreFile?.click());
+recipeRestoreFile?.addEventListener('change',async e=>{const f=e.target.files?.[0];e.target.value='';if(f)await importRecipeBackupFile(f)});
+backupRecipesBtn?.addEventListener('contextmenu',e=>{e.preventDefault();recipeRestoreFile?.click()});
 closeDinnerRecipe?.addEventListener('click',()=>closeRecipeModal(false));
 dinnerRecipeModal?.addEventListener('click',e=>{if(e.target.id==='dinnerRecipeModal')closeRecipeModal(false)});
 dinnerRecipeModal?.addEventListener('input',e=>{if(e.target.closest('.dl-sheet'))scheduleRecipeDraft()});
