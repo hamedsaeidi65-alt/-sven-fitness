@@ -1603,6 +1603,7 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
       <div class="item"><span>📅 روزهای تمرین در هفته</span><b id="profileDaysLabel">—</b></div>
       <div class="item" id="openRecords"><span>🏆 دستاوردها و رکوردها</span><b id="recordsProfileBadge">‹</b></div>
       <div class="item" id="openWorkoutNotifications"><span>🔔 اعلان‌های تمرین</span><b id="notificationProfileState">خاموش</b></div>
+      <div class="item" id="resetWorkoutHistory"><span>↻ پاک کردن سابقه تمرین‌ها</span><b>پاک‌سازی</b></div>
     </div>
   </main>
 
@@ -3821,6 +3822,23 @@ function finishCurrentWorkout(){
   }
 }
 
+function resetWorkoutHistoryOnly(){
+  if(!confirm('همه جلسه‌های ثبت‌شده، رکوردها و دستاوردهای تمرینی پاک شوند؟\n\nبرنامه تمرینی، پروفایل، تغذیه و چک‌این‌ها دست‌نخورده می‌مانند.'))return;
+  if(!confirm('این کار قابل بازگشت نیست. از پاک کردن سابقه تمرین‌ها مطمئنی؟'))return;
+  localStorage.removeItem(WORKOUT_SESSIONS_KEY);
+  localStorage.removeItem(ACTIVE_WORKOUT_KEY);
+  currentSession=null;
+  currentExerciseIndex=0;
+  currentSetIndex=0;
+  renderProgress();
+  renderAchievementsRecords();
+  refreshProgramUI();
+  renderHomeProgressSummary();
+  showSvenToast('سابقه تمرین پاک شد','جلسات، رکوردها و دستاوردهای تمرینی از نو شروع شدند.');
+}
+
+document.getElementById('resetWorkoutHistory')?.addEventListener('click',resetWorkoutHistoryOnly);
+
 document.getElementById('closeComplete').onclick=()=>{
   document.getElementById('workoutComplete').classList.remove('show');
   modal.classList.remove('open');
@@ -4499,7 +4517,7 @@ document.querySelectorAll('[data-quick]').forEach(b=>b.onclick=()=>sendMessage(b
 // === SVEN V4.10 Premium Workouts + Six-Pack Priority + Dedicated Exercise Images ===
 const MANUAL_PLAN_KEY='sven.manualPlan.v2';
 const SVEN_V43_PLAN={
-  version:'4.17.0',
+  version:'4.17.1',
   title:'برنامه ۴ روزه اختصاصی Sven',
   days:[
     {id:'v43_sat',name:'شنبه — بالاتنه ۱',exercises:[
