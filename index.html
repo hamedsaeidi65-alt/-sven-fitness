@@ -1244,6 +1244,9 @@
 #dinnerDetail .ingredient-tags{display:flex;flex-wrap:wrap;gap:8px;direction:rtl}
 #dinnerDetail .ingredient-tag{background:rgba(183,255,0,.12);border:1px solid rgba(183,255,0,.32);color:#e9fbc8;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:850;line-height:1.4}
 #dinnerDetail .recipe-detail-steps{margin:0;padding-right:22px;color:#d8dbe1;font-size:13px;line-height:2}
+#dinnerDetail .recipe-detail-steps{padding:0;white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;max-width:100%;width:100%;box-sizing:border-box;text-align:right;direction:rtl;list-style:none}
+#dinnerDetail .recipe-detail-steps .recipe-step-line{display:block;margin:0 0 8px 0;max-width:100%}
+#dinnerRecipeModal #drSteps{min-height:260px;max-height:none;overflow-y:auto;white-space:pre-wrap}
 #dinnerDetail .meal-prep-badge{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:8px 11px;border-radius:999px;background:#1b2118;color:#dfffb1;border:1px solid rgba(183,255,0,.24);font-size:12px;font-weight:900}
 @media(max-width:390px){#dinnerDetail .macro-row{grid-template-columns:repeat(2,1fr)}#dinnerDetail .recipe-detail-title{font-size:21px}}
 </style>
@@ -1651,7 +1654,7 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
  <div class="dl-field"><label>نام غذا</label><input id="drTitle" placeholder="مثلاً تاکوی مرغ پروتئینی"></div>
  <div class="dl-4"><div class="dl-field"><label>کالری</label><input id="drCal" type="number" inputmode="numeric"></div><div class="dl-field"><label>پروتئین (g)</label><input id="drProtein" type="number" inputmode="decimal"></div><div class="dl-field"><label>کربوهیدرات (g)</label><input id="drCarbs" type="number" inputmode="decimal"></div><div class="dl-field"><label>چربی (g)</label><input id="drFat" type="number" inputmode="decimal"></div></div>
  <div class="dl-4"><div class="dl-field"><label>سروینگ</label><input id="drServings" type="number" value="1"></div><div class="dl-field"><label>زمان پخت (دقیقه)</label><input id="drTime" type="number"></div></div>
-  <div class="dl-field"><label>مراحل پخت — هر مرحله در یک خط</label><textarea id="drSteps" placeholder="مرغ را مزه‌دار کن&#10;در تابه بپز&#10;مواد را داخل تورتیلا قرار بده"></textarea></div>
+  <div class="dl-field"><label>دستور پخت کامل</label><textarea id="drSteps" placeholder="دستور کامل را اینجا وارد کن؛ تیترها، فاصله‌ها و خط‌های جدید همان‌طور که وارد می‌کنی نمایش داده می‌شوند."></textarea></div>
  <div class="dl-field"><label><input id="drMealPrep" type="checkbox"> مناسب Meal Prep</label></div>
  <button class="dl-save" id="saveDinnerRecipe">ذخیره دستور</button>
 </div></div>
@@ -4482,7 +4485,7 @@ document.querySelectorAll('[data-quick]').forEach(b=>b.onclick=()=>sendMessage(b
 // === SVEN V4.10 Premium Workouts + Six-Pack Priority + Dedicated Exercise Images ===
 const MANUAL_PLAN_KEY='sven.manualPlan.v1';
 const SVEN_V43_PLAN={
-  version:'4.16.1',
+  version:'4.16.4',
   title:'برنامه Sven · قدرتی + چربی‌سوزی خانگی',
   days:[
     {id:'v43_sat',name:'شنبه — سینه + پشت‌بازو + تردمیل',exercises:[
@@ -4805,13 +4808,43 @@ function saveRecipeDraftNow(){if(!recipeFormDirty)return;try{localStorage.setIte
 function scheduleRecipeDraft(){recipeFormDirty=true;setDraftStatus('در حال ذخیره…');clearTimeout(draftTimer);draftTimer=setTimeout(saveRecipeDraftNow,350)}
 function clearRecipeDraft(){try{localStorage.removeItem(recipeDraftKey())}catch(e){}setDraftStatus('')}
 function resetRecipeForm(){['drTitle','drCal','drProtein','drCarbs','drFat','drTime','drSteps'].forEach(id=>document.getElementById(id).value='');drServings.value=1;drMealPrep.checked=false;drVideoUrl.value=''}
-function fillRecipeForm(x={}){pendingDriveMeta=x.driveFileId?{driveFileId:x.driveFileId,driveFileName:x.driveFileName||'',videoUrl:x.videoUrl||''}:null;const dfn=document.getElementById('driveFileName');if(dfn)dfn.textContent=x.driveFileName?'✓ '+x.driveFileName:'';drTitle.value=x.title||'';drCal.value=x.cal??'';drProtein.value=x.protein??'';drCarbs.value=x.carbs??'';drFat.value=x.fat??'';drServings.value=x.servings||1;drTime.value=x.time??'';drSteps.value=Array.isArray(x.steps)?x.steps.join('\n'):(x.steps||'');drMealPrep.checked=!!x.mealPrep;drVideoUrl.value=x.videoUrl||'';}
-function restoreRecipeDraft(d){if(!d)return false;pendingDriveMeta=d.driveFileId?{driveFileId:d.driveFileId,driveFileName:d.driveFileName||'',videoUrl:d.videoUrl||''}:pendingDriveMeta;drTitle.value=d.title||'';drCal.value=d.cal||'';drProtein.value=d.protein||'';drCarbs.value=d.carbs||'';drFat.value=d.fat||'';drServings.value=d.servings||1;drTime.value=d.time||'';drSteps.value=d.steps||'';drMealPrep.checked=!!d.mealPrep;drVideoUrl.value=d.videoUrl||'';recipeFormDirty=true;setDraftStatus('پیش‌نویس بازیابی شد');return true}
+function fillRecipeForm(x={}){pendingDriveMeta=x.driveFileId?{driveFileId:x.driveFileId,driveFileName:x.driveFileName||'',videoUrl:x.videoUrl||''}:null;const dfn=document.getElementById('driveFileName');if(dfn)dfn.textContent=x.driveFileName?'✓ '+x.driveFileName:'';drTitle.value=x.title||'';drCal.value=x.cal??'';drProtein.value=x.protein??'';drCarbs.value=x.carbs??'';drFat.value=x.fat??'';drServings.value=x.servings||1;drTime.value=x.time??'';drSteps.value=Array.isArray(x.steps)?x.steps.join('\n'):(x.steps||'');setTimeout(autoGrowRecipeSteps,0);drMealPrep.checked=!!x.mealPrep;drVideoUrl.value=x.videoUrl||'';}
+function restoreRecipeDraft(d){if(!d)return false;pendingDriveMeta=d.driveFileId?{driveFileId:d.driveFileId,driveFileName:d.driveFileName||'',videoUrl:d.videoUrl||''}:pendingDriveMeta;drTitle.value=d.title||'';drCal.value=d.cal||'';drProtein.value=d.protein||'';drCarbs.value=d.carbs||'';drFat.value=d.fat||'';drServings.value=d.servings||1;drTime.value=d.time||'';drSteps.value=d.steps||'';setTimeout(autoGrowRecipeSteps,0);drMealPrep.checked=!!d.mealPrep;drVideoUrl.value=d.videoUrl||'';recipeFormDirty=true;setDraftStatus('پیش‌نویس بازیابی شد');return true}
 async function openDinnerModal(mode='new',id=null){editingRecipeId=null;editingOriginalRecipe=null;recipeFormDirty=false;setDraftStatus('');if(mode==='edit'&&id){const x=await recipeGet(id);if(!x)return;editingRecipeId=id;editingOriginalRecipe=x;fillRecipeForm(x);recipeModalTitle.textContent='ویرایش '+mealCfg().fa;saveDinnerRecipe.textContent='ذخیره تغییرات';try{const raw=localStorage.getItem(recipeDraftKey());if(raw)restoreRecipeDraft(JSON.parse(raw))}catch(e){}}else{resetRecipeForm();recipeModalTitle.textContent='افزودن '+mealCfg().fa;saveDinnerRecipe.textContent='ذخیره دستور';try{const raw=localStorage.getItem(recipeDraftKey());if(raw)restoreRecipeDraft(JSON.parse(raw))}catch(e){}}dinnerRecipeModal.classList.add('open')}
 function closeRecipeModal(force=false){clearTimeout(draftTimer);if(recipeFormDirty){saveRecipeDraftNow();if(!force&&!confirm('تغییرات ذخیره‌نشده داری. پیش‌نویس خودکار ذخیره شده است. از این صفحه خارج می‌شوی؟'))return false}dinnerRecipeModal.classList.remove('open');return true}
+function autoGrowRecipeSteps(){const el=document.getElementById('drSteps');if(!el)return;el.style.height='auto';el.style.height=Math.max(260,Math.min(el.scrollHeight,900))+'px'}
+function stickyGarlicFullRecipe(){return `🍗 مرغ
+مرغ را به قطعات لقمه‌ای خرد کن و با نمک، فلفل و پودر سیر مزه‌دار کن. ۱ قاشق غذاخوری روغن کنجد را در تابه داغ کن و مرغ را روی حرارت متوسط رو به بالا ۶ تا ۸ دقیقه تفت بده تا کاملاً بپزد و کمی طلایی شود. سپس مرغ را موقتاً از تابه خارج کن.
+
+🍜 نودل
+نودل Stir-Fry را طبق دستور روی بسته بپز. کمی زودتر از حد کاملاً نرم از آب خارج کن تا هنگام مخلوط شدن با سس له نشود. آبکش کن و کنار بگذار.
+
+🧄 سس سیر چسبناک
+در همان تابه، سس سویا کم‌سدیم، عسل، سرکه برنج، سس Oyster، ۱ قاشق چای‌خوری روغن کنجد، سیر خردشده و خمیر زنجبیل را اضافه کن. ½ پیمانه آب را بریز و روی حرارت متوسط هم بزن تا سس شروع به جوش ریز کند.
+
+نشاسته ذرت را ابتدا با چند قاشق آب سرد کاملاً حل کن، سپس کم‌کم داخل سس بریز و مرتب هم بزن. ۱ تا ۳ دقیقه حرارت بده تا سس غلیظ، براق و چسبناک شود.
+
+🔥 ترکیب نهایی
+مرغ پخته را دوباره داخل تابه برگردان و با سس مخلوط کن. نودل آبکش‌شده را اضافه کن و ۱ تا ۲ دقیقه آرام زیرورو کن تا تمام نودل‌ها و مرغ به سس آغشته شوند. اگر سس بیش از حد غلیظ شد، ۱ تا ۲ قاشق آب اضافه کن.
+
+🌱 سرو
+غذا را بین ۴ وعده تقسیم کن. روی هر وعده کمی کنجد و پیازچه خردشده بریز و گرم سرو کن.
+
+ارزش غذایی اعلام‌شده برای هر وعده:
+۵۵۰ کالری | ۵۸ گرم پروتئین | ۵۲ گرم کربوهیدرات | ۱۲ گرم چربی`;}
+async function repairKnownRecipeIfNeeded(x){
+  if(!x)return x;
+  const t=String(x.title||'').toLowerCase();
+  const raw=Array.isArray(x.steps)?x.steps.join('\n'):String(x.steps||'');
+  if(t.includes('sticky garlic') && t.includes('noodle')){
+    const hasCooking=/غلیظ|آبکش|تفت|ترکیب نهایی|cook|simmer/i.test(raw);
+    if(!hasCooking){x.steps=stickyGarlicFullRecipe();x.updatedAt=Date.now();try{await recipePut(x)}catch(e){}}
+  }
+  return x;
+}
 async function renderDinnerLibrary(){const cfg=mealCfg(),grid=dinnerRecipeGrid;if(!grid)return;mealLibraryHeader.textContent=cfg.en;const xs=await recipeAll();dinnerCount.textContent=(window.fa?fa(xs.length):xs.length)+' غذا';grid.innerHTML='';if(!xs.length){grid.innerHTML=`<div class="dl-empty"><b>${cfg.emptyTitle}</b><p>${cfg.emptyText}</p></div>`;return}xs.forEach(x=>{const b=document.createElement('button');b.type='button';b.className='recipe-list-item';b.setAttribute('aria-label','باز کردن '+(x.title||'غذا'));b.innerHTML=`<span class="recipe-list-title">${dinnerEsc(x.title)}</span><span class="recipe-list-arrow">‹</span>`;b.addEventListener('click',()=>openDinnerDetail(x.id));grid.appendChild(b)})}
 async function openDinnerDetail(id){
- const x=await recipeGet(id);if(!x)return;currentDetailRecipeId=id;
+ let x=await recipeGet(id);if(!x)return;x=await repairKnownRecipeIfNeeded(x);currentDetailRecipeId=id;
  if(currentDinnerVideoUrl){URL.revokeObjectURL(currentDinnerVideoUrl);currentDinnerVideoUrl=''}
  const cfg=mealCfg();dinnerDetailHeader.textContent=x.title||cfg.detail;
  const offline=await offlineGet(id);
@@ -4819,10 +4852,10 @@ async function openDinnerDetail(id){
  if(offline?.blob){currentDinnerVideoUrl=URL.createObjectURL(offline.blob);videoSrc=currentDinnerVideoUrl;sourceLabel='✓ آماده پخش آفلاین · '+prettyBytes(offline.size)}
  else if(x.videoUrl&&!x.driveFileId){videoSrc=normalizeDriveUrl(x.videoUrl);sourceLabel=navigator.onLine?'پخش از Cloud':'این ویدیو هنوز برای آفلاین دانلود نشده است'}else if(x.driveFileId){sourceLabel=navigator.onLine?'ویدیو در Google Drive ذخیره شده · برای پخش داخل Sven، دانلود آفلاین را بزن':'این ویدیو هنوز برای آفلاین دانلود نشده است'}
  else if(x.video){currentDinnerVideoUrl=URL.createObjectURL(x.video);videoSrc=currentDinnerVideoUrl;sourceLabel='ویدیوی محلی نسخه قدیمی'}
- const steps=(x.steps||[]).map(z=>`<li>${dinnerEsc(z)}</li>`).join('')||'<li>مراحل پخت ثبت نشده است.</li>';
+ const rawSteps=Array.isArray(x.steps)?x.steps.join('\n'):(x.steps||''); const steps=rawSteps?dinnerEsc(rawSteps):'مراحل پخت ثبت نشده است.';
  const videoBlock=videoSrc?`<video controls playsinline preload="metadata" src="${dinnerEsc(videoSrc)}"></video>`:'<div class="recipe-detail-no-video">لینک ویدیو برای این غذا ثبت نشده است.</div>';
  const cloudActions=(x.videoUrl||x.driveFileId)?`<div class="video-cloud-actions">${offline?`<button type="button" id="removeOfflineBtn" class="offline-danger">حذف دانلود آفلاین</button>`:`<button type="button" id="downloadOfflineBtn" class="offline-primary">↓ دانلود برای آفلاین</button>`}<a href="${dinnerEsc(x.videoUrl)}" target="_blank" rel="noopener">باز کردن Cloud ↗</a></div><div class="offline-status ${offline?'ok':''}">${dinnerEsc(sourceLabel)}</div>`:(sourceLabel?`<div class="offline-status ${offline?'ok':''}">${dinnerEsc(sourceLabel)}</div>`:'');
- dinnerDetailCard.innerHTML=`<div class="recipe-detail-video">${videoBlock}</div><div class="recipe-detail-body">${cloudActions}<div class="recipe-detail-title-row"><div><h3 class="recipe-detail-title">${dinnerEsc(x.title)}</h3><div class="recipe-detail-sub">${dinnerEsc(x.time||'—')} دقیقه · ${dinnerEsc(x.servings||1)} سرو</div></div><div class="recipe-detail-actions"><button type="button" id="editRecipeBtn">✎ ویرایش</button><button type="button" id="deleteRecipeBtn" class="danger">حذف</button></div></div><div class="macro-row"><span><b>${dinnerEsc(x.cal||0)}</b>kcal</span><span><b>${dinnerEsc(x.protein||0)}g</b>پروتئین</span><span><b>${dinnerEsc(x.carbs||0)}g</b>کربوهیدرات</span><span><b>${dinnerEsc(x.fat||0)}g</b>چربی</span></div><section class="detail-section"><h4>دستور پخت</h4><ol class="recipe-detail-steps">${steps}</ol></section>${x.mealPrep?'<div class="meal-prep-badge">✓ مناسب Meal Prep</div>':''}</div>`;
+ dinnerDetailCard.innerHTML=`<div class="recipe-detail-video">${videoBlock}</div><div class="recipe-detail-body">${cloudActions}<div class="recipe-detail-title-row"><div><h3 class="recipe-detail-title">${dinnerEsc(x.title)}</h3><div class="recipe-detail-sub">${dinnerEsc(x.time||'—')} دقیقه · ${dinnerEsc(x.servings||1)} سرو</div></div><div class="recipe-detail-actions"><button type="button" id="editRecipeBtn">✎ ویرایش</button><button type="button" id="deleteRecipeBtn" class="danger">حذف</button></div></div><div class="macro-row"><span><b>${dinnerEsc(x.cal||0)}</b>kcal</span><span><b>${dinnerEsc(x.protein||0)}g</b>پروتئین</span><span><b>${dinnerEsc(x.carbs||0)}g</b>کربوهیدرات</span><span><b>${dinnerEsc(x.fat||0)}g</b>چربی</span></div><section class="detail-section"><h4>دستور پخت</h4><div class="recipe-detail-steps">${steps}</div></section>${x.mealPrep?'<div class="meal-prep-badge">✓ مناسب Meal Prep</div>':''}</div>`;
  document.getElementById('editRecipeBtn')?.addEventListener('click',()=>openDinnerModal('edit',id));
  document.getElementById('deleteRecipeBtn')?.addEventListener('click',()=>deleteRecipeFromDetail(id,x.title));
  document.getElementById('downloadOfflineBtn')?.addEventListener('click',()=>downloadRecipeOffline(id));
@@ -4846,7 +4879,8 @@ window.addEventListener('beforeunload',e=>{if(dinnerRecipeModal?.classList.conta
 document.getElementById('connectGoogleDrive')?.addEventListener('click',requestDriveAccess);
 document.getElementById('chooseDriveVideo')?.addEventListener('click',()=>document.getElementById('driveVideoPicker')?.click());
 document.getElementById('driveVideoPicker')?.addEventListener('change',e=>{const f=e.target.files?.[0];if(f)uploadSelectedRecipeVideo(f);e.target.value=''});
-saveDinnerRecipe?.addEventListener('click',async()=>{clearTimeout(draftTimer);const title=drTitle.value.trim();if(!title){alert('نام غذا را وارد کن');return}const isEdit=!!editingRecipeId;const rec={id:editingRecipeId||(crypto.randomUUID?crypto.randomUUID():String(Date.now())),createdAt:editingOriginalRecipe?.createdAt||Date.now(),updatedAt:Date.now(),mealType:currentRecipeMeal,title,videoUrl:drVideoUrl.value.trim(),driveFileId:pendingDriveMeta?.driveFileId||editingOriginalRecipe?.driveFileId||'',driveFileName:pendingDriveMeta?.driveFileName||editingOriginalRecipe?.driveFileName||'',video:editingOriginalRecipe?.video||null,cal:+drCal.value||0,protein:+drProtein.value||0,carbs:+drCarbs.value||0,fat:+drFat.value||0,servings:+drServings.value||1,time:+drTime.value||0,steps:drSteps.value.split('\n').map(x=>x.trim()).filter(Boolean),mealPrep:drMealPrep.checked};try{await recipePut(rec);clearRecipeDraft();recipeFormDirty=false;closeRecipeModal(true);editingRecipeId=null;editingOriginalRecipe=null;if(isEdit){await openDinnerDetail(rec.id)}else{showPage('dinnerLibrary');await renderDinnerLibrary()}}catch(e){alert('ذخیره انجام نشد. احتمالاً فضای ذخیره‌سازی مرورگر کافی نیست.')}});
+document.getElementById('drSteps')?.addEventListener('input',autoGrowRecipeSteps);
+saveDinnerRecipe?.addEventListener('click',async()=>{clearTimeout(draftTimer);const title=drTitle.value.trim();if(!title){alert('نام غذا را وارد کن');return}const isEdit=!!editingRecipeId;const rec={id:editingRecipeId||(crypto.randomUUID?crypto.randomUUID():String(Date.now())),createdAt:editingOriginalRecipe?.createdAt||Date.now(),updatedAt:Date.now(),mealType:currentRecipeMeal,title,videoUrl:drVideoUrl.value.trim(),driveFileId:pendingDriveMeta?.driveFileId||editingOriginalRecipe?.driveFileId||'',driveFileName:pendingDriveMeta?.driveFileName||editingOriginalRecipe?.driveFileName||'',video:editingOriginalRecipe?.video||null,cal:+drCal.value||0,protein:+drProtein.value||0,carbs:+drCarbs.value||0,fat:+drFat.value||0,servings:+drServings.value||1,time:+drTime.value||0,steps:drSteps.value.trim(),mealPrep:drMealPrep.checked};try{await recipePut(rec);clearRecipeDraft();recipeFormDirty=false;closeRecipeModal(true);editingRecipeId=null;editingOriginalRecipe=null;if(isEdit){await openDinnerDetail(rec.id)}else{showPage('dinnerLibrary');await renderDinnerLibrary()}}catch(e){alert('ذخیره انجام نشد. احتمالاً فضای ذخیره‌سازی مرورگر کافی نیست.')}});
 </script>
 
 </body>
