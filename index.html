@@ -1472,11 +1472,12 @@ they can later be replaced in EXERCISE_IMAGES without changing the workout engin
   </main>
 
 
-  <main id="dinnerLibrary" class="page" data-dinner-version="4.16.5">
+  <main id="dinnerLibrary" class="page" data-dinner-version="4.16.6">
     <div class="dl-head"><button class="dl-back" id="dinnerBack">→</button><h2 id="mealLibraryHeader">Dinner Library</h2><span id="dinnerCount">۰ غذا</span></div>
     <div class="dl-grid" id="dinnerRecipeGrid"></div>
     <button class="dl-add" id="addDinnerRecipe">＋ افزودن دستور جدید</button>
     <div class="recipe-data-tools">
+      <button type="button" id="syncRecipesBtn">☁ همگام‌سازی Drive</button>
       <button type="button" id="recoverRecipesBtn">↻ بازیابی غذاها</button>
       <button type="button" id="backupRecipesBtn">↓ پشتیبان غذاها</button>
       <button type="button" id="importRecipesBtn">↑ واردکردن پشتیبان</button>
@@ -4766,7 +4767,7 @@ const SVEN_GOOGLE_CLIENT_ID='259763200711-io4cnk6quik7ffajf0ntvudha7pj8c41.apps.
 const SVEN_DRIVE_SCOPE='https://www.googleapis.com/auth/drive.file';
 let svenDriveToken='',svenDriveTokenClient=null,pendingDriveFile=null,pendingDriveMeta=null;
 function driveStatus(msg='',ok=false){const el=document.getElementById('driveUploadStatus');if(el){el.textContent=msg;el.classList.toggle('ok',!!ok)}}
-function initDriveTokenClient(){if(svenDriveTokenClient)return true;if(!window.google?.accounts?.oauth2)return false;svenDriveTokenClient=google.accounts.oauth2.initTokenClient({client_id:SVEN_GOOGLE_CLIENT_ID,scope:SVEN_DRIVE_SCOPE,callback:r=>{if(r?.access_token){svenDriveToken=r.access_token;driveStatus('Google Drive متصل است ✓',true);if(pendingDriveFile){const f=pendingDriveFile;pendingDriveFile=null;uploadSelectedRecipeVideo(f)}}else driveStatus('اتصال Google Drive انجام نشد.')}});return true}
+function initDriveTokenClient(){if(svenDriveTokenClient)return true;if(!window.google?.accounts?.oauth2)return false;svenDriveTokenClient=google.accounts.oauth2.initTokenClient({client_id:SVEN_GOOGLE_CLIENT_ID,scope:SVEN_DRIVE_SCOPE,callback:async r=>{if(r?.access_token){svenDriveToken=r.access_token;driveStatus('Google Drive متصل است ✓',true);if(pendingDriveFile){const f=pendingDriveFile;pendingDriveFile=null;uploadSelectedRecipeVideo(f)}try{await syncRecipesWithDrive(true)}catch(e){console.warn('recipe cloud sync failed',e)}}else driveStatus('اتصال Google Drive انجام نشد.')}});return true}
 function requestDriveAccess(){if(!initDriveTokenClient()){driveStatus('Google Sign-In هنوز بارگذاری نشده؛ چند ثانیه دیگر دوباره بزن.');return}svenDriveTokenClient.requestAccessToken({prompt:svenDriveToken?'':'consent'})}
 function safeDriveName(v='recipe'){return String(v).trim().replace(/[\\/:*?"<>|#%]+/g,'-').replace(/\s+/g,'-').replace(/-+/g,'-').slice(0,70)||'recipe'}
 function mealFolderName(){return currentRecipeMeal==='breakfast'?'Breakfast':currentRecipeMeal==='lunch'?'Lunch':'Dinner'}
@@ -4796,6 +4797,19 @@ async function uploadSelectedRecipeVideo(file){
 }
 async function fetchDriveVideoBlob(fileId){const r=await driveApi('files/'+encodeURIComponent(fileId)+'?alt=media');return await r.blob()}
 
+// Recipe Cloud Sync v4.16.6 — Google Drive is the canonical cross-context copy;
+// IndexedDB remains the fast/offline cache for Safari and the installed iOS PWA.
+const SVEN_RECIPE_CLOUD_FILE='recipes.json';
+let recipeCloudSyncBusy=false,recipeCloudSyncTimer=null;
+async function getAllLocalRecipes(){const data=await allMealsBackup();return data.meals}
+function mergeRecipeLists(local=[],remote=[]){const m=new Map();for(const x of [...remote,...local]){if(!x?.id)continue;const old=m.get(x.id);if(!old||Number(x.updatedAt||x.createdAt||0)>=Number(old.updatedAt||old.createdAt||0))m.set(x.id,recipeSerializable(x))}return [...m.values()]}
+async function findRecipeCloudFile(){const root=await findOrCreateDriveFolder('Sven Fitness');const database=await findOrCreateDriveFolder('Database',root);const q=`name='${SVEN_RECIPE_CLOUD_FILE}' and '${database}' in parents and trashed=false`;const r=await driveApi('files?q='+encodeURIComponent(q)+'&fields=files(id,name,modifiedTime)&spaces=drive');const j=await r.json();return {folderId:database,file:j.files?.[0]||null}}
+async function readRecipeCloud(){const {folderId,file}=await findRecipeCloudFile();if(!file)return {folderId,file:null,data:null};const r=await driveApi('files/'+encodeURIComponent(file.id)+'?alt=media');let data=null;try{data=await r.json()}catch(e){}return {folderId,file,data}}
+async function writeRecipeCloud(payload,fileInfo=null,folderId=null){const body=JSON.stringify(payload,null,2);let id=fileInfo?.id;if(!id){const r=await driveApi('files?fields=id,name',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:SVEN_RECIPE_CLOUD_FILE,mimeType:'application/json',parents:[folderId]})});id=(await r.json()).id}const u=await fetch('https://www.googleapis.com/upload/drive/v3/files/'+encodeURIComponent(id)+'?uploadType=media',{method:'PATCH',headers:{Authorization:'Bearer '+svenDriveToken,'Content-Type':'application/json; charset=UTF-8'},body});if(!u.ok)throw new Error('CLOUD_WRITE_'+u.status);return id}
+async function replaceLocalMeals(meals){for(const meal of ['breakfast','lunch','dinner'])for(const rec of (meals?.[meal]||[]))await putRecipeIntoMeal(meal,rec);for(const meal of ['breakfast','lunch','dinner'])await writeRecipeSnapshot(meal)}
+async function syncRecipesWithDrive(showMessage=false){if(recipeCloudSyncBusy)return false;if(!navigator.onLine){if(showMessage)alert('برای همگام‌سازی، اتصال اینترنت لازم است.');return false}if(!svenDriveToken){if(showMessage){driveStatus('برای همگام‌سازی ابتدا Google Drive را متصل کن.');requestDriveAccess()}return false}recipeCloudSyncBusy=true;const btn=document.getElementById('syncRecipesBtn');if(btn){btn.disabled=true;btn.textContent='☁ در حال همگام‌سازی…'}try{const local=await getAllLocalRecipes();const cloud=await readRecipeCloud();const remote=cloud.data?.meals||{};const merged={};for(const meal of ['breakfast','lunch','dinner'])merged[meal]=mergeRecipeLists(local[meal]||[],remote[meal]||[]);await replaceLocalMeals(merged);const payload={app:'Sven',type:'recipe-cloud',version:1,updatedAt:Date.now(),meals:merged};await writeRecipeCloud(payload,cloud.file,cloud.folderId);if(document.getElementById('dinnerLibrary')?.classList.contains('active'))await renderDinnerLibrary();driveStatus('غذاها با Google Drive همگام شدند ✓',true);if(showMessage)alert('غذاها با Google Drive همگام شدند.')}catch(e){console.error(e);if(showMessage)alert('همگام‌سازی غذاها انجام نشد. اتصال و مجوز Google Drive را بررسی کن.');return false}finally{recipeCloudSyncBusy=false;if(btn){btn.disabled=false;btn.textContent='☁ همگام‌سازی Drive'}}return true}
+function scheduleRecipeCloudSync(){clearTimeout(recipeCloudSyncTimer);recipeCloudSyncTimer=setTimeout(()=>{if(svenDriveToken&&navigator.onLine)syncRecipesWithDrive(false)},700)}
+
 function mealCfg(){return MEAL_LIBRARY_CONFIG[currentRecipeMeal]||MEAL_LIBRARY_CONFIG.dinner}
 function recipeDBForName(name,version){return new Promise((ok,no)=>{const r=version?indexedDB.open(name,version):indexedDB.open(name);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(DINNER_STORE))r.result.createObjectStore(DINNER_STORE,{keyPath:'id'});if(version&&version>=2&&!r.result.objectStoreNames.contains('offlineVideos'))r.result.createObjectStore('offlineVideos',{keyPath:'id'})};r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
 function recipeDB(){return recipeDBForName(mealCfg().db,2)}
@@ -4804,8 +4818,8 @@ function recipeSerializable(x){if(!x||typeof x!=='object')return null;const y={.
 async function writeRecipeSnapshot(meal=currentRecipeMeal){try{const cfg=MEAL_LIBRARY_CONFIG[meal];if(!cfg)return;const db=await recipeDBForName(cfg.db);const rows=await new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE).objectStore(DINNER_STORE).getAll();r.onsuccess=()=>ok(r.result||[]);r.onerror=()=>no(r.error)});localStorage.setItem(recipeSnapshotKey(meal),JSON.stringify({version:1,meal,savedAt:Date.now(),recipes:rows.map(recipeSerializable).filter(Boolean)}))}catch(e){console.warn('snapshot failed',e)}}
 async function recipeAll(){const db=await recipeDB();return new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE).objectStore(DINNER_STORE).getAll();r.onsuccess=()=>ok((r.result||[]).sort((a,b)=>(b.updatedAt||b.createdAt)-(a.updatedAt||a.createdAt)));r.onerror=()=>no(r.error)})}
 async function recipeGet(id){const db=await recipeDB();return new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE).objectStore(DINNER_STORE).get(id);r.onsuccess=()=>ok(r.result||null);r.onerror=()=>no(r.error)})}
-async function recipePut(x){const db=await recipeDB();return new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE,'readwrite').objectStore(DINNER_STORE).put(x);r.onsuccess=()=>{writeRecipeSnapshot(currentRecipeMeal);ok()};r.onerror=()=>no(r.error)})}
-async function recipeDelete(id){const db=await recipeDB();return new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE,'readwrite').objectStore(DINNER_STORE).delete(id);r.onsuccess=()=>{writeRecipeSnapshot(currentRecipeMeal);ok()};r.onerror=()=>no(r.error)})}
+async function recipePut(x){const db=await recipeDB();return new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE,'readwrite').objectStore(DINNER_STORE).put(x);r.onsuccess=()=>{writeRecipeSnapshot(currentRecipeMeal);scheduleRecipeCloudSync();ok()};r.onerror=()=>no(r.error)})}
+async function recipeDelete(id){const db=await recipeDB();return new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE,'readwrite').objectStore(DINNER_STORE).delete(id);r.onsuccess=()=>{writeRecipeSnapshot(currentRecipeMeal);scheduleRecipeCloudSync();ok()};r.onerror=()=>no(r.error)})}
 async function putRecipeIntoMeal(meal,rec){const cfg=MEAL_LIBRARY_CONFIG[meal];if(!cfg||!rec)return false;const db=await recipeDBForName(cfg.db,2);const clean={...rec,mealType:meal,id:rec.id||(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random())};delete clean.video;return new Promise((ok,no)=>{const r=db.transaction(DINNER_STORE,'readwrite').objectStore(DINNER_STORE).put(clean);r.onsuccess=()=>ok(true);r.onerror=()=>no(r.error)})}
 function inferMealFromName(name='',rec={}){if(['breakfast','lunch','dinner'].includes(rec?.mealType))return rec.mealType;const n=String(name).toLowerCase();if(n.includes('breakfast'))return 'breakfast';if(n.includes('lunch'))return 'lunch';if(n.includes('dinner'))return 'dinner';return null}
 async function recoverRecipesFromAvailableStorage(showMessage=true){let found=0, imported=0;const seen=new Set();for(const meal of ['breakfast','lunch','dinner']){try{const raw=localStorage.getItem(recipeSnapshotKey(meal));if(raw){const j=JSON.parse(raw);for(const rec of (j.recipes||[])){if(!rec?.id)continue;const key=meal+':'+rec.id;if(seen.has(key))continue;seen.add(key);found++;await putRecipeIntoMeal(meal,rec);imported++}}}catch(e){}}
@@ -4904,6 +4918,8 @@ dinnerRecipeModal?.addEventListener('input',e=>{if(e.target.closest('.dl-sheet')
 dinnerRecipeModal?.addEventListener('change',e=>{if(e.target.closest('.dl-sheet'))scheduleRecipeDraft()});
 window.addEventListener('beforeunload',e=>{if(dinnerRecipeModal?.classList.contains('open')&&recipeFormDirty){saveRecipeDraftNow();e.preventDefault();e.returnValue=''}});
 document.getElementById('connectGoogleDrive')?.addEventListener('click',requestDriveAccess);
+document.getElementById('syncRecipesBtn')?.addEventListener('click',()=>{if(!svenDriveToken)requestDriveAccess();else syncRecipesWithDrive(true)});
+window.addEventListener('online',()=>{if(svenDriveToken)scheduleRecipeCloudSync()});
 document.getElementById('chooseDriveVideo')?.addEventListener('click',()=>document.getElementById('driveVideoPicker')?.click());
 document.getElementById('driveVideoPicker')?.addEventListener('change',e=>{const f=e.target.files?.[0];if(f)uploadSelectedRecipeVideo(f);e.target.value=''});
 document.getElementById('drSteps')?.addEventListener('input',autoGrowRecipeSteps);

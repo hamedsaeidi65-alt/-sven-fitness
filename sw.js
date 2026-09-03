@@ -1,4 +1,4 @@
-const CACHE = "sven-v4.16.5-recipe-recovery-backup";
+const CACHE = "sven-v4.16.6-recipe-recovery-backup";
 const ASSETS = ["./manifest.json"];
 
 self.addEventListener("install", (event) => {
